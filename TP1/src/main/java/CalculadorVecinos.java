@@ -52,6 +52,41 @@ public class CalculadorVecinos {
 
         Particula[][] heads = leerParticulas();
 
+        for(int f = 0; f < m + 1; f ++) {
+            for(int c = 0; c < m + 1; c++) {
+                Particula current = heads[f][c];
+                if(current != null) {
+                    //chequeo arriba
+                    if((f - 1 >= 0) && (heads[f - 1][c] != null)) {
+                        //chequear potenciales vecinos
+                    } else if((f - 1 < 0) && contorno && (heads[m][c] != null)) {
+                        //chequear potenciales vecinos
+                    }
+
+                    //chequeo esquina superior derecha
+                    if((f - 1 >= 0) && (c + 1 <= m) && (heads[f - 1][c + 1] != null)) {
+                        //chequear potenciales vecinos
+                    } else if((f - 1 < 0) && (c + 1 > m) && contorno && (heads[m][0] != null)) {
+                        //chequear potenciales vecinos
+                    }
+
+                    //chequeo derecha
+                    if((c + 1 <= m) && (heads[f][c + 1] != null)) {
+                        //chequear potenciales vecinos
+                    } else if((c + 1 > m) && contorno && (heads[f][0] != null)) {
+                        //chequear potenciales vecinos
+                    }
+
+                    //chequeo esquina inferior derecha
+                    if((f + 1 <= m) && (c + 1 <= m) && (heads[f + 1][c + 1] != null)) {
+                        //chequear potenciales vecinos
+                    } else if((f + 1 > m) && (c + 1 > m) && contorno && (heads[0][0] != null)) {
+                        //chequear potenciales vecinos
+                    }
+                }
+            }
+        }
+
         //VER SI CONVIENE METERLE A TODA LA MATRIZ NULLs (CREO QUE NO PORQUE IMPLICA RECORRERLA UNA VEZ ANTES DE PONERLE
         // LOS VALORES DE PARTICULAS) ---> INTENTAR AGREGAR EN LAS POSICIONES INDEX Y VER SI EL RESTO SE PONE NULL SOLO (?
         //CONCLUSION --> HAY QUE PONERLE NULL PORQUE SINO ME VA A TIRAR UNA EXCEPCION DE OUT OF BOUNDS
@@ -92,7 +127,7 @@ public class CalculadorVecinos {
 
     private Particula[][] leerParticulas(){
         Particula[][]  heads = new Particula[m + 1][m + 1];
-        
+
         int id = 0;
 
         if (file != null){
@@ -127,8 +162,8 @@ public class CalculadorVecinos {
         float x = Float.valueOf(tokens[0]);
         float y = Float.valueOf(tokens[1]);
 
-        int f = (int)Math.floor(((double)x)/(l/m));
-        int c = (int)Math.floor(((double)y)/(l/m));
+        int f = m - (int)Math.floor(((double)y)/(l/m));
+        int c = (int)Math.floor(((double)x)/(l/m));
 
         Particula head = heads[f][c];
 
