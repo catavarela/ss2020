@@ -28,6 +28,7 @@ public class CalculadorVecinos {
     public CalculadorVecinos(int n, float l, int m, float rc, boolean contorno, ArrayList<String> particulas){
         this.n = n;
         this.l = l;
+        this.m = m;
         this.rc = rc;
         this.contorno = contorno;
 
@@ -49,7 +50,7 @@ public class CalculadorVecinos {
     public ArrayList<String> calcularVecinos(){
         ArrayList<String> vecinos = new ArrayList<String>(n+1);
 
-        ArrayList<Particula> heads = leerParticulas();
+        Particula[][] heads = leerParticulas();
 
         //VER SI CONVIENE METERLE A TODA LA MATRIZ NULLs (CREO QUE NO PORQUE IMPLICA RECORRERLA UNA VEZ ANTES DE PONERLE
         // LOS VALORES DE PARTICULAS) ---> INTENTAR AGREGAR EN LAS POSICIONES INDEX Y VER SI EL RESTO SE PONE NULL SOLO (?
@@ -89,14 +90,9 @@ public class CalculadorVecinos {
         return vecinos;
     }
 
-    private ArrayList<Particula> leerParticulas(){
-        ArrayList<Particula> heads = new ArrayList<Particula>(m*m);
-
-        int i = m*m;
-
-        while(i > 0)
-            heads.add(i--, null);
-
+    private Particula[][] leerParticulas(){
+        Particula[][]  heads = new Particula[m + 1][m + 1];
+        
         int id = 0;
 
         if (file != null){
@@ -125,27 +121,21 @@ public class CalculadorVecinos {
         return heads;
     }
 
-    private void agregarParticula (ArrayList<Particula> heads, String particula, int id){
+    private void agregarParticula (Particula[][] heads, String particula, int id){
         String[] tokens = particula.split(" ");
 
         float x = Float.valueOf(tokens[0]);
         float y = Float.valueOf(tokens[1]);
 
+        int f = (int)Math.floor(((double)x)/(l/m));
+        int c = (int)Math.floor(((double)y)/(l/m));
 
-        //Resto por m para "construir" la matriz de arriba para abajo, porque el origen de coordenadas (x,y)
-        //está en la esquina izq abajo en la matriz
-
-        int f = m - (int)Math.floor(((double)x)/(l/m));
-        int c = m - (int)Math.floor(((double)y)/(l/m));
-
-        int posicion = f*m + c;
-
-        Particula head = heads.get(posicion);
+        Particula head = heads[f][c];
 
         if(head == null)
-            heads.add(posicion, new Particula(id, x, y, null));
+            heads[f][c] = new Particula(id, x, y, null);
         else
-            heads.add(posicion, new Particula(id, x, y, head));
+            heads[f][c] = new Particula(id, x, y, head);
     }
 
 }
