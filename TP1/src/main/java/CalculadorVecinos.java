@@ -6,6 +6,38 @@ import java.util.Scanner;
 
 import static java.lang.System.exit;
 
+//VER SI CONVIENE METERLE A TODA LA MATRIZ NULLs (CREO QUE NO PORQUE IMPLICA RECORRERLA UNA VEZ ANTES DE PONERLE
+// LOS VALORES DE PARTICULAS) ---> INTENTAR AGREGAR EN LAS POSICIONES INDEX Y VER SI EL RESTO SE PONE NULL SOLO (?
+//CONCLUSION --> HAY QUE PONERLE NULL PORQUE SINO ME VA A TIRAR UNA EXCEPCION DE OUT OF BOUNDS
+
+        /*
+            ESTRUCTURA RECOMENDADA A USAR:
+                ARRAY_HEAD --> TODAS LAS CELDAS CON UN REPRESENTANTE (HEAD)
+                'ARRAY_LIST' --> LISTA DE PARTICULAS EN LA CELDA, ES UNA LISTA PROPIA, NO DEFINIDA COMO ARRAYLIST<ALGO>
+
+            PARA HACER ESTO EN MI OPINION NECESITAMOS:
+                CLASE PARTICULA (CON: ID, X, Y, NEXT_PART), YO NO PONDRÍA UNA LISTA DE HEADS_VECINOS PORQUE CREO QUE ESO
+                NOS VA A LLEVAR A UN ALGORITMO MÁS FÁCIL PERO MÁS LENTO.
+
+            PSEUDOCÓDIGO DEL ALGORITMO:
+
+            DONE 1) CREAR LAS ESTRUCTURAS QUE NECESITO:
+
+             if (file == null)
+                LEER DEL ARCHIVO Y CREAR ARRAY_HEAD, ARRAY_LIST
+             else
+                LEER DE particulas Y CREAR ARRAY_HEAD, ARRAY_LIST
+
+            2) RECORRER EN FORMA DE L PARA ENCONTRAR LAS CELDAS VECINAS Y VER SI ESTÁN DENTRO DEL RC PARA AGREGARLOS
+               A VECINOS (TENIENDO EN CUENTA CONTORNO).
+
+               AL MOMENTO DE VER LAS CANDIDATAS (LAS QUE ESTAN EN LA CELDA VECINA) CALCULAR LA HIPOTENUSA DE LA PART A
+               LA CANDIDATA. SI LA HIPOTENUSA =< RC => ES VECINA => APPENDEAR AL STRING EN LA POSICION DE ID-1 (ID EMPIEZA EN 1)
+
+
+
+         */
+
 public class CalculadorVecinos {
     private int n;
     private float l;
@@ -52,81 +84,71 @@ public class CalculadorVecinos {
 
         Particula[][] heads = leerParticulas();
 
-        for(int f = 0; f < m + 1; f ++) {
-            for(int c = 0; c < m + 1; c++) {
+        int f, c;
+        for(f = 0; f < m; f++) {
+            for(c = 0; c < m; c++) {
                 Particula current = heads[f][c];
                 if(current != null) {
                     //chequeo arriba
                     if((f - 1 >= 0) && (heads[f - 1][c] != null)) {
-                        //chequear potenciales vecinos
-                    } else if((f - 1 < 0) && contorno && (heads[m][c] != null)) {
-                        //chequear potenciales vecinos
+                        chequearVecinos(current, heads[f - 1][c]);
+                    } else if((f - 1 < 0) && contorno && (heads[m - 1][c] != null)) {
+                        chequearVecinos(current, heads[m - 1][c]);
                     }
 
                     //chequeo esquina superior derecha
-                    if((f - 1 >= 0) && (c + 1 <= m) && (heads[f - 1][c + 1] != null)) {
-                        //chequear potenciales vecinos
-                    } else if((f - 1 < 0) && (c + 1 > m) && contorno && (heads[m][0] != null)) {
-                        //chequear potenciales vecinos
+                    if((f - 1 >= 0) && (c + 1 <= m - 1) && (heads[f - 1][c + 1] != null)) {
+                        chequearVecinos(current, heads[f - 1][c + 1]);
+                    } else if((f - 1 < 0) && (c + 1 > m - 1) && contorno && (heads[m - 1][0] != null)) {
+                        chequearVecinos(current, heads[m - 1][0]);
                     }
 
                     //chequeo derecha
-                    if((c + 1 <= m) && (heads[f][c + 1] != null)) {
-                        //chequear potenciales vecinos
-                    } else if((c + 1 > m) && contorno && (heads[f][0] != null)) {
-                        //chequear potenciales vecinos
+                    if((c + 1 <= m - 1) && (heads[f][c + 1] != null)) {
+                        chequearVecinos(current, heads[f][c + 1]);
+                    } else if((c + 1 > m - 1) && contorno && (heads[f][0] != null)) {
+                        chequearVecinos(current, heads[f][0]);
                     }
 
                     //chequeo esquina inferior derecha
-                    if((f + 1 <= m) && (c + 1 <= m) && (heads[f + 1][c + 1] != null)) {
-                        //chequear potenciales vecinos
-                    } else if((f + 1 > m) && (c + 1 > m) && contorno && (heads[0][0] != null)) {
-                        //chequear potenciales vecinos
+                    if((f + 1 <= m - 1) && (c + 1 <= m - 1) && (heads[f + 1][c + 1] != null)) {
+                        chequearVecinos(current, heads[f + 1][c + 1]);
+                    } else if((f + 1 > m - 1) && (c + 1 > m - 1) && contorno && (heads[0][0] != null)) {
+                        chequearVecinos(current, heads[0][0]);
+                    }
+
+                    if (current.getNext() != null) {
+                        chequearVecinos(current, current.getNext());
                     }
                 }
             }
         }
 
-        //VER SI CONVIENE METERLE A TODA LA MATRIZ NULLs (CREO QUE NO PORQUE IMPLICA RECORRERLA UNA VEZ ANTES DE PONERLE
-        // LOS VALORES DE PARTICULAS) ---> INTENTAR AGREGAR EN LAS POSICIONES INDEX Y VER SI EL RESTO SE PONE NULL SOLO (?
-        //CONCLUSION --> HAY QUE PONERLE NULL PORQUE SINO ME VA A TIRAR UNA EXCEPCION DE OUT OF BOUNDS
+        for(f = 0; f < m; f++) {
+            for(c = 0; c < m; c++) {
+                Particula current = heads[f][c];
+                if(current != null) {
+                    do {
+                        String s = String.valueOf(current.getId());
 
-        /*
-            ESTRUCTURA RECOMENDADA A USAR:
-                ARRAY_HEAD --> TODAS LAS CELDAS CON UN REPRESENTANTE (HEAD)
-                'ARRAY_LIST' --> LISTA DE PARTICULAS EN LA CELDA, ES UNA LISTA PROPIA, NO DEFINIDA COMO ARRAYLIST<ALGO>
+                        Iterator<Particula> it = current.getVecinos().iterator();
 
-            PARA HACER ESTO EN MI OPINION NECESITAMOS:
-                CLASE PARTICULA (CON: ID, X, Y, NEXT_PART), YO NO PONDRÍA UNA LISTA DE HEADS_VECINOS PORQUE CREO QUE ESO
-                NOS VA A LLEVAR A UN ALGORITMO MÁS FÁCIL PERO MÁS LENTO.
+                        while(it.hasNext())
+                            s = s + ", " + it.next().getId();
 
-            PSEUDOCÓDIGO DEL ALGORITMO:
+                        vecinos.add(s);
 
-            DONE 1) CREAR LAS ESTRUCTURAS QUE NECESITO:
-
-             if (file == null)
-                LEER DEL ARCHIVO Y CREAR ARRAY_HEAD, ARRAY_LIST
-             else
-                LEER DE particulas Y CREAR ARRAY_HEAD, ARRAY_LIST
-
-            2) RECORRER EN FORMA DE L PARA ENCONTRAR LAS CELDAS VECINAS Y VER SI ESTÁN DENTRO DEL RC PARA AGREGARLOS
-               A VECINOS (TENIENDO EN CUENTA CONTORNO).
-
-               AL MOMENTO DE VER LAS CANDIDATAS (LAS QUE ESTAN EN LA CELDA VECINA) CALCULAR LA HIPOTENUSA DE LA PART A
-               LA CANDIDATA. SI LA HIPOTENUSA =< RC => ES VECINA => APPENDEAR AL STRING EN LA POSICION DE ID-1 (ID EMPIEZA EN 1)
-
-
-
-         */
-
-
-
+                        current = current.getNext();
+                    } while (current != null);
+                }
+            }
+        }
 
         return vecinos;
     }
 
     private Particula[][] leerParticulas(){
-        Particula[][]  heads = new Particula[m + 1][m + 1];
+        Particula[][]  heads = new Particula[m][m];
 
         int id = 0;
 
@@ -162,8 +184,8 @@ public class CalculadorVecinos {
         float x = Float.valueOf(tokens[0]);
         float y = Float.valueOf(tokens[1]);
 
-        int f = m - (int)Math.floor(((double)y)/(l/m));
-        int c = (int)Math.floor(((double)x)/(l/m));
+        int f = y == l ? 0 : m - (int)Math.floor(((double)y)/(l/m)) - 1;
+        int c = x == l ? m - 1 : (int)Math.floor(((double)x)/(l/m));
 
         Particula head = heads[f][c];
 
@@ -171,6 +193,33 @@ public class CalculadorVecinos {
             heads[f][c] = new Particula(id, x, y, null);
         else
             heads[f][c] = new Particula(id, x, y, head);
+    }
+
+    private void chequearVecinos(Particula current, Particula vecino) {
+        Particula potencial = vecino;
+
+        do {
+            do {
+
+                float dist_x = Math.abs(current.getX() - potencial.getX());
+                float dist_y = Math.abs(current.getY() - potencial.getY());
+                double dist = Math.hypot(dist_x, dist_y);
+
+                if(dist < rc) {
+                    current.getVecinos().add(potencial);
+                    potencial.getVecinos().add(current);
+                }
+                potencial = potencial.getNext();
+            } while(potencial != null);
+
+            current = current.getNext();
+            potencial = vecino;
+
+            if(current != null && current.getId() == potencial.getId()) {
+                potencial = vecino.getNext();
+                vecino = potencial;
+            }
+        } while(current != null && potencial != null);
     }
 
 }
