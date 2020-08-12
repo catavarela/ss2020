@@ -2,8 +2,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 
 import static java.lang.System.exit;
@@ -73,6 +77,7 @@ public class Main {
         int n = 0, m = 0;
         float l = 0f, rc = 0f;
         boolean contorno = false;
+        File src;
 
         try {
             Scanner lector = new Scanner(new File(args[1]));
@@ -101,10 +106,13 @@ public class Main {
             ArrayList<String> particulas = g.generar();
 
             writeFile(particulas, "particulas.txt");
+            src = new File("particulas.txt");
 
             calculator = new CalculadorVecinos(n, l, m, rc, contorno, g.getParticulas());
-        }else
+        }else {
+            src = new File(args[2]);
             calculator = new CalculadorVecinos(n, l, m, rc, contorno, args[2]);
+        }
 
         long t_inicio = System.nanoTime();
 
@@ -114,6 +122,35 @@ public class Main {
 
         vecinos.add(0, String.valueOf(((double)t_final - t_inicio)/1000000000));
         writeFile(vecinos, "vecinos.txt");
+
+        try {
+            File dst = new File("output.txt");
+
+            int particula_a_estudiar = Integer.parseInt(args[0]);
+
+            String v = vecinos.get(particula_a_estudiar);
+            String[] tokens = v.split(",");
+            int index = 1;
+
+            List<String> lineas = Files.readAllLines(Paths.get(src.getName()));
+            lineas.set(particula_a_estudiar, lineas.get(particula_a_estudiar) + " 255 0 0");
+
+            while(index < lineas.size()) {
+                lineas.set(index, lineas.get(index++) + " 0 255 0");
+            }
+
+            lineas.add(0, String.valueOf(lineas.size()));
+            lineas.add(1, String.valueOf('\n'));
+
+            Files.write(Paths.get(dst.getName()), lineas);
+        } catch (IOException e) {
+            System.out.println("Ocurrió un error al clonar el archivo de particulas" + ' ' + src.getName() + '.');
+            e.printStackTrace();
+            exit(1);
+        }
+
+
+
     }
 
     public static void writeFile(ArrayList<String> output, String fileName){
