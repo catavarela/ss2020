@@ -34,5 +34,7 @@ public class Particula {
 
     public ArrayList<Particula> getVecinos() {return vecinos;}
 
+    public void setNext(Particula next) {this.next = next;}
+
     public void addVecino(Particula v) { vecinos.add(v);}
 }

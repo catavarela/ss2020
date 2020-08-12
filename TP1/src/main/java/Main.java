@@ -61,10 +61,10 @@ public class Main {
     public static void main(String[] args) {
 
         if(args.length < 2) {
-            if(args[0] == null)
+            if(args[1] == null)
                 System.out.println("Falta archivo de data estática");
 
-            if(args[1] == null)
+            if(args[0] == null)
                 System.out.println("Falta especificar el número de partícula a estudiar");
 
             exit(1);
@@ -75,7 +75,7 @@ public class Main {
         boolean contorno = false;
 
         try {
-            Scanner lector = new Scanner(new File(args[0]));
+            Scanner lector = new Scanner(new File(args[1]));
 
             n = Integer.valueOf(lector.nextLine());
             l = Float.valueOf(lector.nextLine());
@@ -86,7 +86,7 @@ public class Main {
             lector.close();
 
         } catch (FileNotFoundException e) {
-            System.out.println("Ocurrió un error al leer el archivo de data estática" + ' ' + args[0] + '.');
+            System.out.println("Ocurrió un error al leer el archivo de data estática" + ' ' + args[1] + '.');
             e.printStackTrace();
             exit(1);
         }
@@ -96,15 +96,15 @@ public class Main {
 
         CalculadorVecinos calculator;
 
-        if(args.length == 1){
+        if(args.length == 2){
             GeneradorParticulas g = new GeneradorParticulas(n, l);
             ArrayList<String> particulas = g.generar();
 
             writeFile(particulas, "particulas.txt");
 
-            calculator = new CalculadorVecinos(n, l, m, rc, contorno, particulas);
+            calculator = new CalculadorVecinos(n, l, m, rc, contorno, g.getParticulas());
         }else
-            calculator = new CalculadorVecinos(n, l, m, rc, contorno, args[1]);
+            calculator = new CalculadorVecinos(n, l, m, rc, contorno, args[2]);
 
         long t_inicio = System.nanoTime();
 

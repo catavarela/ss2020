@@ -45,7 +45,6 @@ public class CalculadorVecinos {
     private float rc;
     private boolean contorno;
     private String file = null;
-    private ArrayList<String> particulas = null;
     private ArrayList<Particula> lista = new ArrayList<Particula>();
 
 
@@ -58,14 +57,14 @@ public class CalculadorVecinos {
         file = fileParticulas;
     }
 
-    public CalculadorVecinos(int n, float l, int m, float rc, boolean contorno, ArrayList<String> particulas){
+    public CalculadorVecinos(int n, float l, int m, float rc, boolean contorno, ArrayList<Particula> particulas){
         this.n = n;
         this.l = l;
         this.m = m;
         this.rc = rc;
         this.contorno = contorno;
 
-        this.particulas = particulas;
+        this.lista = particulas;
     }
 
     public static int mCalculator (float l, float rc){
@@ -145,15 +144,15 @@ public class CalculadorVecinos {
     private Particula[][] leerParticulas(){
         Particula[][]  heads = new Particula[m][m];
 
-        int id = 0;
-
         if (file != null){
+
+            int id = 1;
 
             try {
                 Scanner lector = new Scanner(new File(file));
 
                 while(lector.hasNext())
-                    agregarParticula(heads, lector.nextLine(), ++id);
+                    agregarParticula(heads, lector.nextLine(), id++);
 
                 lector.close();
 
@@ -164,16 +163,38 @@ public class CalculadorVecinos {
             }
 
         }else{
-            Iterator<String> it = particulas.iterator();
+            Iterator<Particula> it = lista.iterator();
 
             while(it.hasNext())
-                agregarParticula(heads, it.next(), ++id);
+                agregarParticula(heads, it.next());
         }
 
         return heads;
     }
 
-    private void agregarParticula (Particula[][] heads, String particula, int id){
+    private void agregarParticula (Particula[][] heads, Particula particula){
+        //String[] tokens = particula.split(" ");
+
+        float x = particula.getX();
+        float y = particula.getY();
+
+        int f = y == l ? 0 : m - (int)Math.floor(((double)y)/(l/m)) - 1;
+        int c = x == l ? m - 1 : (int)Math.floor(((double)x)/(l/m));
+
+        Particula head = heads[f][c];
+
+        if(head == null) {
+            heads[f][c] = particula;
+            //lista.add(heads[f][c]);
+        }
+        else {
+            heads[f][c] = particula;
+            particula.setNext(head);
+            //lista.add(heads[f][c]);
+        }
+    }
+
+    private void agregarParticula(Particula[][] heads, String particula, int id) {
         String[] tokens = particula.split(" ");
 
         float x = Float.valueOf(tokens[0]);
