@@ -7,13 +7,15 @@ public class Particula {
     private float y;
     private Particula next;
     private ArrayList<Particula> vecinos;
+    private float r;
 
-    public Particula(int id, float x, float y, Particula next) {
+    public Particula(int id, float x, float y, Particula next, float r) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.next = next;
         vecinos = new ArrayList<Particula>();
+        this.r = r;
     }
 
     public float getX() {
@@ -26,6 +28,10 @@ public class Particula {
 
     public int getId() {
         return id;
+    }
+
+    public float getR() {
+        return r;
     }
 
     public Particula getNext() {

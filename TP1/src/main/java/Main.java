@@ -75,8 +75,8 @@ public class Main {
         }
 
         int n = 0, m = 0;
-        float l = 0f, rc = 0f;
-        boolean contorno = false;
+        float l = 0f, rc = 0f, rMax = 0f;
+        boolean contorno = false, igualRadio = false;
         File src;
 
         try {
@@ -87,6 +87,8 @@ public class Main {
             m = Integer.valueOf(lector.nextLine());
             rc = Float.valueOf(lector.nextLine());
             contorno = Boolean.valueOf(lector.nextLine());
+            rMax = Float.valueOf(lector.nextLine());
+            igualRadio = Boolean.valueOf(lector.nextLine());
 
             lector.close();
 
@@ -100,15 +102,18 @@ public class Main {
             m = CalculadorVecinos.mCalculator(l, rc);
 
         CalculadorVecinos calculator;
+        Particula [][] heads = null;
 
         if(args.length == 2){
-            GeneradorParticulas g = new GeneradorParticulas(n, l);
-            ArrayList<String> particulas = g.generar();
+            GeneradorParticulas g = new GeneradorParticulas(n, l, rMax, m);
+            heads = g.generar(igualRadio);
+
+            ArrayList<String> particulas = g.toStringParticulas();
 
             writeFile(particulas, "particulas.txt");
+            calculator = new CalculadorVecinos(n, l, m, rc, contorno, g.getParticulas());
             src = new File("particulas.txt");
 
-            calculator = new CalculadorVecinos(n, l, m, rc, contorno, g.getParticulas());
         }else {
             src = new File(args[2]);
             calculator = new CalculadorVecinos(n, l, m, rc, contorno, args[2]);
@@ -116,7 +121,7 @@ public class Main {
 
         long t_inicio = System.nanoTime();
 
-        ArrayList<String> vecinos = calculator.calcularVecinos();
+        ArrayList<String> vecinos = calculator.calcularVecinos(heads);
 
         long t_final = System.nanoTime();
 

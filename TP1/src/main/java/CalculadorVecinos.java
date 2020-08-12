@@ -63,7 +63,6 @@ public class CalculadorVecinos {
         this.m = m;
         this.rc = rc;
         this.contorno = contorno;
-
         this.lista = particulas;
     }
 
@@ -79,10 +78,15 @@ public class CalculadorVecinos {
         return m;
     }
 
-    public ArrayList<String> calcularVecinos(){
+    //si matrix es null, no se generó de antes la matrix
+    public ArrayList<String> calcularVecinos(Particula[][] matrix){
         ArrayList<String> vecinos = new ArrayList<String>(n+1);
+        Particula[][] heads;
 
-        Particula[][] heads = leerParticulas();
+        if(matrix == null)
+            heads = leerParticulas();
+        else
+            heads = matrix;
 
         int f, c;
         for(f = 0; f < m; f++) {
@@ -166,32 +170,36 @@ public class CalculadorVecinos {
             Iterator<Particula> it = lista.iterator();
 
             while(it.hasNext())
-                agregarParticula(heads, it.next());
+                agregarParticula(heads, it.next(), l, m);
         }
 
         return heads;
     }
 
-    private void agregarParticula (Particula[][] heads, Particula particula){
-        //String[] tokens = particula.split(" ");
-
+    protected static void agregarParticula (Particula[][] heads, Particula particula, float l, int m){
         float x = particula.getX();
         float y = particula.getY();
 
-        int f = y == l ? 0 : m - (int)Math.floor(((double)y)/(l/m)) - 1;
-        int c = x == l ? m - 1 : (int)Math.floor(((double)x)/(l/m));
+        int f = calcFil(y, l, m);
+        int c = calcCol(x, l, m);
 
         Particula head = heads[f][c];
 
         if(head == null) {
             heads[f][c] = particula;
-            //lista.add(heads[f][c]);
         }
         else {
             heads[f][c] = particula;
             particula.setNext(head);
-            //lista.add(heads[f][c]);
         }
+    }
+
+    protected static int calcFil(float y, float l, int m){
+        return y == l ? 0 : m - (int)Math.floor(((double)y)/(l/m)) - 1;
+    }
+
+    protected static int calcCol(float x, float l, int m){
+        return x == l ? m - 1 : (int)Math.floor(((double)x)/(l/m));
     }
 
     private void agregarParticula(Particula[][] heads, String particula, int id) {
@@ -199,18 +207,19 @@ public class CalculadorVecinos {
 
         float x = Float.valueOf(tokens[0]);
         float y = Float.valueOf(tokens[1]);
+        float r = Float.valueOf(tokens[2]);
 
-        int f = y == l ? 0 : m - (int)Math.floor(((double)y)/(l/m)) - 1;
-        int c = x == l ? m - 1 : (int)Math.floor(((double)x)/(l/m));
+        int f = calcFil(y, l, m);
+        int c = calcCol(x, l, m);
 
         Particula head = heads[f][c];
 
         if(head == null) {
-            heads[f][c] = new Particula(id, x, y, null);
+            heads[f][c] = new Particula(id, x, y, null, r);
             lista.add(heads[f][c]);
         }
         else {
-            heads[f][c] = new Particula(id, x, y, head);
+            heads[f][c] = new Particula(id, x, y, head, r);
             lista.add(heads[f][c]);
         }
     }
@@ -221,11 +230,7 @@ public class CalculadorVecinos {
         do {
             do {
 
-                float dist_x = Math.abs(current.getX() - potencial.getX());
-                float dist_y = Math.abs(current.getY() - potencial.getY());
-                double dist = Math.hypot(dist_x, dist_y);
-
-                if(dist < rc) {
+                if(estaEnRango(current, potencial, rc)) {
                     current.getVecinos().add(potencial);
                     potencial.getVecinos().add(current);
                 }
@@ -240,6 +245,17 @@ public class CalculadorVecinos {
                 vecino = potencial;
             }
         } while(current != null && potencial != null);
+    }
+
+    protected static boolean estaEnRango(Particula current, Particula potencial, float distancia){
+        float dist_x = Math.abs(current.getX() - potencial.getX());
+        float dist_y = Math.abs(current.getY() - potencial.getY());
+        double dist = Math.hypot(dist_x, dist_y);
+
+        if(dist < distancia)
+            return true;
+        else
+            return false;
     }
 
 }
