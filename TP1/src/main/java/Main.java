@@ -60,8 +60,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-        if(args.length == 0 || args[0]==null){
-            System.out.println("Falta archivo de data estática");
+        if(args.length < 2) {
+            if(args[0] == null)
+                System.out.println("Falta archivo de data estática");
+
+            if(args[1] == null)
+                System.out.println("Falta especificar el número de partícula a estudiar");
+
             exit(1);
         }
 
@@ -109,7 +114,6 @@ public class Main {
 
         vecinos.add(0, String.valueOf(((double)t_final - t_inicio)/1000000000));
         writeFile(vecinos, "vecinos.txt");
-
     }
 
     public static void writeFile(ArrayList<String> output, String fileName){

@@ -46,6 +46,7 @@ public class CalculadorVecinos {
     private boolean contorno;
     private String file = null;
     private ArrayList<String> particulas = null;
+    private ArrayList<Particula> lista = new ArrayList<Particula>();
 
 
     public CalculadorVecinos(int n, float l, int m, float rc, boolean contorno, String fileParticulas){
@@ -124,24 +125,18 @@ public class CalculadorVecinos {
             }
         }
 
-        for(f = 0; f < m; f++) {
-            for(c = 0; c < m; c++) {
-                Particula current = heads[f][c];
-                if(current != null) {
-                    do {
-                        String s = String.valueOf(current.getId());
+        Iterator<Particula> it = lista.iterator();
 
-                        Iterator<Particula> it = current.getVecinos().iterator();
+        while(it.hasNext()) {
+            Particula current = it.next();
+            String s = String.valueOf(current.getId());
 
-                        while(it.hasNext())
-                            s = s + ", " + it.next().getId();
+            Iterator<Particula> vecinos_it = current.getVecinos().iterator();
 
-                        vecinos.add(s);
+            while(vecinos_it.hasNext())
+                s = s + ", " + vecinos_it.next().getId();
 
-                        current = current.getNext();
-                    } while (current != null);
-                }
-            }
+            vecinos.add(s);
         }
 
         return vecinos;
@@ -189,10 +184,14 @@ public class CalculadorVecinos {
 
         Particula head = heads[f][c];
 
-        if(head == null)
+        if(head == null) {
             heads[f][c] = new Particula(id, x, y, null);
-        else
+            lista.add(heads[f][c]);
+        }
+        else {
             heads[f][c] = new Particula(id, x, y, head);
+            lista.add(heads[f][c]);
+        }
     }
 
     private void chequearVecinos(Particula current, Particula vecino) {
