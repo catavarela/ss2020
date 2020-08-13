@@ -82,7 +82,7 @@ public class CalculadorVecinos {
     //si matrix es null, no se generó de antes la matrix
     public ArrayList<String> calcularVecinos(Particula[][] matrix){
 
-        long t_inicio = System.nanoTime();
+
 
         ArrayList<String> vecinos = new ArrayList<String>(n+1);
         Particula[][] heads;
@@ -94,7 +94,7 @@ public class CalculadorVecinos {
 
         int f, c;
 
-
+        long t_inicio = System.nanoTime();
         for(f = 0; f < m; f++) {
             for(c = 0; c < m; c++) {
                 Particula current = heads[f][c];
@@ -153,7 +153,7 @@ public class CalculadorVecinos {
         }
 
         vecinos.add(0, String.valueOf(((double)t_final - t_inicio)/1000000000));
-        
+
         return vecinos;
     }
 
