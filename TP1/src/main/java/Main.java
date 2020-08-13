@@ -150,9 +150,7 @@ public class Main {
             index = 1;
             while(index < tokens.length) {
                 int i = Integer.parseInt(tokens[index]);
-                System.out.println(i);
                 replace = lineas.get(i - 1);
-                System.out.println(replace);
                 replace = replace.substring(0, replace.length() - 11) + "0 255 0";
                 lineas.set(i - 1, replace);
                 index++;
