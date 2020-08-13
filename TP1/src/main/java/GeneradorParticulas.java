@@ -8,14 +8,16 @@ public class GeneradorParticulas {
     private ArrayList<String> stringPart;
     private float rMax;
     private int m;
+    private boolean contorno;
 
-    public GeneradorParticulas(int n, float l, float rMax, int m){
+    public GeneradorParticulas(int n, float l, float rMax, int m, boolean contorno){
         this.n = n;
         this.l = l;
-        this.particulas = new ArrayList<Particula>();
+        this.particulas = new ArrayList<>();
         this.rMax = rMax;
         this.m = m;
-        ArrayList<String> stringPart = new ArrayList<String>();
+        this.contorno = contorno;
+        stringPart = new ArrayList<>();
     }
 
     public Particula[][] generar(boolean igualRadio){
@@ -41,7 +43,7 @@ public class GeneradorParticulas {
             x = rand.nextFloat() * l;
             y = rand.nextFloat() * l;
 
-            stringPart.add(String.valueOf(x) + ' ' + String.valueOf(y));
+            stringPart.add(String.valueOf(x) + ' ' + String.valueOf(y) + " 0");
             particulas.add(new Particula(id++, x, y, null, 0));
 
             n--;
@@ -75,16 +77,19 @@ public class GeneradorParticulas {
             f = CalculadorVecinos.calcFil(y, l, m);
             c = CalculadorVecinos.calcCol(x, l, m);
 
+            p = new Particula(id, x, y, null, r);
+
             if(heads[f][c] == null) {
-                CalculadorVecinos.agregarParticula(heads, new Particula(id++, x, y, null, r), l, m);
+                stringPart.add(String.valueOf(x) + ' ' + String.valueOf(y) + ' ' + r);
+                CalculadorVecinos.agregarParticula(heads, p, l, m);
+                id++;
                 n--;
             }else{
 
                 current = heads[f][c];
-                p = new Particula(id, x, y, null, r);
 
                 do{
-                    if(CalculadorVecinos.estaEnRango(current, p, p.getR() + current.getR()))
+                    if(CalculadorVecinos.estaEnRango(current, p, p.getR() + current.getR(), l, m, contorno))
                         esValido = false;
                     else
                         current = current.getNext();
@@ -94,6 +99,7 @@ public class GeneradorParticulas {
                 if(esValido){
                     p.setNext(heads[f][c]);
                     heads[f][c] = p;
+                    stringPart.add(String.valueOf(x) + ' ' + String.valueOf(y) + ' ' + r);
                     CalculadorVecinos.agregarParticula(heads, p, l, m);
                     n--;
                     id++;

@@ -229,8 +229,7 @@ public class CalculadorVecinos {
 
         do {
             do {
-
-                if(estaEnRango(current, potencial, rc)) {
+                if(estaEnRango(current, potencial, rc, l, m, contorno)) {
                     current.getVecinos().add(potencial);
                     potencial.getVecinos().add(current);
                 }
@@ -247,15 +246,59 @@ public class CalculadorVecinos {
         } while(current != null && potencial != null);
     }
 
-    protected static boolean estaEnRango(Particula current, Particula potencial, float distancia){
-        float dist_x = Math.abs(current.getX() - potencial.getX());
-        float dist_y = Math.abs(current.getY() - potencial.getY());
-        double dist = Math.hypot(dist_x, dist_y);
+    protected static boolean estaEnRango(Particula current, Particula potencial, float distancia, float l, int m, boolean contorno){
+        float dist_x = 0f, dist_y = 0f, x_c, x_p, y_c, y_p;
+        double dist;
+        int f_c, c_c, f_p, c_p;
 
-        if(dist < distancia)
+        x_c = current.getX();
+        x_p = potencial.getX();
+        y_c = current.getY();
+        y_p = potencial.getY();
+        f_c = calcFil(y_c, l, m);
+        c_c = calcCol(x_c, l, m);
+        f_p = calcFil(y_p, l, m);
+        c_p = calcCol(x_p, l, m);
+
+        if(!contorno || (f_c == f_p && c_c == c_p) || (f_c != 0 && f_c != m-1 && c_c!= 0 && c_c!= m-1)) { //uso contorno como condicion de corte temprana
+            //no estoy en un borde o lo estoy pero ambas estan en la misma celda
+            dist_x = Math.abs(x_c - x_p);
+            dist_y = Math.abs(y_c - y_p);
+        }else{
+            //estoy en un borde
+            if(f_c == f_p && (c_c == 0 && c_p ==m-1)) {
+                dist_x = (l - x_p) + x_c;
+                dist_y = Math.abs(y_c - y_p);
+            }else if(f_c == f_p && (c_p == 0 && c_c ==m-1)){
+                dist_x = (l-x_c)+x_p;
+                dist_y = Math.abs(y_c-y_p);
+            }else if(c_c == c_p && (f_c == 0 && f_p ==m-1)){
+                dist_x = Math.abs(x_c-x_p);
+                dist_y = y_p+ (l-y_c);
+            }else if(c_c == c_p && (f_c == m-1 && f_p ==0)) {
+                dist_x = Math.abs(x_c-x_p);
+                dist_y = y_c+ (l-y_p);
+            } else if(c_c == 0 && c_p == m-1 && f_c==0 && f_p==m-1) {//estoy en una esquina//la part de la que estoy buscando vecinos está en esq izq arriba
+                dist_x = (l - x_p) + x_c;
+                dist_y = (l + y_p) - y_c;
+            }else if(c_p == 0 && c_c == m-1 && f_p==0 && f_c==m-1){//la part de la que estoy buscando vecinos está en esq der abajo
+                dist_x = (l-x_c)+x_p;
+                dist_y = (l+y_c)-y_p;
+            }else if(c_p == 0 && c_c == m-1 && f_p==m-1 && f_c==0){//la part de la que estoy buscando vecinos está en esq der arriba
+                dist_x = (l-x_c)+x_p;
+                dist_y = (l-y_c)+y_p;
+            }else{//la part de la que estoy buscando vecinos está en esq izq abajo if(c1 == 0 && c2 == m-1 && f1==m-1 && f2==0)
+                dist_x = (l-x_p)+x_c;
+                dist_y = (l-y_p)+y_c;
+            }
+        }
+
+        dist = Math.hypot(dist_x, dist_y);
+        if(dist <= distancia)
             return true;
         else
             return false;
     }
+
 
 }

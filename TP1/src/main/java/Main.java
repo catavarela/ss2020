@@ -105,7 +105,7 @@ public class Main {
         Particula [][] heads = null;
 
         if(args.length == 2){
-            GeneradorParticulas g = new GeneradorParticulas(n, l, rMax, m);
+            GeneradorParticulas g = new GeneradorParticulas(n, l, rMax, m, contorno);
             heads = g.generar(igualRadio);
 
             ArrayList<String> particulas = g.toStringParticulas();

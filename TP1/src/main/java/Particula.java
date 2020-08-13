@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+
+//se puede mejorar el algoritmo agregandole a particula f y c
 public class Particula {
 
     private int id;
@@ -14,7 +16,7 @@ public class Particula {
         this.x = x;
         this.y = y;
         this.next = next;
-        vecinos = new ArrayList<Particula>();
+        vecinos = new ArrayList<>();
         this.r = r;
     }
 
@@ -41,6 +43,4 @@ public class Particula {
     public ArrayList<Particula> getVecinos() {return vecinos;}
 
     public void setNext(Particula next) {this.next = next;}
-
-    public void addVecino(Particula v) { vecinos.add(v);}
 }
