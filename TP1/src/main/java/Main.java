@@ -129,23 +129,37 @@ public class Main {
         writeFile(vecinos, "vecinos.txt");
 
         try {
-            File dst = new File("output.txt");
+            File dst = new File("output.xyz");
 
             int particula_a_estudiar = Integer.parseInt(args[0]);
 
             String v = vecinos.get(particula_a_estudiar);
-            String[] tokens = v.split(",");
-            int index = 1;
+            String[] tokens = v.split(", ");
+            int index = 0;
 
             List<String> lineas = Files.readAllLines(Paths.get(src.getName()));
-            lineas.set(particula_a_estudiar, lineas.get(particula_a_estudiar) + " 255 0 0");
 
             while(index < lineas.size()) {
-                lineas.set(index, lineas.get(index++) + " 0 255 0");
+                lineas.set(index, lineas.get(index++) + " 255 255 255");
+            }
+
+            String replace = lineas.get(particula_a_estudiar - 1);
+            replace = replace.substring(0, replace.length() - 11) + "255 0 0";
+            lineas.set(particula_a_estudiar - 1,  replace);
+
+            index = 1;
+            while(index < tokens.length) {
+                int i = Integer.parseInt(tokens[index]);
+                System.out.println(i);
+                replace = lineas.get(i - 1);
+                System.out.println(replace);
+                replace = replace.substring(0, replace.length() - 11) + "0 255 0";
+                lineas.set(i - 1, replace);
+                index++;
             }
 
             lineas.add(0, String.valueOf(lineas.size()));
-            lineas.add(1, String.valueOf('\n'));
+            lineas.add(1, "");
 
             Files.write(Paths.get(dst.getName()), lineas);
         } catch (IOException e) {
@@ -153,9 +167,6 @@ public class Main {
             e.printStackTrace();
             exit(1);
         }
-
-
-
     }
 
     public static void writeFile(ArrayList<String> output, String fileName){
