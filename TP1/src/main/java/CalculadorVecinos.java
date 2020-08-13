@@ -81,6 +81,9 @@ public class CalculadorVecinos {
 
     //si matrix es null, no se generó de antes la matrix
     public ArrayList<String> calcularVecinos(Particula[][] matrix){
+
+        long t_inicio = System.nanoTime();
+
         ArrayList<String> vecinos = new ArrayList<String>(n+1);
         Particula[][] heads;
 
@@ -131,6 +134,9 @@ public class CalculadorVecinos {
             }
         }
 
+
+        long t_final = System.nanoTime();
+
         Iterator<Particula> it = lista.iterator();
 
 
@@ -139,16 +145,15 @@ public class CalculadorVecinos {
             String s = String.valueOf(current.getId());
 
             Iterator<Particula> vecinos_it = current.getVecinos().iterator();
-          //  System.out.println("segundo while");
+
             while(vecinos_it.hasNext())
                 s = s + ", " + vecinos_it.next().getId();
 
-            //System.out.println("sali segundo while");
             vecinos.add(s);
         }
 
-        //System.out.println("sali primer while");
-
+        vecinos.add(0, String.valueOf(((double)t_final - t_inicio)/1000000000));
+        
         return vecinos;
     }
 

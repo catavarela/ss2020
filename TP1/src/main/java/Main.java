@@ -119,18 +119,13 @@ public class Main {
             calculator = new CalculadorVecinos(n, l, m, rc, contorno, args[2]);
         }
 
-        long t_inicio = System.nanoTime();
-
         ArrayList<String> vecinos = calculator.calcularVecinos(heads);
 
-        long t_final = System.nanoTime();
-
-        vecinos.add(0, String.valueOf(((double)t_final - t_inicio)/1000000000));
         writeFile(vecinos, "vecinos.txt");
 
-        t_inicio = System.nanoTime();
+        long t_inicio = System.nanoTime();
         calculator.fuerzaBruta();
-        t_final = System.nanoTime();
+        long t_final = System.nanoTime();
         System.out.println("Cálculo mediante fuerza bruta: " + ((double) t_final - t_inicio) / 1000000000);
 
         try {
