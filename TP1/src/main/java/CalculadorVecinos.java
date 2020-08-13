@@ -311,5 +311,13 @@ public class CalculadorVecinos {
             return false;
     }
 
+    public void fuerzaBruta () {
+        for(Particula current : lista) {
+            for(Particula potencial : lista) {
+                if(current.getId() != potencial.getId())
+                    estaEnRango(current, potencial, rc+current.getR()-potencial.getR(), l, m, contorno);
+            }
+        }
+    }
 
 }

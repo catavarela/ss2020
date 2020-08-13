@@ -128,6 +128,11 @@ public class Main {
         vecinos.add(0, String.valueOf(((double)t_final - t_inicio)/1000000000));
         writeFile(vecinos, "vecinos.txt");
 
+        t_inicio = System.nanoTime();
+        calculator.fuerzaBruta();
+        t_final = System.nanoTime();
+        System.out.println("Cálculo mediante fuerza bruta: " + ((double) t_final - t_inicio) / 1000000000);
+
         try {
             File dst = new File("output.xyz");
 
