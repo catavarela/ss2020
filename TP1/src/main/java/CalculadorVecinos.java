@@ -51,6 +51,7 @@ public class CalculadorVecinos {
     public CalculadorVecinos(int n, float l, int m, float rc, boolean contorno, String fileParticulas){
         this.n = n;
         this.l = l;
+        this.m = m;
         this.rc = rc;
         this.contorno = contorno;
         file = fileParticulas;
@@ -220,6 +221,7 @@ public class CalculadorVecinos {
         int c = calcCol(x, l, m);
 
         Particula head = heads[f][c];
+
 
         if(head == null) {
             heads[f][c] = new Particula(id, x, y, null, r);
