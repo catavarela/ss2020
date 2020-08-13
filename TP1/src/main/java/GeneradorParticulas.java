@@ -65,8 +65,29 @@ public class GeneradorParticulas {
         Particula p;
 
         while(n > 0) {
+
             x = rand.nextFloat() * l;
             y = rand.nextFloat() * l;
+
+            f = CalculadorVecinos.calcFil(y, l, m);
+            c = CalculadorVecinos.calcCol(x, l, m);
+
+
+            //if (f1 < f2) return -1;
+            //-----------------------------
+            // c-1   c  |c-1    c   |         c+1
+            //   |      |    |      |  |   |
+            //  *.*     |    .**    |  | **.
+            //   |      |    |      |  |   |
+
+
+            //si estoy parada en un borde, busco de nuevo
+            if(Float.compare(x, 0) == 0 || Float.compare(y, 0) == 0 || Float.compare(x, l) == 0 || Float.compare(y, l) == 0)
+                continue;
+
+            // si el diametro de la particula toca una celda, volver al while
+            if(Float.compare(x, c*(l/m)) == 0 || Float.compare(y, (m-f-1)*(l/m)) == 0)
+                continue;
 
             if(!igualRadio){
                 do {
@@ -74,14 +95,23 @@ public class GeneradorParticulas {
                 }while (Float.compare(r, 0f) == 0);
             }
 
-            f = CalculadorVecinos.calcFil(y, l, m);
-            c = CalculadorVecinos.calcCol(x, l, m);
+            //1*2
+            //-----------------------------
+            //          |
+            //f    *    | --.--   *
+            //   --.--  |   *     *
+            //f-1  *    |   *   --.--
+
+            if(Float.compare(((c+1)*(l/m))-x, r) < 0 || Float.compare(x-(c*(l/m)), r) < 0 || Float.compare(((m-f)*(l/m))-y, r) < 0 || Float.compare(y-((m-f-1)*(l/m)), r) < 0)
+                continue;
+
 
             p = new Particula(id, x, y, null, r);
 
             if(heads[f][c] == null) {
                 stringPart.add(String.valueOf(x) + ' ' + String.valueOf(y) + ' ' + r);
                 CalculadorVecinos.agregarParticula(heads, p, l, m);
+                particulas.add(p);
                 id++;
                 n--;
             }else{
@@ -94,13 +124,12 @@ public class GeneradorParticulas {
                     else
                         current = current.getNext();
 
-                }while (esValido && current.getNext() != null);
+                }while (esValido && current != null);
 
                 if(esValido){
-                    p.setNext(heads[f][c]);
-                    heads[f][c] = p;
                     stringPart.add(String.valueOf(x) + ' ' + String.valueOf(y) + ' ' + r);
                     CalculadorVecinos.agregarParticula(heads, p, l, m);
+                    particulas.add(p);
                     n--;
                     id++;
                 }

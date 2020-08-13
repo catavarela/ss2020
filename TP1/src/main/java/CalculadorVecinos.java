@@ -45,7 +45,7 @@ public class CalculadorVecinos {
     private float rc;
     private boolean contorno;
     private String file = null;
-    private ArrayList<Particula> lista = new ArrayList<Particula>();
+    private ArrayList<Particula> lista;
 
 
     public CalculadorVecinos(int n, float l, int m, float rc, boolean contorno, String fileParticulas){
@@ -53,8 +53,8 @@ public class CalculadorVecinos {
         this.l = l;
         this.rc = rc;
         this.contorno = contorno;
-
         file = fileParticulas;
+        lista = new ArrayList<Particula>();
     }
 
     public CalculadorVecinos(int n, float l, int m, float rc, boolean contorno, ArrayList<Particula> particulas){
@@ -89,6 +89,8 @@ public class CalculadorVecinos {
             heads = matrix;
 
         int f, c;
+
+
         for(f = 0; f < m; f++) {
             for(c = 0; c < m; c++) {
                 Particula current = heads[f][c];
@@ -130,22 +132,27 @@ public class CalculadorVecinos {
 
         Iterator<Particula> it = lista.iterator();
 
+
         while(it.hasNext()) {
             Particula current = it.next();
             String s = String.valueOf(current.getId());
 
             Iterator<Particula> vecinos_it = current.getVecinos().iterator();
-
+          //  System.out.println("segundo while");
             while(vecinos_it.hasNext())
                 s = s + ", " + vecinos_it.next().getId();
 
+            //System.out.println("sali segundo while");
             vecinos.add(s);
         }
+
+        //System.out.println("sali primer while");
 
         return vecinos;
     }
 
     private Particula[][] leerParticulas(){
+
         Particula[][]  heads = new Particula[m][m];
 
         if (file != null){
@@ -166,7 +173,7 @@ public class CalculadorVecinos {
                 exit(1);
             }
 
-        }else{
+        }else{ //entra cuando es puntual
             Iterator<Particula> it = lista.iterator();
 
             while(it.hasNext())
@@ -228,8 +235,9 @@ public class CalculadorVecinos {
         Particula potencial = vecino;
 
         do {
+
             do {
-                if(estaEnRango(current, potencial, rc, l, m, contorno)) {
+                if(estaEnRango(current, potencial, rc+current.getR()-potencial.getR(), l, m, contorno)) {
                     current.getVecinos().add(potencial);
                     potencial.getVecinos().add(current);
                 }
@@ -237,6 +245,7 @@ public class CalculadorVecinos {
             } while(potencial != null);
 
             current = current.getNext();
+
             potencial = vecino;
 
             if(current != null && current.getId() == potencial.getId()) {
