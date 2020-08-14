@@ -82,12 +82,12 @@ public class GeneradorParticulas {
 
 
             //si estoy parada en un borde, busco de nuevo
-            if(Float.compare(x, 0) == 0 || Float.compare(y, 0) == 0 || Float.compare(x, l) == 0 || Float.compare(y, l) == 0)
-                continue;
+            //if(Float.compare(x, 0) == 0 || Float.compare(y, 0) == 0 || Float.compare(x, l) == 0 || Float.compare(y, l) == 0)
+            //    continue;
 
             // si el diametro de la particula toca una celda, volver al while
-            if(Float.compare(x, c*(l/m)) == 0 || Float.compare(y, (m-f-1)*(l/m)) == 0)
-                continue;
+            //if(Float.compare(x, c*(l/m)) == 0 || Float.compare(y, (m-f-1)*(l/m)) == 0)
+            //    continue;
 
             if(!igualRadio){
                 do {
@@ -102,8 +102,8 @@ public class GeneradorParticulas {
             //   --.--  |   *     *
             //f-1  *    |   *   --.--
 
-            if(Float.compare(((c+1)*(l/m))-x, r) < 0 || Float.compare(x-(c*(l/m)), r) < 0 || Float.compare(((m-f)*(l/m))-y, r) < 0 || Float.compare(y-((m-f-1)*(l/m)), r) < 0)
-                continue;
+            //if(Float.compare(((c+1)*(l/m))-x, r) < 0 || Float.compare(x-(c*(l/m)), r) < 0 || Float.compare(((m-f)*(l/m))-y, r) < 0 || Float.compare(y-((m-f-1)*(l/m)), r) < 0)
+            //    continue;
 
 
             p = new Particula(id, x, y, null, r);

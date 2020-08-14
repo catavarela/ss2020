@@ -67,10 +67,10 @@ public class CalculadorVecinos {
         this.lista = particulas;
     }
 
-    public static int mCalculator (float l, float rc){
+    public static int mCalculator (float l, float rc, float rMax){
         int m = 1;
 
-        while (Float.compare(l/m, rc) > 0)
+        while (Float.compare(l/m, rc+(2*rMax)) > 0)
             m++;
 
         if(Float.compare(l/m, rc) == 0)
@@ -244,7 +244,7 @@ public class CalculadorVecinos {
         do {
 
             do {
-                if(estaEnRango(current, potencial, rc+current.getR()-potencial.getR(), l, m, contorno)) {
+                if(estaEnRango(current, potencial, rc+current.getR()+potencial.getR(), l, m, contorno)) {
                     current.getVecinos().add(potencial);
                     potencial.getVecinos().add(current);
                 }
@@ -310,7 +310,7 @@ public class CalculadorVecinos {
         }
 
         dist = Math.hypot(dist_x, dist_y);
-        if(dist <= distancia)
+        if(dist < distancia)
             return true;
         else
             return false;
@@ -320,7 +320,7 @@ public class CalculadorVecinos {
         for(Particula current : lista) {
             for(Particula potencial : lista) {
                 if(current.getId() != potencial.getId())
-                    estaEnRango(current, potencial, rc+current.getR()-potencial.getR(), l, m, contorno);
+                    estaEnRango(current, potencial, rc+current.getR()+potencial.getR(), l, m, contorno);
             }
         }
     }

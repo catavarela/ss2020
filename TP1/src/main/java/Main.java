@@ -99,7 +99,7 @@ public class Main {
         }
 
         if(m == 0)
-            m = CalculadorVecinos.mCalculator(l, rc);
+            m = CalculadorVecinos.mCalculator(l, rc, rMax);
 
         CalculadorVecinos calculator;
         Particula [][] heads = null;
