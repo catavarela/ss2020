@@ -73,8 +73,10 @@ public class CalculadorVecinos {
         while (Float.compare(l/m, rc+(2*rMax)) > 0)
             m++;
 
-        if(Float.compare(l/m, rc) == 0)
+        if(Float.compare(l/m, rc+(2*rMax)) <= 0)
             m--;
+
+        System.out.println("M: " + m);
 
         return m;
     }
