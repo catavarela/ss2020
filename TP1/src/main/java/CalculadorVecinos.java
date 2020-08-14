@@ -185,7 +185,7 @@ public class CalculadorVecinos {
                 exit(1);
             }
 
-        }else{ //entra cuando es puntual
+        }else{ //entra cuando se pueden superponer
             Iterator<Particula> it = lista.iterator();
 
             while(it.hasNext())

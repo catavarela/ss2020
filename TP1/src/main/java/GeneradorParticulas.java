@@ -21,21 +21,30 @@ public class GeneradorParticulas {
     }
 
     public Particula[][] generar(boolean igualRadio){
-        if(Float.compare(rMax, 0f) == 0) {
-            generarPuntuales();
+
+        //USAR SI NO SE PUEDEN SUPERPONER LAS PARTÍCULAS
+        /*if(Float.compare(rMax, 0f) == 0) {
+            generarSuperpuestas();
 
             return null;
         }
 
-        return generarConRadio(igualRadio);
+        return generarNoSuperpuestas(igualRadio);*/
+
+        //USAR SI SE PUEDEN SUPERPONER LAS PARTÍCULAS
+
+        generarSuperpuestas(igualRadio);
+
+        return null;
 
     }
 
-    private void generarPuntuales(){
+    private void generarSuperpuestas(boolean igualRadio){
         Random rand = new Random();
 
         float x = 0f;
         float y = 0f;
+        float r = 0f;
 
         int id = 1;
 
@@ -43,15 +52,22 @@ public class GeneradorParticulas {
             x = rand.nextFloat() * l;
             y = rand.nextFloat() * l;
 
-            stringPart.add(String.valueOf(x) + ' ' + String.valueOf(y) + " 0");
-            particulas.add(new Particula(id++, x, y, null, 0));
+            if(!igualRadio){
+                do {
+                    r = rand.nextFloat() * rMax;
+                }while (Float.compare(r, 0f) == 0);
+            }else
+                r = rMax;
+
+            stringPart.add(String.valueOf(x) + ' ' + String.valueOf(y) + ' ' + String.valueOf(r));
+            particulas.add(new Particula(id++, x, y, null, r));
 
             n--;
         }
     }
 
     //chequear casos borde donde se genera la particula sobre un borde de la celda
-    public Particula[][] generarConRadio(boolean igualRadio){
+    public Particula[][] generarNoSuperpuestas(boolean igualRadio){
         Random rand = new Random();
 
         Particula[][] heads = new Particula[m][m];
