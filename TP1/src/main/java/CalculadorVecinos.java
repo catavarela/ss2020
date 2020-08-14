@@ -68,15 +68,19 @@ public class CalculadorVecinos {
     }
 
     public static int mCalculator (float l, float rc, float rMax){
-        int m = 1;
+        //int m = 1;
 
-        while (Float.compare(l/m, rc+(2*rMax)) > 0)
+        /*while (Float.compare(l/m, rc+(2*rMax)) > 0)
             m++;
 
         if(Float.compare(l/m, rc+(2*rMax)) <= 0)
             m--;
 
         System.out.println("M: " + m);
+
+        System.out.println("M2: " + )*/
+
+        int m = (int)Math.floor(l/(rc+(2*rMax)));
 
         return m;
     }
