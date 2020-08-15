@@ -233,7 +233,6 @@ public class CalculadorVecinos {
 
         Particula head = heads[f][c];
 
-
         if(head == null) {
             heads[f][c] = new Particula(id, x, y, null, r);
             lista.add(heads[f][c]);
@@ -246,9 +245,7 @@ public class CalculadorVecinos {
 
     private void chequearVecinos(Particula current, Particula vecino) {
         Particula potencial = vecino;
-
         do {
-
             do {
                 if(estaEnRango(current, potencial, rc+current.getR()+potencial.getR(), l, m, contorno)) {
                     current.getVecinos().add(potencial);
@@ -282,8 +279,10 @@ public class CalculadorVecinos {
         f_p = calcFil(y_p, l, m);
         c_p = calcCol(x_p, l, m);
 
-        if(!contorno || (f_c == f_p && c_c == c_p) || (f_c != 0 && f_c != m-1 && c_c!= 0 && c_c!= m-1)) { //uso contorno como condicion de corte temprana
+        if(!contorno || (f_c == f_p && c_c == c_p) || (f_c != 0 && f_c != m-1 && c_c!= 0 && c_c!= m-1) || (c_c == m-1 && f_c != 0 && c_p == c_c) || (f_c == 0 && (f_p == f_c || f_p == 1) && c_c != m-1) ||
+                (c_c == 0 && f_c != 0 && f_c != m-1) || (f_c == m-1 && (f_p == f_c || f_p == f_c-1) && c_c != m-1)) { //uso contorno como condicion de corte temprana
             //no estoy en un borde o lo estoy pero ambas estan en la misma celda
+            //o estoy en un borde pero la potencial no esta afuera del tablero
             dist_x = Math.abs(x_c - x_p);
             dist_y = Math.abs(y_c - y_p);
         }else{
@@ -316,10 +315,8 @@ public class CalculadorVecinos {
         }
 
         dist = Math.hypot(dist_x, dist_y);
-        if(dist < distancia)
-            return true;
-        else
-            return false;
+
+        return dist < distancia;
     }
 
     public void fuerzaBruta () {
