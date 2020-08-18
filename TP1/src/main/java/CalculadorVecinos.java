@@ -117,6 +117,10 @@ public class CalculadorVecinos {
                         chequearVecinos(current, heads[f - 1][c + 1]);
                     } else if((f - 1 < 0) && (c + 1 > m - 1) && contorno && (heads[m - 1][0] != null)) {
                         chequearVecinos(current, heads[m - 1][0]);
+                    } else if((f - 1 < 0) && contorno && (heads[m - 1][c + 1] != null)) {
+                        chequearVecinos(current, heads[m - 1][c + 1]);
+                    } else if((c + 1 > m - 1) && contorno && (heads[f - 1][0] != null)) {
+                        chequearVecinos(current, heads[f - 1][0]);
                     }
 
                     //chequeo derecha
@@ -131,6 +135,10 @@ public class CalculadorVecinos {
                         chequearVecinos(current, heads[f + 1][c + 1]);
                     } else if((f + 1 > m - 1) && (c + 1 > m - 1) && contorno && (heads[0][0] != null)) {
                         chequearVecinos(current, heads[0][0]);
+                    } else if((f + 1 > m - 1) && contorno && (heads[0][c + 1] != null)) {
+                        chequearVecinos(current, heads[0][c + 1]);
+                    } else if ((c + 1 > m - 1) && contorno && (heads[f + 1][0] != null)) {
+                        chequearVecinos(current, heads[f + 1][0]);
                     }
 
                     if (current.getNext() != null) {
@@ -287,19 +295,16 @@ public class CalculadorVecinos {
             dist_y = Math.abs(y_c - y_p);
         }else{
             //estoy en un borde
-            if(f_c == f_p && (c_c == 0 && c_p ==m-1)) {
-                dist_x = (l - x_p) + x_c;
+            if(c_p == 0 && c_c ==m-1 && f_c != 0) { //la current esta en la ultima columna y la potencial esta en la primera
+                dist_x = (l - x_c) + x_p;
                 dist_y = Math.abs(y_c - y_p);
-            }else if(f_c == f_p && (c_p == 0 && c_c ==m-1)){
-                dist_x = (l-x_c)+x_p;
-                dist_y = Math.abs(y_c-y_p);
-            }else if(c_c == c_p && (f_c == 0 && f_p ==m-1)){
-                dist_x = Math.abs(x_c-x_p);
-                dist_y = y_p+ (l-y_c);
-            }else if(c_c == c_p && (f_c == m-1 && f_p ==0)) {
+            }else if(f_c == 0 && f_p ==m-1 && c_c != m-1){ //la current esta en la primer fila y la potencial esta en la ultima
+                dist_x = Math.abs(x_c - x_p);
+                dist_y = y_p + (l - y_c);
+            }else if(f_c == m-1 && f_p ==0 && c_c != m-1) { //la current esta en la ultima fila y la potencial esta en la primera
                 dist_x = Math.abs(x_c-x_p);
                 dist_y = y_c+ (l-y_p);
-            } else if(c_c == 0 && c_p == m-1 && f_c==0 && f_p==m-1) {//estoy en una esquina//la part de la que estoy buscando vecinos está en esq izq arriba
+            } else if(c_c == 0 && c_p == m-1 && f_c==0 && f_p==m-1) {//la part de la que estoy buscando vecinos está en esq izq arriba (solo entra aca en fuerza bruta)
                 dist_x = (l - x_p) + x_c;
                 dist_y = (l + y_p) - y_c;
             }else if(c_p == 0 && c_c == m-1 && f_p==0 && f_c==m-1){//la part de la que estoy buscando vecinos está en esq der abajo
