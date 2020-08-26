@@ -4,8 +4,7 @@ public class Board {
     private int[][] current_board;
     private int size;
 
-    //TODO: definir el porcentaje de celdas vivas
-    Board(int size, int percentage) {
+    Board(int size, double percentage) {
         this.size = size;
         current_board = new int[size][size];
 
@@ -15,11 +14,12 @@ public class Board {
 
         for(int row = min_bound; row < max_bound; row++) {
             for (int column = min_bound; column < max_bound; column++) {
-                current_board[row][column] = rand.nextInt(2);
+                current_board[row][column] = rand.nextDouble() < percentage ? 1 : 0;
             }
         }
     }
 
+    //TODO: agregar reglas custom
     public void update() {
         int neighbours;
         int[][] next_board = new int[size][size];
