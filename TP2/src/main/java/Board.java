@@ -4,16 +4,17 @@ public class Board {
     private int[][] current_board;
     private int size;
 
-    //TODO: reducir el espacio donde inician las celdas vivas
     //TODO: definir el porcentaje de celdas vivas
     Board(int size, int percentage) {
         this.size = size;
         current_board = new int[size][size];
 
         Random rand = new Random();
+        int min_bound = (int) ((size - 0.2 * size) / 2);
+        int max_bound = size - (int) ((size - 0.2 * size) / 2);
 
-        for(int row = 0; row < size; row++) {
-            for (int column = 0; column < size; column++) {
+        for(int row = min_bound; row < max_bound; row++) {
+            for (int column = min_bound; column < max_bound; column++) {
                 current_board[row][column] = rand.nextInt(2);
             }
         }
