@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Board {
@@ -58,13 +60,28 @@ public class Board {
                current_board[down][right];
     }
 
-    public void printBoard() {
+    //TODO: cambiar color según la distancia al centro
+    public List<String> printBoard() {
+        int alive_total = 0;
+        List<String> output = new ArrayList<String>();
+
         for(int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
-                System.out.print(current_board[row][column]);
+                if(current_board[row][column] == 1) {
+                    output.add(column + " " + row + " " + "255");
+                    alive_total++;
+                }
             }
-            System.out.print('\n');
         }
+
+        output.add(0 + " " + 0 + " " + (current_board[0][0] == 1 ? "255" : "0"));
+        output.add(0 + " " + (size - 1) + " " + (current_board[size - 1][0] == 1 ? "255" : "0"));
+        output.add((size - 1) + " " + 0 + " " + (current_board[0][size - 1] == 1 ? "255" : "0"));
+        output.add((size - 1) + " " + (size - 1) + " " + (current_board[size - 1][size - 1] == 1 ? "255" : "0"));
+
+        output.add(0, String.valueOf(alive_total + 4));
+        output.add(1, "");
+        return output;
     }
 
 
