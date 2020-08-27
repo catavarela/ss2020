@@ -2,13 +2,27 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import static java.lang.System.exit;
 
 public class Main {
     public static void main(String[] args) {
-        //TODO: recibir por input el porcentaje de celdas vivas, el tamaño y el número de iteraciones
+        if(args.length < 3) {
+            if(args[0] == null)
+                System.out.println("Falta especificar el tamaño del tablero");
 
-        int iterations = 1000;
-        Board board = new Board(100,0.5);
+            if(args[1] == null)
+                System.out.println("Falta especificar el porcentaje de celdas vivas");
+
+            if(args[2] == null)
+                System.out.println("Falta especificar el número de iteraciones");
+
+            exit(1);
+        }
+
+        int size = Integer.parseInt(args[0]);
+        double percentage = Double.parseDouble(args[1]);
+        int iterations = Integer.parseInt(args[2]);
+        Board board = new Board(size,percentage);
         List<String> output = board.printBoard();
 
         while(iterations-- > 0) {
