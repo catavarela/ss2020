@@ -167,7 +167,6 @@ public class Board {
         return output;
     }
 
-    //TODO: agregar más reglas
     private int ruleSet2D(int rule, int cell, int neighbours) {
         int ret = cell;
         switch (rule) {
@@ -181,8 +180,22 @@ public class Board {
                 }
                 break;
             case 2:
+                if ((cell == 1) && !(neighbours == 2 || neighbours == 3)) {
+                    ret = 0;
+                } else if (cell == 0 && neighbours >= 3 && neighbours <= 6) {
+                    ret = 1;
+                } else {
+                    ret = cell;
+                }
                 break;
             case 3:
+                if ((cell == 1) && !(neighbours >= 1 && neighbours <= 5)) {
+                    ret = 0;
+                } else if (cell == 0 && neighbours == 3) {
+                    ret = 1;
+                } else {
+                    ret = cell;
+                }
                 break;
         }
         return ret;
