@@ -8,12 +8,15 @@ public class Board {
     private int size;
     private boolean three_dimensional;
     private int rule;
-
+    private int aliveCells;
+    private int furthestCell;
 
     Board(int size, double percentage, boolean three_dimensional, int rule) {
         this.size = size;
         this.three_dimensional = three_dimensional;
         this.rule = rule;
+        aliveCells = 0;
+        furthestCell = 0;
 
         Random rand = new Random();
         int min_bound = (int) ((size - 0.2 * size) / 2);
@@ -24,7 +27,13 @@ public class Board {
             for(int row = min_bound; row < max_bound; row++) {
                 for (int column = min_bound; column < max_bound; column++) {
                     for(int depth = min_bound; depth < max_bound; depth++) {
-                        current_3D_board[row][column][depth] = rand.nextDouble() < percentage ? 1 : 0;
+                        if (rand.nextDouble() < percentage) {
+                            current_3D_board[row][column][depth] = 1;
+                            aliveCells++;
+                            int dist = (int) (Math.pow(column - size / 2, 2) + Math.pow(row - size / 2, 2) + Math.pow(depth - size / 2, 2));
+                            if(dist > furthestCell) furthestCell = dist;
+                        }
+                        else current_3D_board[row][column][depth] = 0;
                     }
                 }
             }
@@ -32,7 +41,13 @@ public class Board {
             current_2D_board = new int[size][size];
             for(int row = min_bound; row < max_bound; row++) {
                 for (int column = min_bound; column < max_bound; column++) {
-                    current_2D_board[row][column] = rand.nextDouble() < percentage ? 1 : 0;
+                    if (rand.nextDouble() < percentage) {
+                        current_2D_board[row][column] = 1;
+                        aliveCells++;
+                        int dist = (int) (Math.pow(column - size / 2, 2) + Math.pow(row - size / 2, 2));
+                        if(dist > furthestCell) furthestCell = dist;
+                    }
+                    else current_2D_board[row][column] = 0;
                 }
             }
         }
@@ -41,6 +56,24 @@ public class Board {
     public void update() {
         if(three_dimensional) update3D();
         else update2D();
+    }
+
+    private void update2D() {
+        int neighbours;
+        int[][] next_board = new int[size][size];
+        furthestCell = 0;
+
+        for(int row = 0; row < size; row++) {
+            for(int column = 0; column < size; column++) {
+                neighbours = countNeighbours2D(row, column);
+                next_board[row][column] = ruleSet2D(rule, current_2D_board[row][column], neighbours);
+                if(next_board[row][column] == 1) {
+                    int dist = (int) (Math.pow(column - size / 2, 2) + Math.pow(row - size / 2, 2));
+                    if(dist > furthestCell) furthestCell = dist;
+                }
+            }
+        }
+        current_2D_board = next_board;
     }
 
     private void update3D() {
@@ -52,23 +85,14 @@ public class Board {
                 for(int depth = 0; depth < size; depth++) {
                     neighbours = countNeighbours3D(row, column, depth);
                     next_board[row][column][depth] = ruleSet3D(rule, current_3D_board[row][column][depth], neighbours);
+                    if(next_board[row][column][depth] == 1) {
+                        int dist = (int) (Math.pow(column - size / 2, 2) + Math.pow(row - size / 2, 2) + Math.pow(depth - size / 2, 2));
+                        if(dist > furthestCell) furthestCell = dist;
+                    }
                 }
             }
         }
         current_3D_board = next_board;
-    }
-
-    private void update2D() {
-        int neighbours;
-        int[][] next_board = new int[size][size];
-
-        for(int row = 0; row < size; row++) {
-            for(int column = 0; column < size; column++) {
-                neighbours = countNeighbours2D(row, column);
-                next_board[row][column] = ruleSet2D(rule, current_2D_board[row][column], neighbours);
-            }
-        }
-        current_2D_board = next_board;
     }
 
     private int countNeighbours2D(int row, int column) {
@@ -173,8 +197,10 @@ public class Board {
             case 1:
                 if ((cell == 1) && !(neighbours == 2 || neighbours == 3)) {
                     ret = 0;
+                    aliveCells--;
                 } else if (cell == 0 && neighbours == 3) {
                     ret = 1;
+                    aliveCells++;
                 } else {
                     ret = cell;
                 }
@@ -182,8 +208,10 @@ public class Board {
             case 2:
                 if ((cell == 1) && !(neighbours == 2 || neighbours == 3)) {
                     ret = 0;
+                    aliveCells--;
                 } else if (cell == 0 && neighbours >= 3 && neighbours <= 6) {
                     ret = 1;
+                    aliveCells++;
                 } else {
                     ret = cell;
                 }
@@ -191,8 +219,10 @@ public class Board {
             case 3:
                 if ((cell == 1) && !(neighbours >= 1 && neighbours <= 5)) {
                     ret = 0;
+                    aliveCells--;
                 } else if (cell == 0 && neighbours == 3) {
                     ret = 1;
+                    aliveCells++;
                 } else {
                     ret = cell;
                 }
@@ -207,8 +237,10 @@ public class Board {
             case 1:
                 if ((cell == 1) && !(neighbours == 5 || neighbours == 6 || neighbours == 7)) {
                     ret = 0;
+                    aliveCells--;
                 } else if (cell == 0 && neighbours == 6) {
                     ret = 1;
+                    aliveCells++;
                 } else {
                     ret = cell;
                 }
@@ -216,8 +248,10 @@ public class Board {
             case 2:
                 if ((cell == 1) && !(neighbours == 4 || neighbours == 5)) {
                     ret = 0;
+                    aliveCells--;
                 } else if (cell == 0 && neighbours == 5) {
                     ret = 1;
+                    aliveCells++;
                 } else {
                     ret = cell;
                 }
@@ -225,8 +259,10 @@ public class Board {
             case 3:
                 if ((cell == 1) && !(neighbours == 4 || neighbours == 5)) {
                     ret = 0;
+                    aliveCells--;
                 } else if (cell == 0 && neighbours >= 2 && neighbours <= 6) {
                     ret = 1;
+                    aliveCells++;
                 } else {
                     ret = cell;
                 }
@@ -235,5 +271,9 @@ public class Board {
         return ret;
     }
 
+    public int getAliveCells() {
+        return aliveCells;
+    }
 
+    public double getFurthestCell() { return Math.sqrt(furthestCell); }
 }

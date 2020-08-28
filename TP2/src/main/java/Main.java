@@ -1,5 +1,6 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import static java.lang.System.exit;
@@ -32,13 +33,21 @@ public class Main {
         int rule = Integer.parseInt(args[4]);
         Board board = new Board(size, percentage, three_dimensional, rule);
         List<String> output = board.printBoard();
+        List<String> aliveCells = new ArrayList<String>();
+        aliveCells.add(String.valueOf(board.getAliveCells()));
+        List<String> furthestCells = new ArrayList<String>();
+        furthestCells.add(String.valueOf(board.getFurthestCell()));
 
         while(iterations-- > 0) {
             board.update();
             output.addAll(board.printBoard());
+            aliveCells.add(String.valueOf(board.getAliveCells()));
+            furthestCells.add(String.valueOf(board.getFurthestCell()));
         }
 
         writeFile(output, "output.xyz");
+        writeFile(aliveCells, "aliveCells.txt");
+        writeFile(furthestCells, "furthestCells.txt");
     }
 
     public static void writeFile(List<String> output, String fileName){
