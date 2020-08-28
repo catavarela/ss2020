@@ -7,11 +7,13 @@ public class Board {
     private int[][][] current_3D_board;
     private int size;
     private boolean three_dimensional;
+    private int rule;
 
 
-    Board(int size, double percentage, boolean three_dimensional) {
+    Board(int size, double percentage, boolean three_dimensional, int rule) {
         this.size = size;
         this.three_dimensional = three_dimensional;
+        this.rule = rule;
 
         Random rand = new Random();
         int min_bound = (int) ((size - 0.2 * size) / 2);
@@ -48,41 +50,24 @@ public class Board {
         for(int row = 0; row < size; row++) {
             for(int column = 0; column < size; column++) {
                 for(int depth = 0; depth < size; depth++) {
-                    neighbours = countNeighbours3D(row,column, depth);
-
-                    if(current_3D_board[row][column][depth] == 1 && !(neighbours == 5 || neighbours == 6 || neighbours == 7)) {
-                        next_board[row][column][depth] = 0;
-                    } else if(current_3D_board[row][column][depth] == 0 && neighbours == 6) {
-                        next_board[row][column][depth] = 1;
-                    } else {
-                        next_board[row][column][depth] = current_3D_board[row][column][depth];
-                    }
+                    neighbours = countNeighbours3D(row, column, depth);
+                    next_board[row][column][depth] = ruleSet3D(rule, current_3D_board[row][column][depth], neighbours);
                 }
             }
         }
-
         current_3D_board = next_board;
     }
 
-    //TODO: agregar reglas custom
     private void update2D() {
         int neighbours;
         int[][] next_board = new int[size][size];
 
         for(int row = 0; row < size; row++) {
             for(int column = 0; column < size; column++) {
-                neighbours = countNeighbours2D(row,column);
-
-                if(current_2D_board[row][column] == 1 && !(neighbours == 2 || neighbours == 3)) {
-                    next_board[row][column] = 0;
-                } else if(current_2D_board[row][column] == 0 && neighbours == 3) {
-                    next_board[row][column] = 1;
-                } else {
-                    next_board[row][column] = current_2D_board[row][column];
-                }
+                neighbours = countNeighbours2D(row, column);
+                next_board[row][column] = ruleSet2D(rule, current_2D_board[row][column], neighbours);
             }
         }
-
         current_2D_board = next_board;
     }
 
@@ -180,6 +165,61 @@ public class Board {
         output.add(0, String.valueOf(total));
         output.add(1, "");
         return output;
+    }
+
+    //TODO: agregar más reglas
+    private int ruleSet2D(int rule, int cell, int neighbours) {
+        int ret = cell;
+        switch (rule) {
+            case 1:
+                if ((cell == 1) && !(neighbours == 2 || neighbours == 3)) {
+                    ret = 0;
+                } else if (cell == 0 && neighbours == 3) {
+                    ret = 1;
+                } else {
+                    ret = cell;
+                }
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+        }
+        return ret;
+    }
+
+    private int ruleSet3D(int rule, int cell, int neighbours) {
+        int ret = cell;
+        switch (rule) {
+            case 1:
+                if ((cell == 1) && !(neighbours == 5 || neighbours == 6 || neighbours == 7)) {
+                    ret = 0;
+                } else if (cell == 0 && neighbours == 6) {
+                    ret = 1;
+                } else {
+                    ret = cell;
+                }
+                break;
+            case 2:
+                if ((cell == 1) && !(neighbours == 4 || neighbours == 5)) {
+                    ret = 0;
+                } else if (cell == 0 && neighbours == 5) {
+                    ret = 1;
+                } else {
+                    ret = cell;
+                }
+                break;
+            case 3:
+                if ((cell == 1) && !(neighbours == 4 || neighbours == 5)) {
+                    ret = 0;
+                } else if (cell == 0 && neighbours >= 2 && neighbours <= 6) {
+                    ret = 1;
+                } else {
+                    ret = cell;
+                }
+                break;
+        }
+        return ret;
     }
 
 

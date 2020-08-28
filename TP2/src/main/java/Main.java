@@ -6,7 +6,7 @@ import static java.lang.System.exit;
 
 public class Main {
     public static void main(String[] args) {
-        if(args.length < 4) {
+        if(args.length < 5) {
             if(args[0] == null)
                 System.out.println("Falta especificar el tamaño del tablero");
 
@@ -19,6 +19,9 @@ public class Main {
             if(args[3] == null)
                 System.out.println("Falta especificar si es en tres dimensiones");
 
+            if(args[4] == null)
+                System.out.println("Falta especificar el número de regla a utilizar");
+
             exit(1);
         }
 
@@ -26,7 +29,8 @@ public class Main {
         double percentage = Double.parseDouble(args[1]);
         int iterations = Integer.parseInt(args[2]);
         boolean three_dimensional = Boolean.parseBoolean(args[3]);
-        Board board = new Board(size, percentage, three_dimensional);
+        int rule = Integer.parseInt(args[4]);
+        Board board = new Board(size, percentage, three_dimensional, rule);
         List<String> output = board.printBoard();
 
         while(iterations-- > 0) {
