@@ -38,7 +38,7 @@ public class Main {
 
         int aux_corridas = corridas;
         List<String> csvOutput = new ArrayList<String>();
-        //List<String> furthestCells = new ArrayList<String>();
+
         List<String> output = null;
 
         while (corridas-- > 0)
@@ -60,7 +60,7 @@ public class Main {
         if(ultima_corrida)
             output = board.printBoard();
 
-        csvOutput.add(String.valueOf(corrida) + "," + rule + "," + percentage + "," + "0" + "," + String.valueOf(board.getAliveCells()) + "," + String.valueOf(board.getFurthestCell()));
+        csvOutput.add(corrida + "," + rule + "," + percentage + "," + "0" + "," + board.getAliveCells() + "," + board.getFurthestCell());
 
         int aux_iterations = iterations;
 
@@ -70,7 +70,7 @@ public class Main {
             if(ultima_corrida)
                 output.addAll(board.printBoard());
 
-            csvOutput.add(String.valueOf(corrida) + "," + rule + "," + percentage + "," + String.valueOf(aux_iterations-iterations) + "," + String.valueOf(board.getAliveCells()) + "," + String.valueOf(board.getFurthestCell()));
+            csvOutput.add(corrida + "," + rule + "," + percentage + "," + String.valueOf(aux_iterations-iterations) + "," + board.getAliveCells() + "," + board.getFurthestCell());
         }
 
         return output;
