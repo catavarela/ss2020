@@ -26,7 +26,7 @@ public class Main {
             exit(1);
         }
 
-        int n = 0, m = 0; float l = 0f; long t_terminal = 0;
+        int n = 0, m = 0; float l = 0f; float t_terminal = 0f;
         float r = 0f, mass = 0f, vMax = 0f;
 
         float R = 0f, Mass = 0f, V = 0f, X = 0f, Y = 0f;
@@ -39,7 +39,7 @@ public class Main {
             n = Integer.valueOf(lector.nextLine());
             l = Float.valueOf(lector.nextLine());
             m = Integer.valueOf(lector.nextLine());
-            t_terminal = Long.valueOf(lector.nextLine());
+            t_terminal = Float.valueOf(lector.nextLine());
 
             r = Float.valueOf(lector.nextLine());
             mass = Float.valueOf(lector.nextLine());
@@ -75,10 +75,9 @@ public class Main {
 
         //escribir 'particulas' en archivo output.xyz
 
-        long t_init = System.currentTimeMillis();
         float tc = 0f;
 
-        while (t_terminal > System.currentTimeMillis() - t_init){
+        while (t_terminal > tc){
             tc = calculador.actualizacion() + tc;
 
             particulas = calculador.toStringParticulas();
