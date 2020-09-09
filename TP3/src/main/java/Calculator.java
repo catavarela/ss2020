@@ -117,13 +117,10 @@ public class Calculator {
                         ((Math.pow(delta_r[0], 2) + Math.pow(delta_r[1], 2)) -
                         Math.pow(omega, 2))));
 
-                    if(Float.compare(delta_v_r, 0) >= 0)
+                    if(delta_v_r < 0 && d >= 0 && (delta_v_r +  Math.sqrt(d) < 0) && Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2) >= 0)
+                        t_current = -(float)((delta_v_r + Math.sqrt(d)) / (Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2)));
+                    else
                         t_current = -1;
-                    else if (Float.compare(d, 0) < 0)
-                        t_current = -1;
-                    else {
-                        t_current = (float) -((delta_v_r + Math.sqrt((double) d)) / (Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2)));
-                    }
 
                     if(t_current != -1 && (minChoque[0] == -1 || (Float.compare(minChoque[0],t_current) > 0))){
                         minChoque[0] = t_current;
@@ -140,7 +137,7 @@ public class Calculator {
                 }
             }
 
-        System.out.println("minChoque: "+minChoque[0]);
+        //System.out.println("minChoque: "+minChoque[0]);
 
         return minChoque;
     }
