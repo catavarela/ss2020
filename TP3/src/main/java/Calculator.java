@@ -7,16 +7,16 @@ public class Calculator {
     private float l;
     private  int m;
 
-    Particula[][] heads;
-    ArrayList<String> particulas;
+    ArrayList<String> sParticulas = new ArrayList<>();
+    ArrayList<Particula> chocadas = new ArrayList<>();
+    ArrayList<Particula> particulas;
 
-    ArrayList<Particula> chocadas;
-
-    public Calculator(int n, float l, int m, Particula[][] heads){
+    public Calculator(int n, float l, int m, ArrayList<Particula> particulas){
         this.n = n;
         this.l = l;
         this.m = m;
-        this.heads = heads;
+
+        this.particulas = particulas;
     }
 
     public float actualizacion(){
@@ -28,33 +28,33 @@ public class Calculator {
 
     public float calcularTiempoProxEvento(){
         Particula current;
-        float tMin = 0;
+        float tMin = -1;
         float currentChoque [];
 
-        for(int i = 0; i < m; i++){
-            for (int j = 0; j < m; j++){
-                current = heads[i][j];
-                while (current != null){
-                    currentChoque = calcularTMaxChoques(current);
+        Iterator<Particula> it = particulas.iterator();
 
-                    if(currentChoque[0] != -1 && Double.compare(currentChoque[0],tMin) < 0){
-                        chocadas.clear();
-                        tMin = currentChoque[0];
+        while (it.hasNext()){
+            current = it.next();
 
-                        chocadas.add(new Particula(current.getId(),current.getX(), current.getY(), current.getNext(), current.getR(), current.getMass(), currentChoque[1], currentChoque[2]));
-                    }else if (Double.compare(currentChoque[0],tMin) == 0)
-                        chocadas.add(new Particula(current.getId(),current.getX(), current.getY(), current.getNext(), current.getR(), current.getMass(), currentChoque[1], currentChoque[2]));
+            currentChoque = calcularTMinChoques(current);
 
-                    current = current.getNext();
-                }
-            }
+            if(currentChoque[0] != -1 && (tMin == -1 || Float.compare(currentChoque[0],tMin) < 0)){
+                chocadas.clear();
+                tMin = currentChoque[0];
+
+                System.out.println("tMin: "+ tMin);
+
+                chocadas.add(new Particula(current.getId(),current.getX(), current.getY(), current.getNext(), current.getR(), current.getMass(), currentChoque[1], currentChoque[2]));
+
+            }else if (Float.compare(currentChoque[0],tMin) == 0)
+                chocadas.add(new Particula(current.getId(),current.getX(), current.getY(), current.getNext(), current.getR(), current.getMass(), currentChoque[1], currentChoque[2]));
         }
 
         return tMin;
     }
 
-    public  float[] calcularTMaxChoques(Particula p){
-        float t_current = 0f, vx_min = 0f, vy_min = 0f;
+    public  float[] calcularTMinChoques(Particula p){
+        float t_current;
 
         float [] minChoque = new float[3];
         minChoque[0] = -1;
@@ -65,9 +65,9 @@ public class Calculator {
 
         Particula current = null;
 
-        float delta_v[] = new float[2];
-        float delta_r[] = new float[2];
-        float j[] = new float[2];
+        float [] delta_v = new float[2];
+        float [] delta_r = new float[2];
+        float [] j = new float[2];
         float omega, d, J, delta_v_r;
 
         //choque contra paredes
@@ -82,20 +82,27 @@ public class Calculator {
         }
 
         if(vy > 0) {
-            minChoque[0] = (l - r - y) / vy;
-            minChoque[1] = vx;
-            minChoque[2] = -vy;
+            t_current = (l - r - y) / vy;
+            if(minChoque[0] == -1 || Float.compare(minChoque[0],t_current) > 0) {
+                minChoque[0] = t_current;
+                minChoque[1] = vx;
+                minChoque[2] = -vy;
+            }
         }else if(vy < 0) {
-            minChoque[0] = (0 + r - y) / vy;
-            minChoque[1] = vx;
-            minChoque[2] = -vy;
+            t_current = (0 + r - y) / vy;
+            if(minChoque[0] == -1 || Float.compare(minChoque[0],t_current) > 0) {
+                minChoque[0] = t_current;
+                minChoque[1] = vx;
+                minChoque[2] = -vy;
+            }
         }
 
         //choque contra particulas
-        for(int f = 0; f < m; f++){
-            for (int c = 0; c < m; c++){
-                current = heads[f][c];
-                while (current != null && p.getId() != current.getId()){
+        Iterator<Particula> it = particulas.iterator();
+
+        while (it.hasNext()){
+            current = it.next();
+                if(p.getId() != current.getId()){
                     omega = r + current.getR();
 
                     delta_v[0] = vx - current.getVX();
@@ -114,10 +121,11 @@ public class Calculator {
                         t_current = -1;
                     else if (Float.compare(d, 0) < 0)
                         t_current = -1;
-                    else
-                        t_current = (float)-((delta_v_r + Math.sqrt((double) d))/(Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2)));
+                    else {
+                        t_current = (float) -((delta_v_r + Math.sqrt((double) d)) / (Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2)));
+                    }
 
-                    if(minChoque[0] == -1 || (t_current != -1 && t_current < minChoque[0])){
+                    if(t_current != -1 && (minChoque[0] == -1 || (Float.compare(minChoque[0],t_current) > 0))){
                         minChoque[0] = t_current;
 
                         J = ((2*(p.getMass() + current.getMass())*delta_v_r)/(omega * (p.getMass() + current.getMass())));
@@ -129,40 +137,29 @@ public class Calculator {
                         minChoque[2] = vy + (j[1]/p.getMass());
 
                     }
-
-                    current = current.getNext();
                 }
             }
-        }
+
+        System.out.println("minChoque: "+minChoque[0]);
 
         return minChoque;
     }
 
     public void recalcularPropiedades(float tc){
-        particulas.clear();
+        sParticulas.clear();
 
-        Particula current;
-        for(int i = 0; i < m; i++){
-            for (int j = 0; j < m; j++){
-                current = heads[i][j];
+        Iterator<Particula> it = particulas.iterator();
 
-                while (current != null){
-                    recalcular(current, tc);
-                    current = current.getNext();
-                }
-            }
-        }
+        while (it.hasNext())
+            recalcular(it.next(), tc);
     }
 
     private int esChocada(Particula p){
         Iterator<Particula> it = chocadas.iterator();
         int i = 0;
-        Particula current = null;
 
         while (it.hasNext()){
-            current = it.next();
-
-            if(current.getId() == p.getId())
+            if(it.next().getId() == p.getId())
                 return i;
 
             i++;
@@ -184,11 +181,11 @@ public class Calculator {
             p.setVX(chocadas.get(chocada).getVX());
         }
 
-        particulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " +  p.getMass() + " " + p.getVX() + " " + p.getVY());
+        sParticulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " +  p.getMass() + " " + p.getVX() + " " + p.getVY());
     }
 
     public ArrayList<String> toStringParticulas (){
-        return particulas;
+        return sParticulas;
     }
 
     public static int mCalculator (float l, float rc, float rMax){

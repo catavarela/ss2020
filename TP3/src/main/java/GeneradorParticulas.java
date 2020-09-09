@@ -26,7 +26,7 @@ public class GeneradorParticulas {
         this.vMax = vMax;
     }
 
-    public Particula[][] generar(float R, float Mass,  float V, float X, float Y){
+    public ArrayList<Particula> generar(float R, float Mass,  float V, float X, float Y){
         Random rand = new Random();
 
         Particula[][] heads = new Particula[m][m];
@@ -42,6 +42,7 @@ public class GeneradorParticulas {
         agregarGrande(R, Mass, V, X, Y, heads, id++);
 
         while(n > 0) {
+            System.out.println("falta por crear: " + n);
             x = rand.nextFloat() * l;
             y = rand.nextFloat() * l;
 
@@ -51,7 +52,7 @@ public class GeneradorParticulas {
             p = new Particula(id, x, y, null, r, mass, rand.nextFloat() * vMax, rand.nextFloat() * vMax);
 
             if(!tocaPared(p)) {
-                //NO ESTA ENTRANDO NUNCA ACA
+
                 if (heads[f][c] == null) {
                     agregar(heads, p);
                     id++;
@@ -77,7 +78,7 @@ public class GeneradorParticulas {
             }
         }
 
-        return heads;
+        return particulas;
     }
 
     private boolean tocaPared(Particula p){
@@ -86,16 +87,16 @@ public class GeneradorParticulas {
         x1 = y1 = 0f;
         x2 = y2 = l;
 
-        if(!(Float.compare(x2-p.getR()-p.getX(), 0f) > 0))
+        if(Float.compare(x2-p.getR()-p.getX(), 0f) < 0)
             return true;
 
-        if(!(Float.compare(y2-p.getR()-p.getY(), 0f) > 0))
+        if(Float.compare(y2-p.getR()-p.getY(), 0f) < 0)
             return true;
 
-        if(!(Float.compare(x1+p.getR()-p.getX(), 0f) > 0))
+        if(Float.compare(x1+p.getR()-p.getX(), 0f) > 0)
             return true;
 
-        if(!(Float.compare(y1+p.getR()-p.getY(), 0f) > 0))
+        if(Float.compare(y1+p.getR()-p.getY(), 0f) > 0)
             return true;
 
         return false;
@@ -118,10 +119,6 @@ public class GeneradorParticulas {
         stringPart.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass() + " " + p.getVX() + " " + p.getVY());
         Calculator.agregarParticula(heads, p, l, m);
         particulas.add(p);
-    }
-
-    public ArrayList<Particula> getParticulas() {
-        return particulas;
     }
 
     public ArrayList<String> toStringParticulas() {

@@ -17,13 +17,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //TODO: volar el primer argumento?
-        if(args.length < 2) {
-            if(args[1] == null)
-                System.out.println("Falta archivo de data estática");
-
+        if(args.length < 1) {
             if(args[0] == null)
-                System.out.println("Falta especificar el número de partícula a estudiar");
+                System.out.println("Falta archivo de data estática");
 
             exit(1);
         }
@@ -34,12 +30,10 @@ public class Main {
         float R = 0f, Mass = 0f, V = 0f, X = 0f, Y = 0f;
 
         try {
-            Scanner lector = new Scanner(new File(args[1]));
+            Scanner lector = new Scanner(new File(args[0]));
 
             n = Integer.valueOf(lector.nextLine());
             l = Float.valueOf(lector.nextLine());
-            //TODO: es necesario m?
-            m = Integer.valueOf(lector.nextLine());
             t_terminal = Float.valueOf(lector.nextLine());
 
             r = Float.valueOf(lector.nextLine());
@@ -60,31 +54,31 @@ public class Main {
             exit(1);
         }
 
-        //TODO: es necesario m?
-        if(m == 0)
-            m = Calculator.mCalculator(l, 0f, R);
+        m = Calculator.mCalculator(l, 0f, R);
 
-        Particula [][] heads;
+        ArrayList<Particula> particulas;
 
         GeneradorParticulas g = new GeneradorParticulas(n, l,  r, m, mass, vMax);
-        heads = g.generar(R, Mass,  V, X, Y);
-        ArrayList<String> particulas = g.toStringParticulas();
+        particulas = g.generar(R, Mass,  V, X, Y);
+        ArrayList<String> Sparticulas = g.toStringParticulas();
 
-        Calculator calculador = new Calculator(n, l, m, heads);
+        Calculator calculador = new Calculator(n, l, m, particulas);
 
         //TODO: es necesario el archivo .txt?
-        writeFile(particulas, "particulas.txt");
+        writeFile(Sparticulas, "particulas.txt");
 
-        writeXYZ(particulas, "output.xyz");
+        //writeXYZ(particulas, "output.xyz");
 
         float tc = 0f;
 
         while (t_terminal > tc){
             tc = calculador.actualizacion() + tc;
 
-            particulas = calculador.toStringParticulas();
+            System.out.println("Iteración de tiempo " + tc + "s terminada.");
+
+            //particulas = calculador.toStringParticulas();
             //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
-            writeXYZ(particulas, "output.xyz");
+            //writeXYZ(particulas, "output.xyz");
         }
     }
 
