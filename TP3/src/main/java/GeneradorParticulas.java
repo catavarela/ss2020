@@ -39,10 +39,9 @@ public class GeneradorParticulas {
         Particula current;
         Particula p;
 
-        agregarGrande(R, Mass,  V, X, Y, heads, id++);
+        agregarGrande(R, Mass, V, X, Y, heads, id++);
 
         while(n > 0) {
-
             x = rand.nextFloat() * l;
             y = rand.nextFloat() * l;
 
@@ -52,8 +51,9 @@ public class GeneradorParticulas {
             p = new Particula(id, x, y, null, r, mass, rand.nextFloat() * vMax, rand.nextFloat() * vMax);
 
             if(!tocaPared(p)) {
+                //NO ESTA ENTRANDO NUNCA ACA
                 if (heads[f][c] == null) {
-                    agregar(heads, x, y, r, mass, p);
+                    agregar(heads, p);
                     id++;
                     n--;
                 } else {
@@ -69,7 +69,7 @@ public class GeneradorParticulas {
                     } while (esValido && current != null);
 
                     if (esValido) {
-                        agregar(heads, x, y, r, mass, p);
+                        agregar(heads, p);
                         n--;
                         id++;
                     }
@@ -110,11 +110,12 @@ public class GeneradorParticulas {
 
     private void agregarGrande(float R, float Mass,  float V, float X, float Y, Particula[][] heads, int id){
         Particula p = new Particula(id, X, Y, null, R, Mass, V, V);
-        agregar(heads, X, Y, R, Mass, p);
+        agregar(heads, p);
     }
 
-    private void agregar (Particula[][] heads, float x, float y, float r, float mass, Particula p){
-        stringPart.add(String.valueOf(x) + ' ' + String.valueOf(y) + ' ' + r + mass);
+    private void agregar (Particula[][] heads, Particula p){
+        //TODO: chequear si es necesario devolver todas las propiedades
+        stringPart.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass() + " " + p.getVX() + " " + p.getVY());
         Calculator.agregarParticula(heads, p, l, m);
         particulas.add(p);
     }

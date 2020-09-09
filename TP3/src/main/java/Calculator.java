@@ -95,7 +95,7 @@ public class Calculator {
         for(int f = 0; f < m; f++){
             for (int c = 0; c < m; c++){
                 current = heads[f][c];
-                while (p.getId() != current.getId() && current != null){
+                while (current != null && p.getId() != current.getId()){
                     omega = r + current.getR();
 
                     delta_v[0] = vx - current.getVX();
@@ -184,7 +184,7 @@ public class Calculator {
             p.setVX(chocadas.get(chocada).getVX());
         }
 
-        particulas.add(String.valueOf(p.getX()) + ' ' + String.valueOf(p.getY()) + ' ' + p.getR() + p.getMass());
+        particulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " +  p.getMass() + " " + p.getVX() + " " + p.getVY());
     }
 
     public ArrayList<String> toStringParticulas (){

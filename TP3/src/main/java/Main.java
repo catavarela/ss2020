@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.Scanner;
 
 import static java.lang.System.exit;
+import static java.lang.System.out;
 
 public class Main {
 
     public static void main(String[] args) {
 
+        //TODO: volar el primer argumento?
         if(args.length < 2) {
             if(args[1] == null)
                 System.out.println("Falta archivo de data estática");
@@ -31,13 +33,12 @@ public class Main {
 
         float R = 0f, Mass = 0f, V = 0f, X = 0f, Y = 0f;
 
-        File src;
-
         try {
             Scanner lector = new Scanner(new File(args[1]));
 
             n = Integer.valueOf(lector.nextLine());
             l = Float.valueOf(lector.nextLine());
+            //TODO: es necesario m?
             m = Integer.valueOf(lector.nextLine());
             t_terminal = Float.valueOf(lector.nextLine());
 
@@ -59,10 +60,11 @@ public class Main {
             exit(1);
         }
 
+        //TODO: es necesario m?
         if(m == 0)
             m = Calculator.mCalculator(l, 0f, R);
 
-        Particula [][] heads = null;
+        Particula [][] heads;
 
         GeneradorParticulas g = new GeneradorParticulas(n, l,  r, m, mass, vMax);
         heads = g.generar(R, Mass,  V, X, Y);
@@ -70,10 +72,10 @@ public class Main {
 
         Calculator calculador = new Calculator(n, l, m, heads);
 
+        //TODO: es necesario el archivo .txt?
         writeFile(particulas, "particulas.txt");
-        src = new File("particulas.txt");
 
-        //escribir 'particulas' en archivo output.xyz
+        writeXYZ(particulas, "output.xyz");
 
         float tc = 0f;
 
@@ -81,8 +83,16 @@ public class Main {
             tc = calculador.actualizacion() + tc;
 
             particulas = calculador.toStringParticulas();
-            //escribir 'particulas' a archivo output.xyz + tc (tiempo de choque)
+            //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
+            writeXYZ(particulas, "output.xyz");
         }
+    }
+
+    public static void writeXYZ(ArrayList<String> output, String fileName) {
+        output.add(0, String.valueOf(output.size()));
+        output.add(1, "");
+
+        writeFile(output, fileName);
     }
 
     public static void writeFile(ArrayList<String> output, String fileName){
