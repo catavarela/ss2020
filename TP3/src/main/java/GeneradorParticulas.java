@@ -35,13 +35,14 @@ public class GeneradorParticulas {
 
         int id = 1, f, c;
 
-        boolean esValido = true;
+        boolean esValido;
         Particula current;
         Particula p;
 
         agregarGrande(R, Mass, V, X, Y, heads, id++);
 
         while(n > 0) {
+            esValido = true;
             System.out.println("falta por crear: " + n);
             x = rand.nextFloat() * l;
             y = rand.nextFloat() * l;
@@ -52,13 +53,11 @@ public class GeneradorParticulas {
             p = new Particula(id, x, y, null, r, mass, rand.nextFloat() * vMax, rand.nextFloat() * vMax);
 
             if(!tocaPared(p)) {
-
                 if (heads[f][c] == null) {
                     agregar(heads, p);
                     id++;
                     n--;
                 } else {
-
                     current = heads[f][c];
 
                     do {
