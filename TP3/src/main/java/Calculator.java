@@ -42,8 +42,6 @@ public class Calculator {
                 chocadas.clear();
                 tMin = currentChoque[0];
 
-                System.out.println("tMin: "+ tMin);
-
                 chocadas.add(new Particula(current.getId(),current.getX(), current.getY(), current.getNext(), current.getR(), current.getMass(), currentChoque[1], currentChoque[2]));
 
             }else if (Float.compare(currentChoque[0],tMin) == 0)
@@ -136,8 +134,6 @@ public class Calculator {
                     }
                 }
             }
-
-        //System.out.println("minChoque: "+minChoque[0]);
 
         return minChoque;
     }

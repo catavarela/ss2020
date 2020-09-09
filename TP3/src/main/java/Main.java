@@ -54,31 +54,27 @@ public class Main {
             exit(1);
         }
 
-        m = Calculator.mCalculator(l, 0f, R);
-
         ArrayList<Particula> particulas;
 
-        GeneradorParticulas g = new GeneradorParticulas(n, l,  r, m, mass, vMax);
+        GeneradorParticulas g = new GeneradorParticulas(n, l,  r, mass, vMax);
         particulas = g.generar(R, Mass,  V, X, Y);
         ArrayList<String> Sparticulas = g.toStringParticulas();
 
         Calculator calculador = new Calculator(n, l, m, particulas);
 
         //TODO: es necesario el archivo .txt?
-        writeFile(Sparticulas, "particulas.txt");
+        //writeFile(Sparticulas, "particulas.txt");
 
-        //writeXYZ(particulas, "output.xyz");
+        writeXYZ(Sparticulas, "output.xyz");
 
         float tc = 0f;
 
         while (t_terminal > tc){
             tc = calculador.actualizacion() + tc;
 
-            System.out.println("Iteración de tiempo " + tc + "s terminada.");
-
-            //particulas = calculador.toStringParticulas();
+            Sparticulas = calculador.toStringParticulas();
             //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
-            //writeXYZ(particulas, "output.xyz");
+            writeXYZ(Sparticulas, "output.xyz");
         }
     }
 

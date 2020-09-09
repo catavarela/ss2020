@@ -4,7 +4,6 @@ import java.util.Random;
 public class GeneradorParticulas {
     private int n;
     private float l;
-    private int m;
 
     private ArrayList<Particula> particulas;
     private ArrayList<String> stringPart;
@@ -13,10 +12,9 @@ public class GeneradorParticulas {
     private float mass;
     private float vMax;
 
-    public GeneradorParticulas(int n, float l,  float r, int m, float mass, float vMax){
+    public GeneradorParticulas(int n, float l,  float r, float mass, float vMax){
         this.n = n;
         this.l = l;
-        this.m = m;
 
         this.particulas = new ArrayList<>();
         stringPart = new ArrayList<>();
@@ -29,51 +27,25 @@ public class GeneradorParticulas {
     public ArrayList<Particula> generar(float R, float Mass,  float V, float X, float Y){
         Random rand = new Random();
 
-        Particula[][] heads = new Particula[m][m];
-
         float x, y;
 
-        int id = 1, f, c;
+        int id = 1;
 
-        boolean esValido;
-        Particula current;
         Particula p;
 
-        agregarGrande(R, Mass, V, X, Y, heads, id++);
+        agregarGrande(R, Mass, V, X, Y, id++);
 
         while(n > 0) {
-            esValido = true;
-            System.out.println("falta por crear: " + n);
+
             x = rand.nextFloat() * l;
             y = rand.nextFloat() * l;
 
-            f = Calculator.calcFil(y, l, m);
-            c = Calculator.calcCol(x, l, m);
-
             p = new Particula(id, x, y, null, r, mass, rand.nextFloat() * vMax, rand.nextFloat() * vMax);
 
-            if(!tocaPared(p)) {
-                if (heads[f][c] == null) {
-                    agregar(heads, p);
-                    id++;
-                    n--;
-                } else {
-                    current = heads[f][c];
-
-                    do {
-                        if (seSuperponen(current, p))
-                            esValido = false;
-                        else
-                            current = current.getNext();
-
-                    } while (esValido && current != null);
-
-                    if (esValido) {
-                        agregar(heads, p);
-                        n--;
-                        id++;
-                    }
-                }
+            if(!tocaPared(p) && !seSuperpone(p)) {
+                agregar(p);
+                n--;
+                id++;
             }
         }
 
@@ -101,22 +73,24 @@ public class GeneradorParticulas {
         return false;
     }
 
-    private boolean seSuperponen(Particula current, Particula p){
-        if(Double.compare(Math.pow(current.getX() - p.getX(), 2) + Math.pow(current.getY() - p.getY(), 2), Math.pow(current.getR() - p.getR(), 2)) > 0)
-            return false;
+    private boolean seSuperpone(Particula p){
 
-        return true;
+        for (Particula current : particulas){
+            if(Double.compare(Math.pow(current.getX() - p.getX(), 2) + Math.pow(current.getY() - p.getY(), 2), Math.pow(current.getR() + p.getR(), 2)) <= 0)
+                return true;
+        }
+
+        return false;
     }
 
-    private void agregarGrande(float R, float Mass,  float V, float X, float Y, Particula[][] heads, int id){
+    private void agregarGrande(float R, float Mass,  float V, float X, float Y, int id){
         Particula p = new Particula(id, X, Y, null, R, Mass, V, V);
-        agregar(heads, p);
+        agregar(p);
     }
 
-    private void agregar (Particula[][] heads, Particula p){
+    private void agregar (Particula p){
         //TODO: chequear si es necesario devolver todas las propiedades
         stringPart.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass() + " " + p.getVX() + " " + p.getVY());
-        Calculator.agregarParticula(heads, p, l, m);
         particulas.add(p);
     }
 
