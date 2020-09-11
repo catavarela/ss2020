@@ -60,7 +60,7 @@ public class Main {
         particulas = g.generar(R, Mass,  V, X, Y);
         ArrayList<String> Sparticulas = g.toStringParticulas();
 
-        Calculator calculador = new Calculator(n, l, particulas);
+        Calculator calculador = new Calculator(l, particulas);
 
         writeXYZ(Sparticulas, "output.xyz", false);
 

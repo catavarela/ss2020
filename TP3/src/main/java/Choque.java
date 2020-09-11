@@ -1,4 +1,4 @@
-public class Choque {
+public class Choque implements Comparable{
 
     private float tc;
     private Particula p1;
@@ -63,6 +63,18 @@ public class Choque {
         Choque c = (Choque) o;
 
         // Compare the data members and return accordingly
-        return p1 == c.getP1() && p2 == c.getP2() && Float.compare(tc, c.getTc()) == 0;
+        return ((p1 == c.getP1() && p2 == c.getP2()) || (p2 == c.getP1() && p1 == c.getP2()));
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Choque c = (Choque) o;
+
+        if(tc > c.getTc())
+            return 1;
+        else if (tc < c.getTc())
+            return -1;
+
+        return 0;
     }
 }
