@@ -24,6 +24,12 @@ public class Calculator {
 
         primerCorrida = false;
 
+        for(Choque choque : choques) {
+            if(choque.getP2() == null)
+                System.out.println("Choque con p1: " + choque.getP1().getId() + " y pared: " + choque.getP2());
+            else
+                System.out.println("Choque con p1: " + choque.getP1().getId() + " y p2: " + choque.getP2().getId());
+        }
         return tc;
     }
 
