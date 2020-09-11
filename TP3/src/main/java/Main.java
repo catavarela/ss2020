@@ -62,34 +62,36 @@ public class Main {
 
         Calculator calculador = new Calculator(n, l, m, particulas);
 
-        //TODO: es necesario el archivo .txt?
-        //writeFile(Sparticulas, "particulas.txt");
-
-        writeXYZ(Sparticulas, "output.xyz");
+        writeXYZ(Sparticulas, "output.xyz", false);
 
         float tc = 0f;
 
         while (t_terminal > tc){
             tc = calculador.actualizacion() + tc;
+            System.out.println("TC: " + tc);
 
             Sparticulas = calculador.toStringParticulas();
             //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
-            writeXYZ(Sparticulas, "output.xyz");
+            writeXYZ(Sparticulas, "output.xyz", true);
         }
     }
 
-    public static void writeXYZ(ArrayList<String> output, String fileName) {
-        output.add(0, String.valueOf(output.size()));
+    public static void writeXYZ(ArrayList<String> output, String fileName, boolean append) {
+        output.add(0, String.valueOf(output.size() + 4));
         output.add(1, "");
+        output.add(2, "0.0 6.0 0.1 0.0 0.0 0.0\n" +
+                "6.0 6.0 0.1 0.0 0.0 0.0\n" +
+                "6.0 0.0 0.1 0.0 0.0 0.0\n" +
+                "0.0 0.0 0.1 0.0 0.0 0.0");
 
-        writeFile(output, fileName);
+        writeFile(output, fileName, append);
     }
 
-    public static void writeFile(ArrayList<String> output, String fileName){
+    public static void writeFile(ArrayList<String> output, String fileName, boolean append){
         Iterator<String> it = output.iterator();
 
         try {
-            FileWriter writer = new FileWriter(fileName);
+            FileWriter writer = new FileWriter(fileName, append);
 
             while(it.hasNext())
                 writer.write(it.next() + '\n');
