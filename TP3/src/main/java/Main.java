@@ -24,7 +24,7 @@ public class Main {
             exit(1);
         }
 
-        int n = 0, m = 0; float l = 0f; float t_terminal = 0f;
+        int n = 0; float l = 0f; float t_terminal = 0f;
         float r = 0f, mass = 0f, vMax = 0f;
 
         float R = 0f, Mass = 0f, V = 0f, X = 0f, Y = 0f;
@@ -60,10 +60,7 @@ public class Main {
         particulas = g.generar(R, Mass,  V, X, Y);
         ArrayList<String> Sparticulas = g.toStringParticulas();
 
-        Calculator calculador = new Calculator(n, l, m, particulas);
-
-        //TODO: es necesario el archivo .txt?
-        //writeFile(Sparticulas, "particulas.txt");
+        Calculator calculador = new Calculator(n, l, particulas);
 
         writeXYZ(Sparticulas, "output.xyz");
 

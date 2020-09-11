@@ -40,7 +40,7 @@ public class GeneradorParticulas {
             x = rand.nextFloat() * l;
             y = rand.nextFloat() * l;
 
-            p = new Particula(id, x, y, null, r, mass, rand.nextFloat() * vMax, rand.nextFloat() * vMax);
+            p = new Particula(id, x, y, r, mass, rand.nextFloat() * vMax, rand.nextFloat() * vMax);
 
             if(!tocaPared(p) && !seSuperpone(p)) {
                 agregar(p);
@@ -84,7 +84,7 @@ public class GeneradorParticulas {
     }
 
     private void agregarGrande(float R, float Mass,  float V, float X, float Y, int id){
-        Particula p = new Particula(id, X, Y, null, R, Mass, V, V);
+        Particula p = new Particula(id, X, Y, R, Mass, V, V);
         agregar(p);
     }
 
