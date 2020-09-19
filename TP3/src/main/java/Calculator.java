@@ -149,16 +149,35 @@ public class Calculator {
                     j[1] = J * delta_r[1] / omega;
 
                     currentChoque = new Choque(t_current, p, p2, vx - (j[0] / p.getMass()), vy - (j[1] / p.getMass()), p2.getVX() + (j[0] / p2.getMass()), p2.getVY() + (j[1] / p2.getMass()));
-                    p.getChoquesParticulas().add(currentChoque);
 
-                    //si no estaba en p2, agregalo
-                    int index = p2.getChoquesParticulas().indexOf(currentChoque);
+                    int index = p.getChoquesParticulas().indexOf(currentChoque);
 
-                    if(index == -1)
-                        p2.getChoquesParticulas().add(currentChoque);
-                    else if (p2.getChoquesParticulas().get(index).getTc() != currentChoque.getTc()){
-                        p2.getChoquesParticulas().remove(index);
-                        p2.getChoquesParticulas().add(currentChoque);
+                    //si no lo agregue en otra pasada de la otra particula, agregalo
+                    if(index == -1){
+                        p.getChoquesParticulas().add(currentChoque);
+
+                        index = p2.getChoquesParticulas().indexOf(currentChoque);
+
+                        //si no estaba en p2, agregalo
+                        if(index == -1)
+                            p2.getChoquesParticulas().add(currentChoque);
+                        else if (p2.getChoquesParticulas().get(index).getTc() != currentChoque.getTc()){
+                            p2.getChoquesParticulas().remove(index);
+                            p2.getChoquesParticulas().add(currentChoque);
+                        }
+
+                    }else if (p.getChoquesParticulas().get(index).getTc() != currentChoque.getTc()){
+                        p.getChoquesParticulas().remove(index);
+                        p.getChoquesParticulas().add(currentChoque);
+
+                        index = p2.getChoquesParticulas().indexOf(currentChoque);
+
+                        if(index == -1)
+                            p2.getChoquesParticulas().add(currentChoque);
+                        else if (p2.getChoquesParticulas().get(index).getTc() != currentChoque.getTc()){
+                            p2.getChoquesParticulas().remove(index);
+                            p2.getChoquesParticulas().add(currentChoque);
+                        }
                     }
 
                     if (minChoque == null || (Float.compare(minChoque.getTc(), t_current) > 0))
@@ -204,7 +223,7 @@ public class Calculator {
                 calcularChoques(p);
             }
 
-            sParticulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " +  p.getMass() + " " + p.getVX() + " " + p.getVY());
+            sParticulas.add(p.getId() + " " + p.getX() + " " + p.getY() + " " + p.getR() + " " +  p.getMass() + " " + p.getVX() + " " + p.getVY());
         }
     }
 
