@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 public class Calculator {
+
     private double l;
 
     private ArrayList<String> sParticulas = new ArrayList<>();
@@ -42,27 +43,25 @@ public class Calculator {
 
         double[] delta_v = new double[2];
         double[] delta_r = new double[2];
-        double[] j = new double[2];
-        double omega, d, delta_v_r, J, t_current;
+        double omega, d, delta_v_r, t_current;
 
-        double paredX2 = l;
-        double paredX1 = 0;
-
-        //choque contra paredes: los chicos no se por que hacen chequeo de infinite y nan
+        //choque contra paredes
         if (vx > 0) {
-            currentChoque = new Choque((paredX2 - r - x) / vx, p, null, -vx, vy, 0, 0);
+            currentChoque = new Choque((l - r - x) / vx, p, null, Pared.VERTICAL);
+
             if (currentChoque.getTc() > 0) {
                 minChoque = currentChoque;
             }
         } else if (vx < 0) {
-            currentChoque = new Choque((paredX1 + r - x) / vx, p, null, -vx, vy, 0, 0);
+            currentChoque = new Choque((0 + r - x) / vx, p, null, Pared.VERTICAL);
+
             if (currentChoque.getTc() > 0) {
                 minChoque = currentChoque;
             }
         }
 
         if (vy > 0) {
-            currentChoque = new Choque((l - r - y) / vy, p, null, vx, -vy, 0, 0);
+            currentChoque = new Choque((l - r - y) / vy, p, null, Pared.HORIZONTAL);
 
             if (currentChoque.getTc() > 0) {
 
@@ -71,7 +70,7 @@ public class Calculator {
                 }
             }
         } else if (vy < 0) {
-            currentChoque = new Choque((0 + r - y) / vy, p, null, vx, -vy, 0, 0);
+            currentChoque = new Choque((0 + r - y) / vy, p, null, Pared.HORIZONTAL);
 
             if (currentChoque.getTc() > 0) {
 
@@ -101,17 +100,8 @@ public class Calculator {
                     t_current = -1;
 
                 if (t_current != -1) {
-                    J = ((2 * p2.getMass() * p.getMass() * delta_v_r) / (omega * (p2.getMass() + p.getMass())));
 
-                    j[0] = J * delta_r[0] / omega;
-                    j[1] = J * delta_r[1] / omega;
-
-                    currentChoque = new Choque(t_current, p, p2,
-                            vx - (j[0] / p.getMass()),
-                            vy - (j[1] / p.getMass()),
-                            p2.getVX() + (j[0] / p2.getMass()),
-                            p2.getVY() + (j[1] / p2.getMass())
-                    );
+                    currentChoque = new Choque(t_current, p, p2, Pared.NO_PARED);
 
                     if (minChoque == null || (Double.compare(minChoque.getTc(), t_current) > 0))
                         minChoque = currentChoque;
@@ -121,85 +111,92 @@ public class Calculator {
         return minChoque;
     }
 
-/*
-    public Choque calcularChoque(Particula first) {
-        float deltaPositionX;
-        float deltaPositionY;
-        float deltaSpeedX;
-        float deltaSpeedY;
-        float ro;
-        float firstCondition;
-        float secondCondition;
-        float thirdCondition;
-        float time;
-
-
-
-        Choque currentMin=null;
-
-        for(Particula second: particulas) {
-            if (first.getId() != second.getId()) {
-                deltaPositionX = first.getX() - second.getX();
-                deltaPositionY = first.getY() - second.getY();
-                deltaSpeedX = first.getVX() - second.getVX();
-                deltaSpeedY = first.getVY() - second.getVY();
-                ro = first.getR() + second.getR();
-                firstCondition = calculateFirstCondition(deltaPositionX, deltaPositionY, deltaSpeedX, deltaSpeedY);
-                secondCondition = calculateSecondCondition(deltaPositionX, deltaPositionY, deltaSpeedX, deltaSpeedY, ro);
-                thirdCondition = (float)(Math.pow(deltaSpeedX, 2) + Math.pow(deltaSpeedY, 2));
-                if (firstCondition < 0 && secondCondition >= 0 &&
-                        (firstCondition +  Math.sqrt(secondCondition) < 0) && thirdCondition >= 0) {
-                    time = analizeCrash(firstCondition, secondCondition,thirdCondition);
-
-                    if(currentMin == null || currentMin.getTc() > time) {
-
-
-                        currentMin = new Choque(time, first, second);
-                    }
-
-                }
-            }
-        }
-
-        analizeWallCrashes(first);
-
-
-
-    }
-*/
-
     public void recalcularPropiedades(Choque choque) {
         sParticulas.clear();
 
         double tc = choque.getTc();
-        Particula p1 = choque.getP1();
-        Particula p2 = choque.getP2();
 
-        boolean isP1, isP2;
-
-        float cantMov = 0;
+        double cantMov = 0;
 
         for (Particula p : particulas) {
-            isP1 = p1.getId() == p.getId();
-            isP2 = p2 != null && p2.getId() == p.getId();
-
             p.integrate(tc);
 
-            if (isP1) {
-                p.setVX(choque.getNuevo_vx_p1());
-                p.setVY(choque.getNuevo_vy_p1());
-
-            } else if (isP2) {
-                p.setVX(choque.getNuevo_vx_p2());
-                p.setVY(choque.getNuevo_vy_p2());
-            }
+            sParticulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass());
 
             cantMov += p.getMass() * p.getVX() * p.getVX() + p.getVY() * p.getVY();
-
-            sParticulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass() + " " + p.getVX() + " " + p.getVY());
         }
 
-        System.out.println(cantMov);
+        System.out.println("CantMov: " + cantMov);
+
+        recalcularVelocidadesDespuesDelChoque(choque);
+    }
+
+    private void recalcularVelocidadesDespuesDelChoque(Choque choque) {
+        switch (choque.getPared()){
+            case VERTICAL:
+                choque.getP1().setVX(-1*choque.getP1().getVX());
+                break;
+
+            case HORIZONTAL:
+                choque.getP1().setVY(-1*choque.getP1().getVY());
+                break;
+
+            case NO_PARED:
+                recalcularVelocidadesDespuesDeChoqueEntreParticulas(choque.getP1(), choque.getP2());
+                break;
+        }
+    }
+
+    private void recalcularVelocidadesDespuesDeChoqueEntreParticulas(Particula p1, Particula p2) {
+        double omega;
+        double[] delta_r = new double[2];
+
+        double J;
+        double[] j = new double[2];
+
+        double[] nuevas_v_p1 = new double[2];
+        double[] nuevas_v_p2 = new double[2];
+
+        omega = p1.getR() + p2.getR();
+        delta_r[0] = p1.getX() - p2.getX();
+        delta_r[1] = p1.getY() - p2.getY();
+
+
+        J = jacobiano(p1, p2);
+        j[0] = (J * delta_r[0]) / omega;
+        j[1] = (J * delta_r[1]) / omega;
+
+
+        nuevas_v_p1[0] = p1.getVX() - (j[0] / p1.getMass());
+        nuevas_v_p1[1] = p1.getVY() - (j[1] / p1.getMass());
+
+        nuevas_v_p2[0] = p2.getVX() + (j[0] / p2.getMass());
+        nuevas_v_p2[1] = p2.getVY() + (j[1] / p2.getMass());
+
+        p1.setVX(nuevas_v_p1[0]);
+        p1.setVY(nuevas_v_p1[1]);
+
+        p2.setVX(nuevas_v_p2[0]);
+        p2.setVY(nuevas_v_p2[1]);
+
+    }
+
+    private double jacobiano(Particula p1, Particula p2) {
+        double J, omega;
+
+        double [] delta_r = new double[2];
+        double[] delta_v = new double[2];
+
+        delta_r[0] = p1.getX() - p2.getX();
+        delta_r[1] = p1.getY() - p2.getY();
+        delta_v[0] = p1.getVX() - p2.getVX();
+        delta_v[1] = p1.getVY() - p2.getVY();
+
+        omega = p1.getR() + p2.getR();
+
+        J = (2 * p1.getMass() * p2.getMass()) * ((delta_v[0] * delta_r[0]) + (delta_v[1] * delta_r[1])) / (omega * (p1.getMass() + p2.getMass()));
+
+        return J;
     }
 
     public ArrayList<String> toStringParticulas() {

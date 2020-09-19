@@ -87,10 +87,10 @@ public class Main {
     public static void writeXYZ(ArrayList<String> output, String fileName, boolean append) {
         output.add(0, String.valueOf(output.size() + 4));
         output.add(1, "");
-        output.add(2, "0.0 6.0 0.1 0.0 0.0 0.0\n" +
-                "6.0 6.0 0.1 0.0 0.0 0.0\n" +
-                "6.0 0.0 0.1 0.0 0.0 0.0\n" +
-                "0.0 0.0 0.1 0.0 0.0 0.0");
+        output.add(2, "0.0 6.0 0.1 0.0\n" +
+                "6.0 6.0 0.1 0.0\n" +
+                "6.0 0.0 0.1 0.0\n" +
+                "0.0 0.0 0.1 0.0");
 
         writeFile(output, fileName, append);
     }
