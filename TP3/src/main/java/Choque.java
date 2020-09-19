@@ -1,5 +1,4 @@
 public class Choque implements Comparable{
-
     private float tc;
     private Particula p1;
     private Particula p2;

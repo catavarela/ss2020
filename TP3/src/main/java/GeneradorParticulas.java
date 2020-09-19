@@ -34,6 +34,14 @@ public class GeneradorParticulas {
         Particula p;
 
         agregarGrande(R, Mass, V, X, Y, id++);
+//
+//        p = new Particula(id++, 1, 1, r, mass, rand.nextFloat() * vMax, rand.nextFloat() * vMax);
+//        agregar(p);
+
+//        p = new Particula(id++, 3, 3, 0.2f, 0.9f, 2, 0);
+//        agregar(p);
+
+
 
         while(n > 0) {
 
