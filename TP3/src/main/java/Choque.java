@@ -1,13 +1,13 @@
-public class Choque implements Comparable{
-    private float tc;
+public class Choque{
+    private double tc;
     private Particula p1;
     private Particula p2;
-    private float nuevo_vx_p1;
-    private float nuevo_vy_p1;
-    private float nuevo_vx_p2;
-    private float nuevo_vy_p2;
+    private double nuevo_vx_p1;
+    private double nuevo_vy_p1;
+    private double nuevo_vx_p2;
+    private double nuevo_vy_p2;
 
-    public Choque (float tc, Particula p1, Particula p2, float nuevo_vx_p1, float nuevo_vy_p1, float nuevo_vx_p2, float nuevo_vy_p2){
+    public Choque (double tc, Particula p1, Particula p2, double nuevo_vx_p1, double nuevo_vy_p1, double nuevo_vx_p2, double nuevo_vy_p2){
         this.tc = tc;
         this.p1 = p1;
         this.p2 = p2;
@@ -17,23 +17,23 @@ public class Choque implements Comparable{
         this.nuevo_vy_p2 = nuevo_vy_p2;
     }
 
-    public float getNuevo_vx_p1() {
+    public double getNuevo_vx_p1() {
         return nuevo_vx_p1;
     }
 
-    public float getNuevo_vy_p2() {
+    public double getNuevo_vy_p2() {
         return nuevo_vy_p2;
     }
 
-    public float getTc() {
+    public double getTc() {
         return tc;
     }
 
-    public float getNuevo_vx_p2() {
+    public double getNuevo_vx_p2() {
         return nuevo_vx_p2;
     }
 
-    public float getNuevo_vy_p1() {
+    public double getNuevo_vy_p1() {
         return nuevo_vy_p1;
     }
 
@@ -63,17 +63,5 @@ public class Choque implements Comparable{
 
         // Compare the data members and return accordingly
         return ((p1 == c.getP1() && p2 == c.getP2()) || (p2 == c.getP1() && p1 == c.getP2()));
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        Choque c = (Choque) o;
-
-        if(tc > c.getTc())
-            return 1;
-        else if (tc < c.getTc())
-            return -1;
-
-        return 0;
     }
 }

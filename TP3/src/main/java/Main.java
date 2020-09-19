@@ -24,27 +24,26 @@ public class Main {
             exit(1);
         }
 
-        int n = 0; float l = 0f; float t_terminal = 0f;
-        float r = 0f, mass = 0f, vMax = 0f;
+        int n = 0; double l = 0;
+        double r = 0, mass = 0, vMax = 0;
 
-        float R = 0f, Mass = 0f, V = 0f, X = 0f, Y = 0f;
+        double R = 0, Mass = 0f, V = 0, X = 0, Y = 0;
 
         try {
             Scanner lector = new Scanner(new File(args[0]));
 
             n = Integer.valueOf(lector.nextLine());
-            l = Float.valueOf(lector.nextLine());
-            t_terminal = Float.valueOf(lector.nextLine());
+            l = Double.valueOf(lector.nextLine());
 
-            r = Float.valueOf(lector.nextLine());
-            mass = Float.valueOf(lector.nextLine());
-            vMax = Float.valueOf(lector.nextLine());
+            r = Double.valueOf(lector.nextLine());
+            mass = Double.valueOf(lector.nextLine());
+            vMax = Double.valueOf(lector.nextLine());
 
-            R = Float.valueOf(lector.nextLine());
-            Mass = Float.valueOf(lector.nextLine());
-            V = Float.valueOf(lector.nextLine());
-            X = Float.valueOf(lector.nextLine());
-            Y = Float.valueOf(lector.nextLine());
+            R = Double.valueOf(lector.nextLine());
+            Mass = Double.valueOf(lector.nextLine());
+            V = Double.valueOf(lector.nextLine());
+            X = Double.valueOf(lector.nextLine());
+            Y = Double.valueOf(lector.nextLine());
 
             lector.close();
 
@@ -64,11 +63,20 @@ public class Main {
 
         writeXYZ(Sparticulas, "output.xyz", false);
 
-        float tc = 0f;
+        double delta_t_acum = 0;
+        Choque prox_choque;
 
-        while (t_terminal > tc){
-            tc = calculador.actualizacion() + tc;
-            System.out.println("TC: " + tc);
+        boolean grandeNoChocoPared = true;
+
+        while (grandeNoChocoPared){
+            prox_choque = calculador.actualizacion();
+
+            delta_t_acum = prox_choque.getTc() + delta_t_acum;
+
+            if(prox_choque.getP1().getId() == 1 && prox_choque.getP2() == null)
+                grandeNoChocoPared = false;
+
+            System.out.println("TC: " + delta_t_acum);
 
             Sparticulas = calculador.toStringParticulas();
             //TODO: tratar de generar todo el output antes y escrbir una sola vez al final

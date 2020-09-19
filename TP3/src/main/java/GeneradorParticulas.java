@@ -3,16 +3,16 @@ import java.util.Random;
 
 public class GeneradorParticulas {
     private int n;
-    private float l;
+    private double l;
 
     private ArrayList<Particula> particulas;
     private ArrayList<String> stringPart;
 
-    private float r;
-    private float mass;
-    private float vMax;
+    private double r;
+    private double mass;
+    private double vMax;
 
-    public GeneradorParticulas(int n, float l,  float r, float mass, float vMax){
+    public GeneradorParticulas(int n, double l,  double r, double mass, double vMax){
         this.n = n;
         this.l = l;
 
@@ -24,31 +24,30 @@ public class GeneradorParticulas {
         this.vMax = vMax;
     }
 
-    public ArrayList<Particula> generar(float R, float Mass,  float V, float X, float Y){
+    public ArrayList<Particula> generar(double R, double Mass,  double V, double X, double Y){
         Random rand = new Random();
 
-        float x, y;
+        double x, y, vx, vy, v, teta;
 
         int id = 1;
 
         Particula p;
 
         agregarGrande(R, Mass, V, X, Y, id++);
-//
-//        p = new Particula(id++, 1, 1, r, mass, rand.nextFloat() * vMax, rand.nextFloat() * vMax);
-//        agregar(p);
-
-//        p = new Particula(id++, 3, 3, 0.2f, 0.9f, 2, 0);
-//        agregar(p);
-
-
 
         while(n > 0) {
 
-            x = rand.nextFloat() * l;
-            y = rand.nextFloat() * l;
+            x = rand.nextDouble() * l;
+            y = rand.nextDouble() * l;
 
-            p = new Particula(id, x, y, r, mass, rand.nextFloat() * vMax, rand.nextFloat() * vMax);
+            v = rand.nextDouble() * vMax;
+            teta =  rand.nextDouble() * Math.PI;
+
+            vx = Math.cos(teta) * v;
+
+            vy = Math.sin(teta) * v;
+
+            p = new Particula(id, x, y, r, mass, vx, vy);
 
             if(!tocaPared(p) && !seSuperpone(p)) {
                 agregar(p);
@@ -61,21 +60,21 @@ public class GeneradorParticulas {
     }
 
     private boolean tocaPared(Particula p){
-        float x1, x2, y1, y2;
+        double x1, x2, y1, y2;
 
         x1 = y1 = 0f;
         x2 = y2 = l;
 
-        if(Float.compare(x2-p.getR()-p.getX(), 0f) < 0)
+        if(Double.compare(x2-p.getR()-p.getX(), 0f) < 0)
             return true;
 
-        if(Float.compare(y2-p.getR()-p.getY(), 0f) < 0)
+        if(Double.compare(y2-p.getR()-p.getY(), 0f) < 0)
             return true;
 
-        if(Float.compare(x1+p.getR()-p.getX(), 0f) > 0)
+        if(Double.compare(x1+p.getR()-p.getX(), 0f) > 0)
             return true;
 
-        if(Float.compare(y1+p.getR()-p.getY(), 0f) > 0)
+        if(Double.compare(y1+p.getR()-p.getY(), 0f) > 0)
             return true;
 
         return false;
@@ -91,7 +90,7 @@ public class GeneradorParticulas {
         return false;
     }
 
-    private void agregarGrande(float R, float Mass,  float V, float X, float Y, int id){
+    private void agregarGrande(double R, double Mass,  double V, double X, double Y, int id){
         Particula p = new Particula(id, X, Y, R, Mass, V, V);
         agregar(p);
     }

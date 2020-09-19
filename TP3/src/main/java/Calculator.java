@@ -1,32 +1,21 @@
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class Calculator {
-    private float l;
-    private boolean primerCorrida;
+    private double l;
 
     private ArrayList<String> sParticulas = new ArrayList<>();
     private ArrayList<Particula> particulas;
 
-    public Calculator(float l, ArrayList<Particula> particulas) {
+    public Calculator(double l, ArrayList<Particula> particulas) {
         this.l = l;
-        primerCorrida = true;
         this.particulas = particulas;
     }
 
-    public float actualizacion() {
+    public Choque actualizacion() {
         Choque choque = calcularTiempoProxEvento();
         recalcularPropiedades(choque);
 
-        //if(choque.getP2() == null)
-        //System.out.println("Choque con p1: " + choque.getP1().getId() + " y pared: " + choque.getP2());
-        //else
-        //System.out.println("Choque con p1: " + choque.getP1().getId() + " y p2: " + choque.getP2().getId());
-
-        primerCorrida = false;
-
-        return choque.getTc();
+        return choque;
     }
 
     public Choque calcularTiempoProxEvento() {
@@ -35,9 +24,8 @@ public class Calculator {
 
         for (Particula particula : particulas) {
             choqueConTMin = calcularChoque(particula);
-            //System.out.println(particula.getId() + ": " + choqueConTMin.getTc());
 
-            if (choque == null || (choqueConTMin != null && (Float.compare(choqueConTMin.getTc(), choque.getTc()) < 0))) {
+            if (choque == null || (choqueConTMin != null && (Double.compare(choqueConTMin.getTc(), choque.getTc()) < 0))) {
                 choque = choqueConTMin;
 
             }
@@ -50,15 +38,15 @@ public class Calculator {
         Choque minChoque = null;
         Choque currentChoque;
 
-        float vx = p.getVX(), vy = p.getVY(), x = p.getX(), y = p.getY(), r = p.getR();
+        double vx = p.getVX(), vy = p.getVY(), x = p.getX(), y = p.getY(), r = p.getR();
 
-        float[] delta_v = new float[2];
-        float[] delta_r = new float[2];
-        float[] j = new float[2];
-        float omega, d, J, delta_v_r, t_current;
+        double[] delta_v = new double[2];
+        double[] delta_r = new double[2];
+        double[] j = new double[2];
+        double omega, d, delta_v_r, J, t_current;
 
-        float paredX2 = l;
-        float paredX1 = 0;
+        double paredX2 = l;
+        double paredX1 = 0;
 
         //choque contra paredes: los chicos no se por que hacen chequeo de infinite y nan
         if (vx > 0) {
@@ -78,7 +66,7 @@ public class Calculator {
 
             if (currentChoque.getTc() > 0) {
 
-                if (minChoque == null || Float.compare(minChoque.getTc(), currentChoque.getTc()) > 0) {
+                if (minChoque == null || Double.compare(minChoque.getTc(), currentChoque.getTc()) > 0) {
                     minChoque = currentChoque;
                 }
             }
@@ -87,7 +75,7 @@ public class Calculator {
 
             if (currentChoque.getTc() > 0) {
 
-                if (minChoque == null || Float.compare(minChoque.getTc(), currentChoque.getTc()) > 0) {
+                if (minChoque == null || Double.compare(minChoque.getTc(), currentChoque.getTc()) > 0) {
                     minChoque = currentChoque;
                 }
             }
@@ -105,10 +93,10 @@ public class Calculator {
 
                 delta_v_r = (delta_v[0] * delta_r[0]) + (delta_v[1] * delta_r[1]);
 
-                d = (float) (Math.pow(delta_v_r, 2) - ((Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2)) * ((Math.pow(delta_r[0], 2) + Math.pow(delta_r[1], 2)) - Math.pow(omega, 2))));
+                d = (Math.pow(delta_v_r, 2) - ((Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2)) * ((Math.pow(delta_r[0], 2) + Math.pow(delta_r[1], 2)) - Math.pow(omega, 2))));
 
                 if (delta_v_r < 0 && d >= 0 && (delta_v_r + Math.sqrt(d) < 0) && Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2) >= 0)
-                    t_current = -(float) ((delta_v_r + Math.sqrt(d)) / (Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2)));
+                    t_current = -((delta_v_r + Math.sqrt(d)) / (Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2)));
                 else
                     t_current = -1;
 
@@ -125,7 +113,7 @@ public class Calculator {
                             p2.getVY() + (j[1] / p2.getMass())
                     );
 
-                    if (minChoque == null || (Float.compare(minChoque.getTc(), t_current) > 0))
+                    if (minChoque == null || (Double.compare(minChoque.getTc(), t_current) > 0))
                         minChoque = currentChoque;
                 }
             }
@@ -133,18 +121,68 @@ public class Calculator {
         return minChoque;
     }
 
+/*
+    public Choque calcularChoque(Particula first) {
+        float deltaPositionX;
+        float deltaPositionY;
+        float deltaSpeedX;
+        float deltaSpeedY;
+        float ro;
+        float firstCondition;
+        float secondCondition;
+        float thirdCondition;
+        float time;
+
+
+
+        Choque currentMin=null;
+
+        for(Particula second: particulas) {
+            if (first.getId() != second.getId()) {
+                deltaPositionX = first.getX() - second.getX();
+                deltaPositionY = first.getY() - second.getY();
+                deltaSpeedX = first.getVX() - second.getVX();
+                deltaSpeedY = first.getVY() - second.getVY();
+                ro = first.getR() + second.getR();
+                firstCondition = calculateFirstCondition(deltaPositionX, deltaPositionY, deltaSpeedX, deltaSpeedY);
+                secondCondition = calculateSecondCondition(deltaPositionX, deltaPositionY, deltaSpeedX, deltaSpeedY, ro);
+                thirdCondition = (float)(Math.pow(deltaSpeedX, 2) + Math.pow(deltaSpeedY, 2));
+                if (firstCondition < 0 && secondCondition >= 0 &&
+                        (firstCondition +  Math.sqrt(secondCondition) < 0) && thirdCondition >= 0) {
+                    time = analizeCrash(firstCondition, secondCondition,thirdCondition);
+
+                    if(currentMin == null || currentMin.getTc() > time) {
+
+
+                        currentMin = new Choque(time, first, second);
+                    }
+
+                }
+            }
+        }
+
+        analizeWallCrashes(first);
+
+
+
+    }
+*/
+
     public void recalcularPropiedades(Choque choque) {
         sParticulas.clear();
 
-        float tc = choque.getTc();
+        double tc = choque.getTc();
         Particula p1 = choque.getP1();
         Particula p2 = choque.getP2();
+
+        boolean isP1, isP2;
 
         float cantMov = 0;
 
         for (Particula p : particulas) {
-            boolean isP1 = p1.getId() == p.getId();
-            boolean isP2 = p2 != null && p2.getId() == p.getId();
+            isP1 = p1.getId() == p.getId();
+            isP2 = p2 != null && p2.getId() == p.getId();
+
             p.integrate(tc);
 
             if (isP1) {
@@ -167,4 +205,5 @@ public class Calculator {
     public ArrayList<String> toStringParticulas() {
         return sParticulas;
     }
+
 }
