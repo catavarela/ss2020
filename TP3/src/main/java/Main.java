@@ -24,27 +24,27 @@ public class Main {
             exit(1);
         }
 
-        int n = 0; float l = 0f; float t_terminal = 0f;
-        float r = 0f, mass = 0f, vMax = 0f;
+        int t_arbitrario = 1;
+        int n = 0; double l = 0;
+        double r = 0, mass = 0, vMax = 0;
 
-        float R = 0f, Mass = 0f, V = 0f, X = 0f, Y = 0f;
+        double R = 0, Mass = 0f, V = 0, X = 0, Y = 0;
 
         try {
             Scanner lector = new Scanner(new File(args[0]));
 
             n = Integer.valueOf(lector.nextLine());
-            l = Float.valueOf(lector.nextLine());
-            t_terminal = Float.valueOf(lector.nextLine());
+            l = Double.valueOf(lector.nextLine());
 
-            r = Float.valueOf(lector.nextLine());
-            mass = Float.valueOf(lector.nextLine());
-            vMax = Float.valueOf(lector.nextLine());
+            r = Double.valueOf(lector.nextLine());
+            mass = Double.valueOf(lector.nextLine());
+            vMax = Double.valueOf(lector.nextLine());
 
-            R = Float.valueOf(lector.nextLine());
-            Mass = Float.valueOf(lector.nextLine());
-            V = Float.valueOf(lector.nextLine());
-            X = Float.valueOf(lector.nextLine());
-            Y = Float.valueOf(lector.nextLine());
+            R = Double.valueOf(lector.nextLine());
+            Mass = Double.valueOf(lector.nextLine());
+            V = Double.valueOf(lector.nextLine());
+            X = Double.valueOf(lector.nextLine());
+            Y = Double.valueOf(lector.nextLine());
 
             lector.close();
 
@@ -64,25 +64,39 @@ public class Main {
 
         writeXYZ(Sparticulas, "output.xyz", false);
 
-        float tc = 0f;
+        double delta_t_acum = 0;
+        Choque prox_choque;
 
-        while (t_terminal > tc){
-            tc = calculador.actualizacion() + tc;
-            System.out.println("TC: " + tc);
+        boolean grandeNoChocoPared = true;
 
-            Sparticulas = calculador.toStringParticulas();
-            //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
-            writeXYZ(Sparticulas, "output.xyz", true);
+        while (grandeNoChocoPared){
+            prox_choque = calculador.actualizacion();
+
+            delta_t_acum = prox_choque.getTc() + delta_t_acum;
+
+            if(prox_choque.getP1().getId() == 1 && prox_choque.getP2() == null)
+                grandeNoChocoPared = false;
+
+            System.out.println("TC: " + delta_t_acum);
+
+            if(delta_t_acum >= t_arbitrario) {
+                Sparticulas = calculador.toStringParticulas();
+                //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
+                writeXYZ(Sparticulas, "output.xyz", true);
+                t_arbitrario++;
+            }
+
         }
     }
 
     public static void writeXYZ(ArrayList<String> output, String fileName, boolean append) {
         output.add(0, String.valueOf(output.size() + 4));
         output.add(1, "");
-        output.add(2, "0 0.0 6.0 0.1 0.0 0.0 0.0\n" +
-                "0 6.0 6.0 0.1 0.0 0.0 0.0\n" +
-                "0 6.0 0.0 0.1 0.0 0.0 0.0\n" +
-                "0 0.0 0.0 0.1 0.0 0.0 0.0");
+
+        output.add(2, "0.0 6.0 0.1 0.0\n" +
+                "6.0 6.0 0.1 0.0\n" +
+                "6.0 0.0 0.1 0.0\n" +
+                "0.0 0.0 0.1 0.0");
 
         writeFile(output, fileName, append);
     }

@@ -4,21 +4,17 @@ import java.util.ArrayList;
 public class Particula {
 
     private int id;
-    private float x;
-    private float y;
-    private float vx;
-    private float vy;
-    private float r;
-    private float mass;
+    private double x;
+    private double y;
+    private double vx;
+    private double vy;
+    private double r;
+    private double mass;
 
-    private ArrayList<Choque> choquesParticulas;
-
-
-    public Particula(int id, float x, float y, float r, float mass, float vx, float vy) {
+    public Particula(int id, double x, double y, double r, double mass, double vx, double vy) {
         this.id = id;
         this.x = x;
         this.y = y;
-        choquesParticulas = new ArrayList<>();
         this.r = r;
         this.mass = mass;
         this.vx = vx;
@@ -26,25 +22,27 @@ public class Particula {
     }
 
     public int getId() { return id; }
-    public float getR() { return r; }
-    public float getMass() { return mass; }
+    public double getR() { return r; }
+    public double getMass() { return mass; }
 
-    public float getX() {
+    public double getX() {
         return x;
     }
-    public float getY() {
+    public double getY() {
         return y;
     }
-    public float getVX() {
+    public double getVX() {
         return vx;
     }
-    public float getVY() {
+    public double getVY() {
         return vy;
     }
-    public void setX(float x) {this.x = x;}
-    public void setY(float y) {this.y = y;}
-    public void setVX(float vx) {this.vx = vx;}
-    public void setVY(float vy) {this.vy = vy;}
+    public void setVX(double vx) {this.vx = vx;}
+    public void setVY(double vy) {this.vy = vy;}
 
-    public ArrayList<Choque> getChoquesParticulas() {return choquesParticulas;}
+
+    public void integrate (double tc) {
+        this.x += this.vx * tc;
+        this.y += this.vy * tc;
+    }
 }
