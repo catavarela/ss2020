@@ -90,8 +90,13 @@ public class Calculator {
                 delta_v[1] = vy - p2.getVY();
                 delta_r[0] = x - p2.getX();
                 delta_r[1] = y - p2.getY();
+                //System.out.println("XJ: " + x);
+                //System.out.println("XI: " + p2.getX());
 
                 delta_v_r = (delta_v[0] * delta_r[0]) + (delta_v[1] * delta_r[1]);
+                //System.out.println("DELTAV: " + delta_v[0]);
+                //System.out.println("DELTAR: " + delta_r[0]);
+                //System.out.println("DELTAVR: " + delta_v_r);
 
                 d = (Math.pow(delta_v_r, 2) - ((Math.pow(delta_v[0], 2) + Math.pow(delta_v[1], 2)) * ((Math.pow(delta_r[0], 2) + Math.pow(delta_r[1], 2)) - Math.pow(omega, 2))));
 
@@ -101,7 +106,8 @@ public class Calculator {
                     t_current = -1;
 
                 if (t_current != -1) {
-                    J = ((2 * p2.getMass() * p.getMass() * delta_v_r) / (omega * (p2.getMass() + p.getMass())));
+                    J = (2 * p2.getMass() * p.getMass() * delta_v_r) / (omega * (p2.getMass() + p.getMass()));
+
 
                     j[0] = J * delta_r[0] / omega;
                     j[1] = J * delta_r[1] / omega;
@@ -170,36 +176,23 @@ public class Calculator {
 
     public void recalcularPropiedades(Choque choque) {
         sParticulas.clear();
-
         double tc = choque.getTc();
-        Particula p1 = choque.getP1();
-        Particula p2 = choque.getP2();
-
-        boolean isP1, isP2;
 
         float cantMov = 0;
 
         for (Particula p : particulas) {
-            isP1 = p1.getId() == p.getId();
-            isP2 = p2 != null && p2.getId() == p.getId();
 
             p.integrate(tc);
-
-            if (isP1) {
-                p.setVX(choque.getNuevo_vx_p1());
-                p.setVY(choque.getNuevo_vy_p1());
-
-            } else if (isP2) {
-                p.setVX(choque.getNuevo_vx_p2());
-                p.setVY(choque.getNuevo_vy_p2());
-            }
-
-            cantMov += p.getMass() * p.getVX() * p.getVX() + p.getVY() * p.getVY();
+            cantMov += p.getMass() * (p.getVX() * p.getVX() + p.getVY() * p.getVY());
 
             sParticulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass() + " " + p.getVX() + " " + p.getVY());
         }
 
-        System.out.println(cantMov);
+
+        choque.resolver();
+
+
+        //System.out.println(cantMov);
     }
 
     public ArrayList<String> toStringParticulas() {
