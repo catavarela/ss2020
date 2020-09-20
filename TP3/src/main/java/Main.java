@@ -24,6 +24,7 @@ public class Main {
             exit(1);
         }
 
+        int t_arbitrario = 1;
         int n = 0; double l = 0;
         double r = 0, mass = 0, vMax = 0;
 
@@ -78,9 +79,13 @@ public class Main {
 
             System.out.println("TC: " + delta_t_acum);
 
-            Sparticulas = calculador.toStringParticulas();
-            //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
-            writeXYZ(Sparticulas, "output.xyz", true);
+            if(delta_t_acum >= t_arbitrario) {
+                Sparticulas = calculador.toStringParticulas();
+                //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
+                writeXYZ(Sparticulas, "output.xyz", true);
+                t_arbitrario++;
+            }
+
         }
     }
 
