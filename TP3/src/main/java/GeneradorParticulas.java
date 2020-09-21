@@ -29,13 +29,17 @@ public class GeneradorParticulas {
 
         double x, y, vx, vy, v, teta;
 
-        int id = 1;
+        long term_time= 60000; long init_time;
+
+        int id = 1, cant = n;
 
         Particula p;
 
         agregarGrande(R, Mass, V, X, Y, id++);
 
-        while(n > 0) {
+        init_time = System.currentTimeMillis();
+
+        while(cant > 0 && System.currentTimeMillis() - init_time < term_time) {
 
             x = rand.nextDouble() * l;
             y = rand.nextDouble() * l;
@@ -51,9 +55,16 @@ public class GeneradorParticulas {
 
             if(!tocaPared(p) && !seSuperpone(p)) {
                 agregar(p);
-                n--;
+                cant--;
                 id++;
             }
+        }
+
+        if(cant!=0) {
+            particulas.clear();
+            stringPart.clear();
+
+            return null;
         }
 
         return particulas;

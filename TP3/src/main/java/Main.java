@@ -10,8 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-import static java.lang.System.exit;
-import static java.lang.System.out;
+import static java.lang.System.*;
 
 public class Main {
 
@@ -24,8 +23,8 @@ public class Main {
             exit(1);
         }
 
-        int t_arbitrario = 1;
-        int n = 0; double l = 0;
+        int t_arbitrario;
+        int n = 0, colisionesxS, corridas = 0, maxCorridas = 20; double l = 0;
         double r = 0, mass = 0, vMax = 0;
 
         double R = 0, Mass = 0f, V = 0, X = 0, Y = 0;
@@ -54,38 +53,110 @@ public class Main {
             exit(1);
         }
 
-        ArrayList<Particula> particulas;
+        ArrayList<String> csv_1 = new ArrayList<>();
+        csv_1.add("Corrida,Unidad_Tiempo,Colisiones");
+        writeFile(csv_1, "CSVG1.csv", false);
+        csv_1.clear();
 
-        GeneradorParticulas g = new GeneradorParticulas(n, l,  r, mass, vMax);
-        particulas = g.generar(R, Mass,  V, X, Y);
-        ArrayList<String> Sparticulas = g.toStringParticulas();
+        ArrayList<String> csv_2 = new ArrayList<>();
+        csv_2.add("Corrida,Tiempo_Entre_Choques");
+        writeFile(csv_2, "CSVG2.csv", false);
+        csv_2.clear();
 
-        Calculator calculador = new Calculator(l, particulas);
+        ArrayList<String> csv_3 = new ArrayList<>();
+        csv_3.add("Corrida,Tiempo_Acum,Modulo_V");
+        writeFile(csv_3, "CSVG3.csv", false);
+        csv_3.clear();
 
-        writeXYZ(Sparticulas, "output.xyz", false);
+        while(maxCorridas-- > 0){
+            corridas++;
+            colisionesxS=0;
+            t_arbitrario = 1;
 
-        double delta_t_acum = 0;
-        Choque prox_choque;
+            ArrayList<Particula> particulas;
 
-        boolean grandeNoChocoPared = true;
+            GeneradorParticulas g = new GeneradorParticulas(n, l,  r, mass, vMax);
 
-        while (grandeNoChocoPared){
-            prox_choque = calculador.actualizacion();
+            do{
+                particulas = g.generar(R, Mass,  V, X, Y);
 
-            delta_t_acum = prox_choque.getTc() + delta_t_acum;
+                System.out.println(particulas);
+            }while (particulas==null);
 
-            if(prox_choque.getP1().getId() == 1 && prox_choque.getP2() == null)
-                grandeNoChocoPared = false;
+            //ArrayList<String> Sparticulas = g.toStringParticulas();
 
-            System.out.println("TC: " + delta_t_acum);
+            Calculator calculador = new Calculator(l, particulas);
 
-            if(delta_t_acum >= t_arbitrario) {
-                Sparticulas = calculador.toStringParticulas();
-                //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
-                writeXYZ(Sparticulas, "output.xyz", true);
-                t_arbitrario++;
+            //writeXYZ(Sparticulas, "output.xyz", false);
+
+            double delta_t_acum = 0;
+            Choque prox_choque;
+
+            boolean grandeNoChocoPared = true;
+
+
+            if(corridas==1) {
+                for (Particula p : particulas)
+                    csv_3.add(corridas + "," + delta_t_acum + "," + Math.sqrt((p.getVX() * p.getVX()) + (p.getVY() * p.getVY())));
+
+                writeFile(csv_3, "CSVG3.csv", true);
+                csv_3.clear();
             }
 
+            while (grandeNoChocoPared){
+                prox_choque = calculador.actualizacion();
+
+                colisionesxS++;
+
+                delta_t_acum = prox_choque.getTc() + delta_t_acum;
+
+                if(prox_choque.getP1().getId() == 1 && prox_choque.getP2() == null)
+                    grandeNoChocoPared = false;
+
+                //System.out.println("TC: " + delta_t_acum);
+
+                csv_2.add(corridas + "," + prox_choque.getTc());
+
+
+                if(corridas == 1) {
+                    for (Particula p : particulas)
+                        csv_3.add(corridas + "," + delta_t_acum + "," + Math.sqrt((p.getVX() * p.getVX()) + (p.getVY() * p.getVY())));
+                }
+
+                if(delta_t_acum >= t_arbitrario) {
+                    csv_1.add(corridas + "," + t_arbitrario + "," + colisionesxS);
+
+                    //Sparticulas = calculador.toStringParticulas();
+                    //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
+                    //writeXYZ(Sparticulas, "output.xyz", true);
+                    t_arbitrario++;colisionesxS=0;
+                }
+
+                if(colisionesxS%10 == 0){
+                    writeFile(csv_1, "CSVG1.csv", true);
+                    csv_1.clear();
+
+                    writeFile(csv_2, "CSVG2.csv", true);
+                    csv_2.clear();
+
+                    writeFile(csv_3, "CSVG3.csv", true);
+                    csv_3.clear();
+                }
+
+            }
+
+            System.out.println("Corrida: " + corridas);
+
+            writeFile(csv_1, "CSVG1.csv", true);
+            csv_1.clear();
+
+            writeFile(csv_2, "CSVG2.csv", true);
+            csv_2.clear();
+
+            if(corridas==1) {
+                writeFile(csv_3, "CSVG3.csv", true);
+                csv_3.clear();
+            }
         }
     }
 
