@@ -11,6 +11,7 @@ public class GeneradorParticulas {
     private double r;
     private double mass;
     private double vMax;
+    private Particula particulaGrande;
 
     public GeneradorParticulas(int n, double l,  double r, double mass, double vMax){
         this.n = n;
@@ -93,6 +94,7 @@ public class GeneradorParticulas {
     private void agregarGrande(double R, double Mass,  double V, double X, double Y, int id){
         Particula p = new Particula(id, X, Y, R, Mass, V, V);
         agregar(p);
+        particulaGrande = p;
     }
 
     private void agregar (Particula p){
@@ -103,5 +105,9 @@ public class GeneradorParticulas {
 
     public ArrayList<String> toStringParticulas() {
         return stringPart;
+    }
+
+    public Particula getParticulaGrande() {
+        return particulaGrande;
     }
 }

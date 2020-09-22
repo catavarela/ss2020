@@ -6,10 +6,12 @@ public class Calculator {
 
     private ArrayList<String> sParticulas = new ArrayList<>();
     private ArrayList<Particula> particulas;
+    private Particula particulaGrande;
 
-    public Calculator(double l, ArrayList<Particula> particulas) {
+    public Calculator(double l, ArrayList<Particula> particulas, Particula particulaGrande) {
         this.l = l;
         this.particulas = particulas;
+        this.particulaGrande = particulaGrande;
     }
 
     public Choque actualizacion() {
@@ -125,7 +127,7 @@ public class Calculator {
             cantMov += p.getMass() * p.getVX() * p.getVX() + p.getVY() * p.getVY();
         }
 
-        System.out.println("CantMov: " + cantMov);
+        //System.out.println("CantMov: " + cantMov);
 
         recalcularVelocidadesDespuesDelChoque(choque);
     }
@@ -201,6 +203,20 @@ public class Calculator {
 
     public ArrayList<String> toStringParticulas() {
         return sParticulas;
+    }
+
+    public String getPosicionParticulaGrande() {
+        return particulaGrande.getX() + ";" + particulaGrande.getY();
+    }
+
+    public double getTemperatura() {
+        double suma = 0;
+
+        for(Particula p: particulas) {
+            suma += p.getMass() * Math.pow(Math.hypot(p.getVX(), p.getVY()), 2);
+        }
+
+        return suma / (particulas.size() * 2 * 1.38064852 * Math.pow(10, -23));
     }
 
 }

@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -59,8 +60,9 @@ public class Main {
         GeneradorParticulas g = new GeneradorParticulas(n, l,  r, mass, vMax);
         particulas = g.generar(R, Mass,  V, X, Y);
         ArrayList<String> Sparticulas = g.toStringParticulas();
+        ArrayList<String> STrayPartGrande = new ArrayList<>();
 
-        Calculator calculador = new Calculator(l, particulas);
+        Calculator calculador = new Calculator(l, particulas, g.getParticulaGrande());
 
         writeXYZ(Sparticulas, "output.xyz", false);
 
@@ -79,7 +81,9 @@ public class Main {
 
             System.out.println("TC: " + delta_t_acum);
 
-            if(delta_t_acum >= t_arbitrario) {
+            STrayPartGrande.add(calculador.getPosicionParticulaGrande());
+
+            if(delta_t_acum >= t_arbitrario || !grandeNoChocoPared) {
                 Sparticulas = calculador.toStringParticulas();
                 //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
                 writeXYZ(Sparticulas, "output.xyz", true);
@@ -87,6 +91,9 @@ public class Main {
             }
 
         }
+        System.out.println("Temperatura: " + calculador.getTemperatura() + " K");
+        STrayPartGrande.add(0,"X;Y");
+        writeFile(STrayPartGrande, "Trayectoria.csv", false);
     }
 
     public static void writeXYZ(ArrayList<String> output, String fileName, boolean append) {
@@ -113,7 +120,7 @@ public class Main {
             writer.close();
 
         } catch (IOException e) {
-            System.out.println("Ocurrio un error al querer crear/escribir el archivo" + fileName + '.');
+            System.out.println("Ocurrio un error al querer crear/escribir el archivo " + fileName + '.');
             e.printStackTrace();
         }
     }
