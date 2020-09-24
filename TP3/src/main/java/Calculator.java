@@ -125,7 +125,7 @@ public class Calculator {
             cantMov += p.getMass() * p.getVX() * p.getVX() + p.getVY() * p.getVY();
         }
 
-        System.out.println("CantMov: " + cantMov);
+        //System.out.println("CantMov: " + cantMov);
 
         recalcularVelocidadesDespuesDelChoque(choque);
     }
