@@ -7,11 +7,17 @@ public class Calculator {
     private ArrayList<String> sParticulas = new ArrayList<>();
     private ArrayList<Particula> particulas;
     private Particula particulaGrande;
+    private Particula particulaChica;
+    private double x_inicial;
+    private double y_inicial;
 
     public Calculator(double l, ArrayList<Particula> particulas, Particula particulaGrande) {
         this.l = l;
         this.particulas = particulas;
         this.particulaGrande = particulaGrande;
+        this.particulaChica = particulas.get(1);
+        x_inicial = particulaChica.getX();
+        y_inicial = particulaChica.getY();
     }
 
     public Choque actualizacion() {
@@ -117,17 +123,10 @@ public class Calculator {
 
         double tc = choque.getTc();
 
-        double cantMov = 0;
-
         for (Particula p : particulas) {
             p.integrate(tc);
-
-            sParticulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass());
-
-            cantMov += p.getMass() * p.getVX() * p.getVX() + p.getVY() * p.getVY();
+            sParticulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getColor());
         }
-
-        //System.out.println("CantMov: " + cantMov);
 
         recalcularVelocidadesDespuesDelChoque(choque);
     }
@@ -217,6 +216,22 @@ public class Calculator {
         }
 
         return suma / (particulas.size() * 2 * 1.38064852 * Math.pow(10, -23));
+    }
+
+    public double getDCM(boolean grande) {
+        double DCM;
+        double dist_x;
+        double dist_y;
+
+        if(grande) {
+            dist_x = Math.abs(particulaGrande.getX() - 3);
+            dist_y = Math.abs(particulaGrande.getY() - 3);
+        } else {
+            dist_x = Math.abs(particulaChica.getX() - x_inicial);
+            dist_y = Math.abs(particulaChica.getY() - y_inicial);
+        }
+        DCM = dist_x * dist_x + dist_y * dist_y;
+        return DCM;
     }
 
 }

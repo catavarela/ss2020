@@ -61,6 +61,7 @@ public class Main {
         particulas = g.generar(R, Mass,  V, X, Y);
         ArrayList<String> Sparticulas = g.toStringParticulas();
         ArrayList<String> STrayPartGrande = new ArrayList<>();
+        ArrayList<String> SDCM = new ArrayList<>();
 
         Calculator calculador = new Calculator(l, particulas, g.getParticulaGrande());
 
@@ -79,31 +80,40 @@ public class Main {
             if(prox_choque.getP1().getId() == 1 && prox_choque.getP2() == null)
                 grandeNoChocoPared = false;
 
-            System.out.println("TC: " + delta_t_acum);
+            //System.out.println("TC: " + delta_t_acum);
 
             STrayPartGrande.add(calculador.getPosicionParticulaGrande());
 
             if(delta_t_acum >= t_arbitrario || !grandeNoChocoPared) {
                 Sparticulas = calculador.toStringParticulas();
-                //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
                 writeXYZ(Sparticulas, "output.xyz", true);
+
+                SDCM.add(Math.floor(delta_t_acum) + ";" + calculador.getDCM(true) + ";" + calculador.getDCM(false));
                 t_arbitrario++;
             }
 
         }
         System.out.println("Temperatura: " + calculador.getTemperatura() + " K");
+
         STrayPartGrande.add(0,"X;Y");
         writeFile(STrayPartGrande, "Trayectoria.csv", false);
+
+        int aux = SDCM.size();
+        for(int i = 0; i < aux / 2; i++) {
+            SDCM.remove(0);
+        }
+        SDCM.add(0, "Tiempo;GrandeDCM;ChicaDCM");
+        writeFile(SDCM, "DCM1.csv", false);
     }
 
     public static void writeXYZ(ArrayList<String> output, String fileName, boolean append) {
         output.add(0, String.valueOf(output.size() + 4));
         output.add(1, "");
 
-        output.add(2, "0.0 6.0 0.1 0.0\n" +
-                "6.0 6.0 0.1 0.0\n" +
-                "6.0 0.0 0.1 0.0\n" +
-                "0.0 0.0 0.1 0.0");
+        output.add(2, "0.0 6.0 0.1 0 0\n" +
+                "6.0 6.0 0.1 0 0\n" +
+                "6.0 0.0 0.1 0 0\n" +
+                "0.0 0.0 0.1 0 0");
 
         writeFile(output, fileName, append);
     }

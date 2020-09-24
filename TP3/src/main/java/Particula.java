@@ -39,6 +39,7 @@ public class Particula {
     }
     public void setVX(double vx) {this.vx = vx;}
     public void setVY(double vy) {this.vy = vy;}
+    public String getColor() {return id == 1? "1 0" : "0 1";}
 
 
     public void integrate (double tc) {
