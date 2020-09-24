@@ -77,7 +77,7 @@ public class Main {
             if(prox_choque.getP1().getId() == 1 && prox_choque.getP2() == null)
                 grandeNoChocoPared = false;
 
-            System.out.println("TC: " + delta_t_acum);
+            //System.out.println("TC: " + delta_t_acum);
 
             if(delta_t_acum >= t_arbitrario) {
                 Sparticulas = calculador.toStringParticulas();
