@@ -96,8 +96,7 @@ public class GeneradorParticulas {
     }
 
     private void agregar (Particula p){
-        //TODO: chequear si es necesario devolver todas las propiedades
-        stringPart.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass());
+        stringPart.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass() + " " + p.getVX() + " " + p.getVY());
         particulas.add(p);
     }
 

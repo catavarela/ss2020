@@ -120,7 +120,7 @@ public class Calculator {
         for (Particula p : particulas) {
             p.integrate(tc);
 
-            sParticulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass());
+            sParticulas.add(p.getX() + " " + p.getY() + " " + p.getR() + " " + p.getMass() + " " + p.getVX() + " " + p.getVY());
 
             cantMov += p.getMass() * p.getVX() * p.getVX() + p.getVY() * p.getVY();
         }

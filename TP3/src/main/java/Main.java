@@ -81,7 +81,7 @@ public class Main {
 
             if(delta_t_acum >= t_arbitrario) {
                 Sparticulas = calculador.toStringParticulas();
-                //TODO: tratar de generar todo el output antes y escrbir una sola vez al final
+
                 writeXYZ(Sparticulas, "output.xyz", true);
                 t_arbitrario++;
             }
@@ -93,10 +93,10 @@ public class Main {
         output.add(0, String.valueOf(output.size() + 4));
         output.add(1, "");
 
-        output.add(2, "0.0 6.0 0.1 0.0\n" +
-                "6.0 6.0 0.1 0.0\n" +
-                "6.0 0.0 0.1 0.0\n" +
-                "0.0 0.0 0.1 0.0");
+        output.add(2, "0.0 6.0 0.1 0.0 0.0 0.0\n" +
+                "6.0 6.0 0.1 0.0 0.0 0.0\n" +
+                "6.0 0.0 0.1 0.0 0.0 0.0\n" +
+                "0.0 0.0 0.1 0.0 0.0 0.0");
 
         writeFile(output, fileName, append);
     }
