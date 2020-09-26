@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,6 +10,16 @@ import java.util.Scanner;
 
 import static java.lang.System.exit;
 import static java.lang.System.out;
+
+class Pair{
+    public Double first;
+    public Double second;
+
+    Pair(Double first, Double second) {
+        this.first = first;
+        this.second = second;
+    }
+}
 
 public class Main {
 
@@ -30,6 +37,7 @@ public class Main {
         double r = 0, mass = 0, vMax = 0;
 
         double R = 0, Mass = 0f, V = 0, X = 0, Y = 0;
+        ArrayList<Pair> curva = new ArrayList<>();
 
         try {
             Scanner lector = new Scanner(new File(args[0]));
@@ -49,11 +57,36 @@ public class Main {
 
             lector.close();
 
-        } catch (FileNotFoundException e) {
+            String row;
+            BufferedReader csvReader = new BufferedReader(new FileReader("CorreccionDCM.csv"));
+            csvReader.readLine();
+            while ((row = csvReader.readLine()) != null) {
+                String[] data = row.split(",");
+                curva.add(new Pair(Double.valueOf(data[0]), Double.valueOf(data[11])));
+            }
+            csvReader.close();
+
+        } catch (IOException e) {
             System.out.println("Ocurrió un error al leer el archivo de data estática" + ' ' + args[1] + '.');
             e.printStackTrace();
             exit(1);
         }
+
+        double y;
+        double error;
+        ArrayList<String> sError = new ArrayList<>();
+        sError.add("Pendiente,Error");
+        for(double m = 0; m < 0.1; m += 0.001) {
+            error = 0;
+            for(Pair pair : curva) {
+                y = m * pair.first + 1.5;
+                error += Math.pow((pair.second - y), 2);
+            }
+            sError.add(m + "," + error);
+        }
+
+
+        writeFile(sError, "Error.csv", false);
 
         ArrayList<Particula> particulas;
 
@@ -62,6 +95,7 @@ public class Main {
         ArrayList<String> Sparticulas = g.toStringParticulas();
         ArrayList<String> STrayPartGrande = new ArrayList<>();
         ArrayList<String> SDCM = new ArrayList<>();
+        ArrayList<Pair> sPosicion = new ArrayList<>();
 
         Calculator calculador = new Calculator(l, particulas, g.getParticulaGrande());
 
@@ -80,7 +114,7 @@ public class Main {
             if(prox_choque.getP1().getId() == 1 && prox_choque.getP2() == null)
                 grandeNoChocoPared = false;
 
-            //System.out.println("TC: " + delta_t_acum);
+            System.out.println("TC: " + delta_t_acum);
 
             STrayPartGrande.add(calculador.getPosicionParticulaGrande());
 
@@ -88,7 +122,8 @@ public class Main {
                 Sparticulas = calculador.toStringParticulas();
                 writeXYZ(Sparticulas, "output.xyz", true);
 
-                SDCM.add(Math.floor(delta_t_acum) + ";" + calculador.getDCM(true) + ";" + calculador.getDCM(false));
+                calculador.addsPosicion();
+                //SDCM.add(Math.floor(delta_t_acum) + ";" + calculador.getDCM(true) + ";" + calculador.getDCM(false));
                 t_arbitrario++;
             }
 
@@ -98,12 +133,29 @@ public class Main {
         STrayPartGrande.add(0,"X;Y");
         writeFile(STrayPartGrande, "Trayectoria.csv", false);
 
-        int aux = SDCM.size();
+        sPosicion = calculador.getsPosicion();
+        int aux = sPosicion.size();
         for(int i = 0; i < aux / 2; i++) {
-            SDCM.remove(0);
+            sPosicion.remove(0);
         }
-        SDCM.add(0, "Tiempo;GrandeDCM;ChicaDCM");
-        writeFile(SDCM, "DCM1.csv", false);
+
+        calcularDCM(sPosicion);
+    }
+
+    private static void calcularDCM(ArrayList<Pair> sPosicion) {
+        Pair posicionInicial = sPosicion.get(0);
+        double dist_x, dist_y, DCM;
+        ArrayList<String> sDCM = new ArrayList<>();
+        sDCM.add("Tiempo,DCM");
+        int tiempo = 1;
+        for(Pair current: sPosicion) {
+            dist_x = current.first - posicionInicial.first;
+            dist_y = current.second - posicionInicial.second;
+            DCM = dist_x * dist_x + dist_y * dist_y;
+            sDCM.add(tiempo + "," + DCM);
+            tiempo++;
+        }
+        writeFile(sDCM, "DCM1.csv", false);
     }
 
     public static void writeXYZ(ArrayList<String> output, String fileName, boolean append) {

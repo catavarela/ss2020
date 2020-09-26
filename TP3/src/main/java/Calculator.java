@@ -6,10 +6,12 @@ public class Calculator {
 
     private ArrayList<String> sParticulas = new ArrayList<>();
     private ArrayList<Particula> particulas;
+    private ArrayList<Pair> sPosicion = new ArrayList<>();
     private Particula particulaGrande;
     private Particula particulaChica;
     private double x_inicial;
     private double y_inicial;
+
 
     public Calculator(double l, ArrayList<Particula> particulas, Particula particulaGrande) {
         this.l = l;
@@ -18,6 +20,10 @@ public class Calculator {
         this.particulaChica = particulas.get(1);
         x_inicial = particulaChica.getX();
         y_inicial = particulaChica.getY();
+    }
+
+    public void addsPosicion() {
+        sPosicion.add(new Pair(particulaGrande.getX(), particulaGrande.getY()));
     }
 
     public Choque actualizacion() {
@@ -234,4 +240,7 @@ public class Calculator {
         return DCM;
     }
 
+    public ArrayList<Pair> getsPosicion() {
+        return sPosicion;
+    }
 }
