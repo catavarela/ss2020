@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args){
         double current_t = 0;
         Oscilator oscilator = new Oscilator();
-        
+
         List<String> analyticResults = new ArrayList<String>();
         analyticResults.add("Time,Position");
 
