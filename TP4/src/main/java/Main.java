@@ -6,16 +6,18 @@ import java.util.List;
 
 public class Main {
     private static double final_t = 5; //s
-    private static double delta_t = 1/60f; //s
+    private static double delta_t = 1/1000f; //s
+
     public static void main(String[] args){
         double current_t = 0;
         Oscilator oscilator = new Oscilator();
 
         List<String> analyticResults = new ArrayList<String>();
-        analyticResults.add("Time,Position");
+        analyticResults.add("Time,Analytic Solution, Velocity Verlet");
 
         while(current_t < final_t) {
-            analyticResults.add(current_t + "," + oscilator.analyticSolution(current_t));
+            oscilator.velocityVerlet(current_t, delta_t);
+            analyticResults.add(current_t + "," + oscilator.analyticSolution(current_t) + "," + oscilator.getR(current_t));
             current_t += delta_t;
         }
 
