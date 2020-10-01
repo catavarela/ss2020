@@ -5,23 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Main {
-    private static double final_t = 5; //s
-    private static double delta_t = 1/1000f; //s
+    private static double final_t = 10; //s
+    private static double delta_t = 1/1000d; //s
 
     public static void main(String[] args){
-        double current_t = 0;
         Oscilator oscilator = new Oscilator();
 
-        List<String> analyticResults = new ArrayList<String>();
-        analyticResults.add("Time,Analytic Solution, Velocity Verlet");
-
-        while(current_t < final_t) {
-            oscilator.velocityVerlet(current_t, delta_t);
-            analyticResults.add(current_t + "," + oscilator.analyticSolution(current_t) + "," + oscilator.getR(current_t));
-            current_t += delta_t;
-        }
-
-        writeFile(analyticResults, "results.csv");
+        writeFile(oscilator.calculate(final_t,delta_t, Metodo.VERLET), "results.csv");
     }
 
     public static void writeFile(List<String> output, String fileName){
