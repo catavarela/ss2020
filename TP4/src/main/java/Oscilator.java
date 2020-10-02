@@ -75,10 +75,10 @@ public class Oscilator {
 
         r_derivatives[0] = r.get(t);
         r_derivatives[1] = v.get(t);
-        r_derivatives[2] = force(t)/m;  //-k * r0 - gamma * r1
-        r_derivatives[3] = (-k*r_derivatives[1] - gamma*r_derivatives[2])/m;    //(-k * r1 - gamma * r2)/m
-        r_derivatives[4] = (-k*r_derivatives[2] - gamma*r_derivatives[3])/m;    //(-k * r2 - gamma * r3)/m
-        r_derivatives[5] = (-k*r_derivatives[3] - gamma*r_derivatives[4])/m;    //(-k * r3 - gamma * r4)/m
+        r_derivatives[2] = force(t)/m; 
+        r_derivatives[3] = (-k*r_derivatives[1] - gamma*r_derivatives[2])/m;
+        r_derivatives[4] = (-k*r_derivatives[2] - gamma*r_derivatives[3])/m;
+        r_derivatives[5] = (-k*r_derivatives[3] - gamma*r_derivatives[4])/m;
 
         return r_derivatives;
     }
@@ -99,7 +99,6 @@ public class Oscilator {
     private double evaluateGear(double t, double delta_t, double [] r_predictions){
         double next_a = force(r_predictions[0], r_predictions[1]) / m;
         double delta_a = next_a - r_predictions[2];
-        //double delta_R2 = delta_a*Math.pow(delta_t, 2)/2;
 
         return delta_a*Math.pow(delta_t, 2)/2;
     }
