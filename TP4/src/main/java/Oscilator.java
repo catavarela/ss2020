@@ -40,11 +40,11 @@ public class Oscilator {
         }
     }
 
-    public double force(double t) {
+    private double force(double t) {
         return -k * r.get(t) - gamma * v.get(t);
     }
 
-    public double force(double r, double v) {
+    private double force(double r, double v) {
         return -k * r - gamma * v;
     }
 
@@ -96,14 +96,14 @@ public class Oscilator {
         return r_predictions;
     }
 
-    private double evaluateGear(double t, double delta_t, double [] r_predictions){
+    private double evaluateGear(double delta_t, double [] r_predictions){
         double next_a = force(r_predictions[0], r_predictions[1]) / m;
         double delta_a = next_a - r_predictions[2];
 
         return delta_a*Math.pow(delta_t, 2)/2;
     }
 
-    private double [] correctGear(double t, double delta_t, double [] r_predictions, double delta_R2){
+    private double [] correctGear(double delta_t, double [] r_predictions, double delta_R2){
         double [] r_corrected = new double[2];
 
         r_corrected[0] = r_predictions[0] + (3.0/20)*delta_R2;
@@ -123,9 +123,9 @@ public class Oscilator {
 
         r_predictions = predictGear(t, delta_t, r_derivatives);
 
-        delta_R2 = evaluateGear(t, delta_t, r_predictions);
+        delta_R2 = evaluateGear(delta_t, r_predictions);
 
-        r_corrected = correctGear(t, delta_t, r_predictions, delta_R2);
+        r_corrected = correctGear(delta_t, r_predictions, delta_R2);
 
         r.put(t + delta_t, r_corrected[0]);
         v.put(t + delta_t, r_corrected[1]);
