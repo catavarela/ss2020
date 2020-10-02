@@ -34,6 +34,9 @@ public class Oscilator {
             case GEAR:
                 results.add("Time, Analytic Solution, Gear");
                 break;
+            case EULER:
+                results.add("Time, Analytic Solution, Euler");
+                break;
         }
     }
 
@@ -55,7 +58,7 @@ public class Oscilator {
         return r.get(t);
     }
 
-    private void Euler(double t, double delta_t) {
+    private void EulerIteration(double t, double delta_t) {
         if (v.containsKey(t + delta_t) && r.containsKey(t + delta_t)) {
             return;
         }
@@ -67,6 +70,67 @@ public class Oscilator {
         r.put(t + delta_t, position);
     }
 
+    private double [] r_derivatives(double t){
+        double [] r_derivatives = new double[6];
+
+        r_derivatives[0] = r.get(t);
+        r_derivatives[1] = v.get(t);
+        r_derivatives[2] = force(t)/m;  //-k * r0 - gamma * r1
+        r_derivatives[3] = (-k*r_derivatives[1] - gamma*r_derivatives[2])/m;    //(-k * r1 - gamma * r2)/m
+        r_derivatives[4] = (-k*r_derivatives[2] - gamma*r_derivatives[3])/m;    //(-k * r2 - gamma * r3)/m
+        r_derivatives[5] = (-k*r_derivatives[3] - gamma*r_derivatives[4])/m;    //(-k * r3 - gamma * r4)/m
+
+        return r_derivatives;
+    }
+
+    private double [] predictGear(double t, double delta_t, double [] r_derivatives){
+        double [] r_predictions = new double[6];
+
+        r_predictions[0] = r_derivatives[0] + r_derivatives[1]*delta_t + r_derivatives[2]*Math.pow(delta_t, 2)/2 + r_derivatives[3]*Math.pow(delta_t, 3)/6 + r_derivatives[4]*Math.pow(delta_t, 4)/24 + r_derivatives[5]*Math.pow(delta_t, 5)/120;
+        r_predictions[1] = r_derivatives[1] + r_derivatives[2]*delta_t + r_derivatives[3]*Math.pow(delta_t, 2)/2 + r_derivatives[4]*Math.pow(delta_t, 3)/6 + r_derivatives[5]*Math.pow(delta_t, 4)/24;
+        r_predictions[2] = r_derivatives[2] + r_derivatives[3]*delta_t + r_derivatives[4]*Math.pow(delta_t, 2)/2 + r_derivatives[5]*Math.pow(delta_t, 3)/6;
+        r_predictions[3] = r_derivatives[3] + r_derivatives[4]*delta_t + r_derivatives[5]*Math.pow(delta_t, 2)/2;
+        r_predictions[4] = r_derivatives[4] + r_derivatives[5]*delta_t;
+        r_predictions[5] = r_derivatives[5];
+
+        return r_predictions;
+    }
+
+    private double evaluateGear(double t, double delta_t, double [] r_predictions){
+        double next_a = force(r_predictions[0], r_predictions[1]) / m;
+        double delta_a = next_a - r_predictions[2];
+        //double delta_R2 = delta_a*Math.pow(delta_t, 2)/2;
+
+        return delta_a*Math.pow(delta_t, 2)/2;
+    }
+
+    private double [] correctGear(double t, double delta_t, double [] r_predictions, double delta_R2){
+        double [] r_corrected = new double[2];
+
+        r_corrected[0] = r_predictions[0] + (3.0/20)*delta_R2;
+        r_corrected[1] = r_predictions[1] + (251.0/360)*delta_R2/delta_t;
+
+        return r_corrected;
+    }
+
+    private void GearIteration(double t, double delta_t){
+        double [] r_predictions;
+        double [] r_derivatives;
+        double [] r_corrected;
+
+        double delta_R2;
+
+        r_derivatives = r_derivatives(t);
+
+        r_predictions = predictGear(t, delta_t, r_derivatives);
+
+        delta_R2 = evaluateGear(t, delta_t, r_predictions);
+
+        r_corrected = correctGear(t, delta_t, r_predictions, delta_R2);
+
+        r.put(t + delta_t, r_corrected[0]);
+        v.put(t + delta_t, r_corrected[1]);
+    }
 
     public List<String> calculate(double final_t, double delta_t, Metodo metodo){
         double current_t = 0d;
@@ -82,7 +146,10 @@ public class Oscilator {
                     BeemanIteration(current_t, delta_t);
                     break;
                 case GEAR:
-                    //TODO
+                    GearIteration(current_t, delta_t);
+                    break;
+                case EULER:
+                    EulerIteration(current_t, delta_t);
                     break;
             }
 

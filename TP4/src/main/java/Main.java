@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args){
         Oscilator oscilator = new Oscilator();
 
-        writeFile(oscilator.calculate(final_t,delta_t, Metodo.VERLET), "results.csv");
+        writeFile(oscilator.calculate(final_t,delta_t, Metodo.GEAR), "results.csv");
     }
 
     public static void writeFile(List<String> output, String fileName){
