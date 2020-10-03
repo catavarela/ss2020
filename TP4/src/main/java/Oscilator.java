@@ -23,6 +23,10 @@ public class Oscilator {
 
     public void resetResults(Metodo metodo){
         results.clear();
+        r.clear();
+        v.clear();
+        r.put(0d, 1d);
+        v.put(0d, -A * gamma / (2 * m));
 
         switch (metodo){
             case VERLET:
@@ -75,7 +79,7 @@ public class Oscilator {
 
         r_derivatives[0] = r.get(t);
         r_derivatives[1] = v.get(t);
-        r_derivatives[2] = force(t)/m; 
+        r_derivatives[2] = force(t)/m;
         r_derivatives[3] = (-k*r_derivatives[1] - gamma*r_derivatives[2])/m;
         r_derivatives[4] = (-k*r_derivatives[2] - gamma*r_derivatives[3])/m;
         r_derivatives[5] = (-k*r_derivatives[3] - gamma*r_derivatives[4])/m;
@@ -131,26 +135,30 @@ public class Oscilator {
         v.put(t + delta_t, r_corrected[1]);
     }
 
+    private void calculateNextIteration(double current_t, double delta_t, Metodo metodo){
+        switch (metodo){
+            case VERLET:
+                velocityVerletIteration(current_t, delta_t);
+                break;
+            case BEEMAN:
+                BeemanIteration(current_t, delta_t);
+                break;
+            case GEAR:
+                GearIteration(current_t, delta_t);
+                break;
+            case EULER:
+                EulerIteration(current_t, delta_t);
+                break;
+        }
+    }
+
     public List<String> calculate(double final_t, double delta_t, Metodo metodo){
         double current_t = 0d;
 
         resetResults(metodo);
 
         while(current_t < final_t) {
-            switch (metodo){
-                case VERLET:
-                    velocityVerletIteration(current_t, delta_t);
-                    break;
-                case BEEMAN:
-                    BeemanIteration(current_t, delta_t);
-                    break;
-                case GEAR:
-                    GearIteration(current_t, delta_t);
-                    break;
-                case EULER:
-                    EulerIteration(current_t, delta_t);
-                    break;
-            }
+            calculateNextIteration(current_t, delta_t, metodo);
 
             results.add(current_t + ", " + analyticSolution(current_t) + ", " + getR(current_t));
             current_t += delta_t;
