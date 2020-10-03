@@ -13,8 +13,7 @@ public class Main {
 
         while(order >= -6) {
             delta_t = Math.pow(10, order);
-            writeFile(oscilator.calculate(final_t, delta_t, Metodo.VERLET), "results.csv");
-            System.out.println(order);
+            writeFile(oscilator.calculate(final_t, delta_t, Metodo.BEEMAN), "results.csv");
             order--;
         }
 
