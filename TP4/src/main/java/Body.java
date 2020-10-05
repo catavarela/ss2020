@@ -8,18 +8,17 @@ public class Body {
     private Map<Double, Double[]> r = new HashMap<Double, Double[]>();
     private Map<Double, Double[]> v = new HashMap<Double, Double[]>();
 
-    public Body(double m, double r0, double v0, String name){
+    public Body(double m, double x0, double y0, double vx0, double vy0, String name){
         this.m = m;
         this.name = name;
 
-        r.put(0d, descomposition(r0));
-        v.put(0d, descomposition(v0));
+        r.put(0d, new Double[]{x0, y0});
+        v.put(0d, new Double[]{vx0, vy0});
     }
 
-    //TODO: en un principio está descompuesto pero si en el post nos quedan archivos muy grandes podemos guardarlo sin descomponer y después descomponer en el post
     public String getOutput(double t){
         Double[] pos,vel;
-        pos = r.get(t); vel = v.get(t);
+        pos = getR(t); vel = getV(t);
 
         return "" + pos[0] + ", " + pos[1] + ", " + vel[0] + ", " + vel[1];
     }
@@ -44,7 +43,7 @@ public class Body {
         v.clear();
     }
 
-    //TODO: ver cómo es la descomposición
+    /*
     public static Double[] descomposition(double value){
         Double[] componentes = new Double[2];
 
@@ -52,17 +51,23 @@ public class Body {
         componentes[1] = value;
 
         return componentes;
-    }
+    }*/
 
     public double getM() {
         return m;
     }
 
     public Double[] getR(double t) {
+        if(name.equals("Sol"))
+            return r.get(0d);
+
         return r.get(t);
     }
 
     public Double[] getV(double t) {
+        if(name.equals("Sol"))
+            return v.get(0d);
+
         return v.get(t);
     }
 
