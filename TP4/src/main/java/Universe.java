@@ -107,7 +107,7 @@ public class Universe {
         double [] aux_force;
         Body other_b;
 
-        for(int i = 0; i < celestial_bodies.size()-1; i++){
+        for(int i = 0; i < celestial_bodies.size(); i++){
             other_b = celestial_bodies.get(i);
 
             if(!body.getName().equals(other_b.getName())){
@@ -172,21 +172,21 @@ public class Universe {
 
         Body b;
 
-        for(int i = 0; i < celestial_bodies.size()-2; i++){
+        for(int i = 0; i < celestial_bodies.size()-1; i++){
             b = celestial_bodies.get(i+1);
             forces_t[i] = calculateForce(b, t); //paso 0
         }
 
         moveSistWithForceInTVerlet(t, delta_t, forces_t); //pasos 1, 2 y 3
 
-        for(int i = 0; i < celestial_bodies.size()-2; i++){
+        for(int i = 0; i < celestial_bodies.size()-1; i++){
             b = celestial_bodies.get(i+1);
             forces[i] = calculateForce(b, t + delta_t/2); //paso 4
         }
 
         newVelWithForceTPlusHalfDeltaT(t, delta_t, forces); //paso 5
 
-        for(int i = 0; i < celestial_bodies.size()-2; i++){
+        for(int i = 0; i < celestial_bodies.size()-1; i++){
             b = celestial_bodies.get(i+1);
             forces[i] = calculateForce(b, t + delta_t); //paso 6
         }
@@ -317,7 +317,6 @@ public class Universe {
         }
     }
 
-    //TODO: si falla puede ser que sea porque hay que calcular las distancias entre los cuerpos sin usar las derivadas, usando las posiciones
     private Double[][][] calculateDerivatives(double t){
         Double[][][] r_derivatives = new Double[2][6][2];
         Double [] all_r_derivatives_sun = new Double[]{0d,0d};
@@ -456,7 +455,7 @@ public class Universe {
 
     private void Gear(double t, double delta_t){
         Double [][][] r_predictions = new Double[2][6][2];
-        Double [][][] r_derivatives = new Double[2][6][2];
+        Double [][][] r_derivatives;
         Double [][] corrected;
         double [][] delta_R2 = new double[2][2];
         Body b;
