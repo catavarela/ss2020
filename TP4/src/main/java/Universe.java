@@ -198,9 +198,10 @@ public class Universe {
     private void newVelWithForceTPlusDeltaT(double t, double delta_t, double [][] forces, double [][] forces_t){
         Body b;
         Double[] v;
-        Double[] new_v = new Double[2];
+        Double[] new_v;
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
+            new_v = new Double[2];
             b = celestial_bodies.get(i+1);
             v=b.getV(t);
 
@@ -213,9 +214,10 @@ public class Universe {
     private void newVelWithForceTPlusHalfDeltaT(double t, double delta_t, double [][] forces){
         Body b;
         Double[] v;
-        Double[] new_v = new Double[2];
+        Double[] new_v;
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
+            new_v = new Double[2];
             b = celestial_bodies.get(i+1);
             v = b.getV(t + delta_t/2);
 
@@ -228,11 +230,15 @@ public class Universe {
     private void moveSistWithForceInTVerlet(double t, double delta_t, double [][] forces){
         Body b;
         Double[] r, v;
-        Double[] new_r = new Double[2];
-        Double[] new_v = new Double[2];
-        Double[] aux_r = new Double[2];
+        Double[] new_r;
+        Double[] new_v;
+        Double[] aux_r;
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
+            new_r = new Double[2];
+            new_v = new Double[2];
+            aux_r = new Double[2];
+
             b = celestial_bodies.get(i+1);
             r = b.getR(t);
             v = b.getV(t);
