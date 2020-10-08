@@ -20,7 +20,7 @@ public class Body {
         Double[] pos,vel;
         pos = getR(t); vel = getV(t);
 
-        return "" + pos[0] + ", " + pos[1] + ", " + vel[0] + ", " + vel[1];
+        return "" + pos[0] + ", " + pos[1] + ", " + vel[0] + ", " + vel[1] + ", ";
     }
 
     public String getName() {

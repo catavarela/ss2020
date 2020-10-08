@@ -6,9 +6,9 @@ public class Universe {
     private List<Body> celestial_bodies = new ArrayList<Body>();
     private List<String> results = new ArrayList<String>();
 
-    public Universe(double G, double x0_s, double y0_s, double vx0_s, double vy0_s,
-                    double x0_t, double y0_t, double vx0_t, double vy0_t,
-                    double x0_m, double y0_m, double vx0_m, double vy0_m, double ms, double mt, double mm){
+    public Universe(double G, double ms, double x0_s, double y0_s, double vx0_s, double vy0_s,
+                    double mt, double x0_t, double y0_t, double vx0_t, double vy0_t,
+                    double mm, double x0_m, double y0_m, double vx0_m, double vy0_m){
 
         this.G = G;
 
@@ -18,7 +18,7 @@ public class Universe {
     }
 
     public void startResults(){
-        String start = "Time, ";
+        String start = "Time";
 
         for(Body b : celestial_bodies)
             start += ", Position x " + b.getName() + ", Position y " + b.getName() + ", Velocity x " + b.getName() + ", Velocity y " + b.getName();
@@ -46,17 +46,18 @@ public class Universe {
 
     public List<String> calculate(double final_t, double delta_t, Metodo metodo){
         double current_t = 0d;
-        String result = "";
+        String result;
 
         startResults();
 
         while(current_t < final_t) {
+            result = "";
             calculateNextIteration(current_t, delta_t, metodo);
 
             for (Body b : celestial_bodies)
                 result += b.getOutput(current_t);
 
-            results.add(current_t + result);
+            results.add(current_t + ", " + result);
             current_t += delta_t;
         }
 
@@ -483,5 +484,9 @@ public class Universe {
             b.putR(t + delta_t, corrected[0]);
             b.putV(t + delta_t, corrected[1]);
         }
+    }
+
+    public List<String> getResults() {
+        return results;
     }
 }
