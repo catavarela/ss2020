@@ -17,7 +17,7 @@ public class Universe {
         celestial_bodies.add(new Body(mm, x0_m, y0_m, vx0_m, vy0_m, "Marte"));
     }
 
-    public void startResults(){
+    /*public void startResults(){
         String start = "Time";
 
         for(Body b : celestial_bodies)
@@ -25,7 +25,7 @@ public class Universe {
 
 
         results.add(start);
-    }
+    }*/
 
     private void calculateNextIteration(double current_t, double delta_t, Metodo metodo){
         switch (metodo){
@@ -40,18 +40,20 @@ public class Universe {
 
     public List<String> calculate(double final_t, double delta_t, Metodo metodo){
         double current_t = 0d;
-        String result;
 
-        startResults();
+        //startResults();
 
         while(current_t < final_t) {
-            result = "";
+            //result = "";
             calculateNextIteration(current_t, delta_t, metodo);
 
-            for (Body b : celestial_bodies)
-                result += b.getOutput(current_t);
+            results.add("" + (int)current_t);
 
-            results.add(current_t + ", " + result);
+            for (Body b : celestial_bodies) {
+                results.add(b.getOutput(current_t));
+            }
+
+            //results.add(current_t + ", " + result);
             current_t += delta_t;
         }
 
@@ -71,7 +73,7 @@ public class Universe {
 
         force = force(m1, m2, distance);
 
-        teta = Math.atan((r2[1] - r1[1]) / (r2[0]-r1[0]));
+        teta = Math.atan2((r2[1] - r1[1]), (r2[0]-r1[0]));
 
         decomp_force[0] = force * Math.cos(teta);
         decomp_force[1] = force * Math.sin(teta);
@@ -140,7 +142,6 @@ public class Universe {
         velocity[0] = vt[0] + (delta_t / b.getM()) * force[0];
         velocity[1] = vt[1] + (delta_t / b.getM()) * force[1];
         b.putV(t + delta_t, velocity);
-
         Double[] position = new Double[2];
 
         position[0] = rt[0] + delta_t * vt[0] + (Math.pow(delta_t, 2) / (2 * b.getM())) * force[0];

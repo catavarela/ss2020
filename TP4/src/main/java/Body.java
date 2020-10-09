@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Body {
@@ -17,10 +18,12 @@ public class Body {
     }
 
     public String getOutput(double t){
-        Double[] pos,vel;
-        pos = getR(t); vel = getV(t);
+        Double[] pos;
+        pos = getR(t);
 
-        return "" + pos[0] + ", " + pos[1] + ", " + vel[0] + ", " + vel[1] + ", ";
+        //return "" + pos[0] + ", " + pos[1] + ", " + vel[0] + ", " + vel[1] + ", ";
+
+        return String.format(Locale.US, "%6.7e", pos[0]) + "    " + String.format(Locale.US, "%6.7e", pos[1]);
     }
 
     public String getName() {
