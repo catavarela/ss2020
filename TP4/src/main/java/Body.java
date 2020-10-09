@@ -72,10 +72,12 @@ public class Body {
     }
 
     public void putR(double t, Double[] r) {
-        this.r.put(t, new Double[]{r[0], r[1]});
+        if(!name.equals("Sol"))
+            this.r.put(t, new Double[]{r[0], r[1]});
     }
 
     public void putV(double t, Double[] v) {
-        this.v.put(t, new Double[]{v[0], v[1]});
+        if(!name.equals("Sol"))
+            this.v.put(t, new Double[]{v[0], v[1]});
     }
 }
