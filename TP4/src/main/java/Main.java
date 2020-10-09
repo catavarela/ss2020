@@ -11,7 +11,7 @@ public class Main {
         Universe universe = new Universe( Constants.G, Constants.sun_mass, Constants.x0_sun, Constants.y0_sun, Constants.vx0_sun, Constants.vy0_sun,
                 Constants.earth_mass, Constants.x0_earth, Constants.y0_earth, Constants.vx0_earth, Constants.vy0_earth,
                 Constants.mars_mass, Constants.x0_mars, Constants.y0_mars, Constants.vx0_mars, Constants.vy0_mars);
-        universe.calculate(final_t, delta_t, Metodo.EULER);
+        universe.calculate(final_t, delta_t, Metodo.VERLET);
         writeFile(universe.getResults(), "test_run.tsv");
     }
 

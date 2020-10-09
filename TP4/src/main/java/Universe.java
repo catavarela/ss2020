@@ -35,6 +35,9 @@ public class Universe {
             case EULER:
                 Euler(current_t, delta_t);
                 break;
+            case VERLET:
+                Verlet(current_t, delta_t);
+                break;
         }
     }
 
@@ -118,6 +121,102 @@ public class Universe {
         }
 
         return force;
+    }
+
+    //0) Calcular fuerza en t                                           DONE
+    //1) calcular nuevas posiciones del sistema para t + delta_t        DONE
+    //2) calcular nuevas velocidades del sistema para t + delta_t/2     DONE
+    //3) calcular nuevas posiciones del sistema para t + delta_t/2      DONE
+    //4) calcular fuerza en t + delta_t/2                               DONE
+    //5) calcular nuevas velocidades del sistema para t + delta_t       DONE
+    //6) calcular fuerza en t + delta_t                                 DONE
+    //7) calcular nuevas velocidades del sistema para t + delta_t       DONE
+
+    private void Verlet(double t, double delta_t){
+        double[][] forces_t = new double[2][2];
+        double[][] forces = new double[2][2];
+
+        Body b;
+
+        for(int i = 0; i < celestial_bodies.size()-1; i++){
+            b = celestial_bodies.get(i+1);
+            forces_t[i] = calculateForce(b, t); //paso 0
+        }
+
+        moveSistWithForceInTVerlet(t, delta_t, forces_t); //pasos 1, 2 y 3
+
+        for(int i = 0; i < celestial_bodies.size()-1; i++){
+            b = celestial_bodies.get(i+1);
+            forces[i] = calculateForce(b, t + delta_t/2); //paso 4
+        }
+
+        newVelWithForceTPlusHalfDeltaT(t, delta_t, forces); //paso 5
+
+        for(int i = 0; i < celestial_bodies.size()-1; i++){
+            b = celestial_bodies.get(i+1);
+            forces[i] = calculateForce(b, t + delta_t); //paso 6
+        }
+
+        newVelWithForceTPlusDeltaT(t, delta_t, forces, forces_t);   //paso 7
+    }
+
+    private void newVelWithForceTPlusDeltaT(double t, double delta_t, double [][] forces, double [][] forces_t){
+        Body b;
+        Double[] v;
+        Double[] new_v = new Double[2];
+
+        for(int i = 0; i < celestial_bodies.size()-1; i++){
+
+            b = celestial_bodies.get(i+1);
+            v=b.getV(t);
+
+            new_v[0] = v[0] + (delta_t / (2*b.getM())) * (forces_t[i][0] + forces[i][0]);
+            new_v[1] = v[1] + (delta_t / (2*b.getM())) * (forces_t[i][1] + forces[i][1]);
+            b.putV(t + delta_t, new_v);
+        }
+    }
+
+    private void newVelWithForceTPlusHalfDeltaT(double t, double delta_t, double [][] forces){
+        Body b;
+        Double[] v;
+        Double[] new_v = new Double[2];
+
+        for(int i = 0; i < celestial_bodies.size()-1; i++){
+
+            b = celestial_bodies.get(i+1);
+            v = b.getV(t + delta_t/2);
+
+            new_v[0] = v[0] + (delta_t / (2*b.getM())) * forces[i][0];
+            new_v[1] = v[1] + (delta_t / (2*b.getM())) * forces[i][1];
+            b.putV(t + delta_t, new_v);
+        }
+    }
+
+    private void moveSistWithForceInTVerlet(double t, double delta_t, double [][] forces){
+        Body b;
+        Double[] r, v;
+        Double[] new_r = new Double[2];
+        Double[] new_v = new Double[2];
+        Double[] aux_r = new Double[2];
+
+        for(int i = 0; i < celestial_bodies.size()-1; i++){
+
+            b = celestial_bodies.get(i+1);
+            r = b.getR(t);
+            v = b.getV(t);
+
+            new_r[0] = r[0] + delta_t * v[0] + (Math.pow(delta_t, 2) / b.getM()) * forces[i][0];
+            new_r[1] = r[1] + delta_t * v[1] + (Math.pow(delta_t, 2) / b.getM()) * forces[i][1];
+            b.putR(t + delta_t, new_r);
+
+            new_v[0] = v[0] + (delta_t / (2*b.getM())) * forces[i][0];
+            new_v[1] = v[1] + (delta_t / (2*b.getM())) * forces[i][1];
+            b.putV(t + delta_t/2, new_v);
+
+            aux_r[0] = r[0] + (delta_t/2) * v[0] + (Math.pow(delta_t/2, 2) / b.getM()) * forces[i][0];
+            aux_r[1] = r[1] + (delta_t/2) * v[1] + (Math.pow(delta_t/2, 2) / b.getM()) * forces[i][1];
+            b.putR(t + delta_t/2, aux_r);
+        }
     }
 
     private void Euler(double t, double delta_t){
