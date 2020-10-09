@@ -1,5 +1,5 @@
 public class Constants {
-    public static double G = 6.693 * Math.pow(10,-11);
+    public static double G = 6.67430 * Math.pow(10,-8);
     public static double sun_mass = 1988500 * Math.pow(10,24);
     public static double x0_sun = 0.0;
     public static double y0_sun = 0.0;

@@ -198,10 +198,10 @@ public class Universe {
     private void newVelWithForceTPlusDeltaT(double t, double delta_t, double [][] forces, double [][] forces_t){
         Body b;
         Double[] v;
-        Double[] new_v;
+        Double[] new_v = new Double[2];
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
-            new_v = new Double[2];
+
             b = celestial_bodies.get(i+1);
             v=b.getV(t);
 
@@ -214,10 +214,10 @@ public class Universe {
     private void newVelWithForceTPlusHalfDeltaT(double t, double delta_t, double [][] forces){
         Body b;
         Double[] v;
-        Double[] new_v;
+        Double[] new_v = new Double[2];
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
-            new_v = new Double[2];
+
             b = celestial_bodies.get(i+1);
             v = b.getV(t + delta_t/2);
 
@@ -230,14 +230,11 @@ public class Universe {
     private void moveSistWithForceInTVerlet(double t, double delta_t, double [][] forces){
         Body b;
         Double[] r, v;
-        Double[] new_r;
-        Double[] new_v;
-        Double[] aux_r;
+        Double[] new_r = new Double[2];
+        Double[] new_v = new Double[2];
+        Double[] aux_r = new Double[2];
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
-            new_r = new Double[2];
-            new_v = new Double[2];
-            aux_r = new Double[2];
 
             b = celestial_bodies.get(i+1);
             r = b.getR(t);
@@ -270,12 +267,14 @@ public class Universe {
         double[][] forces = new double[2][2];
         double[][] prev_a = new double[2][2];
 
-        Double[] [] current_r = new Double[2][2];
-        Double[] [] current_v = new Double[2][2];
-        Double[] [] current_a = new Double[2][2];
+        Double[][] current_r = new Double[2][2];
+        Double[][] current_v = new Double[2][2];
+        Double[][] current_a = new Double[2][2];
 
-        Double[] [] next_r = new Double[2][2];
-        Double[] [] next_v = new Double[2][2];
+        Double[][] next_r = new Double[3][3];
+        next_r[0] = celestial_bodies.get(0).getR(0);
+
+        Double[][] next_v = new Double[2][2];
         double[][] next_a = new double[2][2];
 
         Body b;
@@ -288,8 +287,10 @@ public class Universe {
                 prev_a[i][0] = forces[i][0] / b.getM(); //paso 2
                 prev_a[i][1] = forces[i][1] / b.getM(); //paso 2
             }
-            else
-                prev_a[i][0] = prev_a[i][1] = 0d;   //paso 2
+            else {
+                prev_a[i][0] = 0d;      //paso 2
+                prev_a[i][1] = 0d;      //paso 2
+            }
 
             forces[i] = calculateForce(b, t);
 
@@ -299,8 +300,8 @@ public class Universe {
             current_a[i][0] = forces[i][0] / b.getM();  //paso 3
             current_a[i][1] = forces[i][1] / b.getM();  //paso 3
 
-            next_r[i][0] = current_r[i][0] + current_v[i][0] * delta_t + (2.0/3) * current_a[i][0] * Math.pow(delta_t, 2) - (1.0/6) * prev_a[i][0] * Math.pow(delta_t, 2);  //paso 4
-            next_r[i][1] = current_r[i][1] + current_v[i][1] * delta_t + (2.0/3) * current_a[i][1] * Math.pow(delta_t, 2) - (1.0/6) * prev_a[i][1] * Math.pow(delta_t, 2);  //paso 4
+            next_r[i+1][0] = current_r[i][0] + current_v[i][0] * delta_t + (2.0/3) * current_a[i][0] * Math.pow(delta_t, 2) - (1.0/6) * prev_a[i][0] * Math.pow(delta_t, 2);  //paso 4
+            next_r[i+1][1] = current_r[i][1] + current_v[i][1] * delta_t + (2.0/3) * current_a[i][1] * Math.pow(delta_t, 2) - (1.0/6) * prev_a[i][1] * Math.pow(delta_t, 2);  //paso 4
 
             next_v[i][0] = current_v[i][0] + (3.0/2) * current_a[i][0] * delta_t - (1.0/2) * prev_a[i][0] * delta_t;    //paso 5
             next_v[i][1] = current_v[i][1] + (3.0/2) * current_a[i][1] * delta_t - (1.0/2) * prev_a[i][1] * delta_t;    //paso 5
@@ -310,7 +311,7 @@ public class Universe {
         for(int i = 0; i < celestial_bodies.size()-1; i++) {
             b = celestial_bodies.get(i + 1);
 
-            forces[i] = calculateForce(b, next_r[i], next_r);
+            forces[i] = calculateForce(b, next_r[i+1], next_r);
 
             next_a[i][0] = forces[i][0] / b.getM(); //paso 6
             next_a[i][1] = forces[i][1] / b.getM(); //paso 6
@@ -319,15 +320,15 @@ public class Universe {
             next_v[i][1] = current_v[i][1] + (1.0/3) * next_a[i][1] * delta_t + (5.0/6) * current_a[i][1] * delta_t - (1.0/6) * prev_a[i][1] * delta_t; //paso 7
 
 
-            b.putR(t + delta_t, next_r[i]); //paso 8
-            b.putR(t + delta_t, next_v[i]); //paso 8
+            b.putR(t + delta_t, next_r[i+1]); //paso 8
+            b.putV(t + delta_t, next_v[i]); //paso 8
         }
     }
 
     private Double[][][] calculateDerivatives(double t){
         Double[][][] r_derivatives = new Double[2][6][2];
         Double [] all_r_derivatives_sun = new Double[]{0d,0d};
-        Double[][] aux_other_r_derivatives = new Double[2][2];
+        Double[][] aux_r_derivatives = new Double[3][2];
 
 
         double [] aux_force;
@@ -345,57 +346,48 @@ public class Universe {
             r_derivatives[i][2][1] = aux_force[1] /b.getM();
         }
 
+        aux_r_derivatives[0] = all_r_derivatives_sun;
+        aux_r_derivatives[1] = r_derivatives[0][1];
+        aux_r_derivatives[2] = r_derivatives[1][1];
+
         for (int i = 0; i < celestial_bodies.size()-1; i++){
             b = celestial_bodies.get(i + 1);
 
             //calcular todas las terceras derivadas
 
-            aux_other_r_derivatives[0] = all_r_derivatives_sun;
-
-            if(i == 0)
-                aux_other_r_derivatives[1] = r_derivatives[1][1];
-            else
-                aux_other_r_derivatives[1] = r_derivatives[0][1];
-
-            aux_force = calculateForce(b, r_derivatives[i][1], aux_other_r_derivatives);
+            aux_force = calculateForce(b, r_derivatives[i][1], aux_r_derivatives);
 
             r_derivatives[i][3][0] = aux_force[0]/b.getM();
             r_derivatives[i][3][1] = aux_force[1]/b.getM();
 
         }
 
+        aux_r_derivatives[0] = all_r_derivatives_sun;
+        aux_r_derivatives[1] = r_derivatives[0][2];
+        aux_r_derivatives[2] = r_derivatives[1][2];
+
         for (int i = 0; i < celestial_bodies.size()-1; i++){
             b = celestial_bodies.get(i + 1);
 
             //calcular todas las cuartas derivadas
 
-            aux_other_r_derivatives[0] = all_r_derivatives_sun;
-
-            if(i == 0)
-                aux_other_r_derivatives[1] = r_derivatives[1][2];
-            else
-                aux_other_r_derivatives[1] = r_derivatives[0][2];
-
-            aux_force = calculateForce(b, r_derivatives[i][2], aux_other_r_derivatives);
+            aux_force = calculateForce(b, r_derivatives[i][2], aux_r_derivatives);
 
             r_derivatives[i][4][0] = aux_force[0]/b.getM();
             r_derivatives[i][4][1] = aux_force[1]/b.getM();
 
         }
 
+        aux_r_derivatives[0] = all_r_derivatives_sun;
+        aux_r_derivatives[1] = r_derivatives[0][3];
+        aux_r_derivatives[2] = r_derivatives[1][3];
+
         for (int i = 0; i < celestial_bodies.size()-1; i++){
             b = celestial_bodies.get(i + 1);
 
             //calcular todas las quintas derivadas
 
-            aux_other_r_derivatives[0] = all_r_derivatives_sun;
-
-            if(i == 0)
-                aux_other_r_derivatives[1] = r_derivatives[1][3];
-            else
-                aux_other_r_derivatives[1] = r_derivatives[0][3];
-
-            aux_force = calculateForce(b, r_derivatives[i][3], aux_other_r_derivatives);
+            aux_force = calculateForce(b, r_derivatives[i][3], aux_r_derivatives);
 
             r_derivatives[i][5][0] = aux_force[0]/b.getM();
             r_derivatives[i][5][1] = aux_force[1]/b.getM();
@@ -467,8 +459,8 @@ public class Universe {
         double [][] delta_R2 = new double[2][2];
         Body b;
 
-        Double [][] other_predictions = new Double[2][2];
-        other_predictions[0] = celestial_bodies.get(0).getR(0);
+        Double [][] aux_r_predictions = new Double[3][2];
+        aux_r_predictions[0] = celestial_bodies.get(0).getR(0);
 
         r_derivatives = calculateDerivatives(t);
 
@@ -476,15 +468,13 @@ public class Universe {
             r_predictions[i] = predictGear(delta_t, r_derivatives[i]);
         }
 
+        aux_r_predictions[1] = r_predictions[0][0];
+        aux_r_predictions[2] = r_predictions[1][0];
+
         for(int i = 0; i < celestial_bodies.size()-1; i++){
             b = celestial_bodies.get(i+1);
 
-            if(i == 0)
-                other_predictions[1] = r_predictions[1][0];
-            else
-                other_predictions[1] = r_predictions[0][0];
-
-            delta_R2[i] = evaluateGear(delta_t, b, r_predictions[i], other_predictions, b.getM());
+            delta_R2[i] = evaluateGear(delta_t, b, r_predictions[i], aux_r_predictions, b.getM());
             corrected = correctGear(delta_t, r_predictions[i], delta_R2[i]);
 
             b.putR(t + delta_t, corrected[0]);
