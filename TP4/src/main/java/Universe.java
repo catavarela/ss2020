@@ -132,15 +132,6 @@ public class Universe {
         }
     }
 
-    private Double [] Euler1D(Double r, Double v, double delta_t, double m, double force){
-        Double [] euler = new Double[2];
-
-        euler[0] = r + delta_t * v + (Math.pow(delta_t, 2) / (2 * m)) * force;
-        euler[1] = v + (delta_t / m) * force;
-
-        return euler;
-    }
-
     private void EulerIteration(double t, double delta_t, Body body) {
         if (body.containsKeyV(t + delta_t) && body.containsKeyR(t + delta_t)) {
             return;
@@ -151,11 +142,19 @@ public class Universe {
         Double[] v = body.getV(t);
         Double[] r = body.getR(t);
 
-        Double[] euler_x = Euler1D(r[0], v[0], delta_t, body.getM(), force[0]);
-        Double[] euler_y = Euler1D(r[1], v[1], delta_t, body.getM(), force[1]);
+        Double[] velocity = new Double[2];
+        Double[] position = new Double[2];
 
-        body.putR(t + delta_t, new Double[]{euler_x[0], euler_y[0]});
-        body.putV(t + delta_t, new Double[]{euler_x[1], euler_y[1]});
+        velocity[0] = v[0] + (delta_t / body.getM()) * force[0];
+        velocity[1] = v[1] + (delta_t / body.getM()) * force[1];
+
+        body.putV(t + delta_t, velocity);
+
+        position[0] = r[0] + delta_t * velocity[0] + (Math.pow(delta_t, 2) / (2 * body.getM())) * force[0];
+        position[1] = r[1] + delta_t * velocity[1] + (Math.pow(delta_t, 2) / (2 * body.getM())) * force[1];
+
+        body.putR(t + delta_t, position);
+
     }
 
     //0) Calcular fuerza en t                                           DONE
