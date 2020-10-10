@@ -12,10 +12,11 @@ public class Main {
     private static double delta_t = 100; //s
     private static String output = "output1.tsv";
 
-    public static void main(String[] args){
-        Universe universe = new Universe( Constants.G, Constants.sun_mass, Constants.x0_sun, Constants.y0_sun, Constants.vx0_sun, Constants.vy0_sun,
+    public static void main(String[] args) {
+        Universe universe = new Universe(Constants.G, Constants.sun_mass, Constants.x0_sun, Constants.y0_sun, Constants.vx0_sun, Constants.vy0_sun,
                 Constants.earth_mass, Constants.x0_earth, Constants.y0_earth, Constants.vx0_earth, Constants.vy0_earth,
                 Constants.mars_mass, Constants.x0_mars, Constants.y0_mars, Constants.vx0_mars, Constants.vy0_mars);
+
         //universe.calculate(final_t, delta_t, Metodo.BEEMAN);
         //writeFile(universe.getResults(), output);
         //System.out.println(getDayWithMinDistance());
