@@ -140,6 +140,23 @@ public class Oscilator {
         v.put(t + delta_t, r_corrected[1]);
     }
 
+    private void calculateNextIteration(double current_t, double delta_t, Metodo metodo){
+        switch (metodo){
+            case VERLET:
+                velocityVerletIteration(current_t, delta_t);
+                break;
+            case BEEMAN:
+                BeemanIteration(current_t, delta_t);
+                break;
+            case GEAR:
+                GearIteration(current_t, delta_t);
+                break;
+            case EULER:
+                EulerIteration(current_t, delta_t);
+                break;
+        }
+    }
+
     public List<String> calculate(double final_t, double delta_t, Metodo metodo) {
         double current_t = 0d;
         double analyticSolution, numericSolution;
@@ -148,21 +165,8 @@ public class Oscilator {
 
         resetResults(metodo);
 
-        while (current_t < final_t) {
-            switch (metodo) {
-                case VERLET:
-                    velocityVerletIteration(current_t, delta_t);
-                    break;
-                case BEEMAN:
-                    BeemanIteration(current_t, delta_t);
-                    break;
-                case GEAR:
-                    GearIteration(current_t, delta_t);
-                    break;
-                case EULER:
-                    EulerIteration(current_t, delta_t);
-                    break;
-            }
+        while(current_t < final_t) {
+            calculateNextIteration(current_t, delta_t, metodo);
 
             analyticSolution = analyticSolution(current_t);
             numericSolution = getR(current_t);
@@ -175,7 +179,6 @@ public class Oscilator {
         error.add(delta_t + ", " + errorSum / iteration);
         return results;
     }
-
     private double calculateError(double analyticSolution, double numericSolution) {
         return Math.pow(analyticSolution - numericSolution, 2);
     }
