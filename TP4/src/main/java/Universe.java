@@ -43,21 +43,24 @@ public class Universe {
 
     public List<String> calculate(double final_t, double delta_t, Metodo metodo){
         double current_t = 0d;
-
+        int iteration = 0;
         //startResults();
 
         while(current_t < final_t) {
             //result = "";
             calculateNextIteration(current_t, delta_t, metodo);
 
-            results.add("" + (int)current_t);
+            //if(iteration % 100 == 0) {
+                results.add("" + (int) current_t);
 
-            for (Body b : celestial_bodies) {
-                results.add(b.getOutput(current_t));
-            }
+                for (Body b : celestial_bodies) {
+                    results.add(b.getOutput(current_t));
+                }
+            //}
 
             //results.add(current_t + ", " + result);
             current_t += delta_t;
+            iteration++;
         }
 
         return results;
