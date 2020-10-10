@@ -6,6 +6,9 @@ public class Universe {
     private List<Body> celestial_bodies = new ArrayList<Body>();
     private List<String> results = new ArrayList<String>();
 
+    private double mintime = -1.0;
+    private double mindistance = -1.0;
+
     public Universe(double G, double ms, double x0_s, double y0_s, double vx0_s, double vy0_s,
                     double mt, double x0_t, double y0_t, double vx0_t, double vy0_t,
                     double mm, double x0_m, double y0_m, double vx0_m, double vy0_m){
@@ -27,6 +30,14 @@ public class Universe {
         results.add(start);
     }*/
 
+    public double getMintime() {
+        return mintime / 86400;
+    }
+
+    public double getMindistance() {
+        return mindistance;
+    }
+
     private void calculateNextIteration(double current_t, double delta_t, Metodo metodo){
         switch (metodo){
             case BEEMAN:
@@ -43,6 +54,7 @@ public class Universe {
 
     public List<String> calculate(double final_t, double delta_t, Metodo metodo){
         double current_t = 0d;
+        double current_distance;
 
         //startResults();
 
@@ -54,6 +66,14 @@ public class Universe {
 
             for (Body b : celestial_bodies) {
                 results.add(b.getOutput(current_t));
+            }
+
+            current_distance = Math.sqrt(Math.pow(celestial_bodies.get(2).getR(current_t)[0] - celestial_bodies.get(1).getR(current_t)[0], 2) +
+                    Math.pow(celestial_bodies.get(2).getR(current_t)[1] - celestial_bodies.get(1).getR(current_t)[1], 2));
+
+            if(mindistance == -1 || mindistance > current_distance) {
+                mintime = current_t;
+                mindistance = current_distance;
             }
 
             //results.add(current_t + ", " + result);
