@@ -110,7 +110,7 @@ public class Universe {
         double orbital_velocity_of_space_station = Constants.orbital_velocity_of_space_station;
         double rocket_blastoff_velocity = Constants.rocket_blastoff_velocity;
 
-        double teta_pos;
+        double teta_pos, teta_vel;
         Body sol = null;
         Body tierra = null;
 
@@ -130,8 +130,13 @@ public class Universe {
         x0 = (tierra.getRadius() + dist_to_space_station) * Math.cos(teta_pos);
         y0 = (tierra.getRadius() + dist_to_space_station) * Math.sin(teta_pos);
 
-        vx0 = tierra.getV(t)[0] + orbital_velocity_of_space_station;
-        vy0 = tierra.getV(t)[1] + orbital_velocity_of_space_station + rocket_blastoff_velocity;
+        teta_vel = 90 - teta_pos;
+
+        vx0 = tierra.getV(t)[0] + orbital_velocity_of_space_station * Math.cos(teta_vel);
+        vy0 = tierra.getV(t)[1] + orbital_velocity_of_space_station * Math.sin(teta_vel) + rocket_blastoff_velocity;
+
+        //vx0 = tierra.getV(t)[0] + orbital_velocity_of_space_station;
+        //vy0 = tierra.getV(t)[1] + orbital_velocity_of_space_station + rocket_blastoff_velocity;
 
         return new Body(t, rocket_mass, 0d, x0, y0, vx0, vy0, "Cohete");
 
