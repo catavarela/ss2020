@@ -44,6 +44,7 @@ public class Universe {
         double current_t = 0d;
         double crash_time = 0d;
         boolean no_fue_agregado = true;
+        int iteration = 0;
 
         //startResults();
 
@@ -63,14 +64,17 @@ public class Universe {
                 celestial_bodies.remove(celestial_bodies.size() - 1);
             }
 
-            results.add("" + (int)current_t);
+            //if(iteration % 100 == 0) {
+                results.add("" + (int) current_t);
 
-            for (Body b : celestial_bodies) {
-                results.add(b.getOutput(current_t));
-            }
+                for (Body b : celestial_bodies) {
+                    results.add(b.getOutput(current_t));
+                }
+            //}
 
             //results.add(current_t + ", " + result);
             current_t += delta_t;
+            iteration++;
         }
 
         return crash_time;

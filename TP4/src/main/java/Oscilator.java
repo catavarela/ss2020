@@ -26,8 +26,7 @@ public class Oscilator {
         results.clear();
         r.clear();
         v.clear();
-        r.put(0d, 1d);
-        v.put(0d, -A * gamma / (2 * m));
+        setInitialConditions();
 
         switch (metodo) {
             case VERLET:
@@ -180,7 +179,6 @@ public class Oscilator {
         error.add(delta_t + ", " + errorSum / iteration);
         return results;
     }
-
     private double calculateError(double analyticSolution, double numericSolution) {
         return Math.pow(analyticSolution - numericSolution, 2);
     }
