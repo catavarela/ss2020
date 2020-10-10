@@ -4,17 +4,19 @@ import java.util.Map;
 
 public class Body {
     private double m;
+    private double radius;
     private String name;
 
     private Map<Double, Double[]> r = new HashMap<Double, Double[]>();
     private Map<Double, Double[]> v = new HashMap<Double, Double[]>();
 
-    public Body(double m, double x0, double y0, double vx0, double vy0, String name){
+    public Body(double t, double m, double radius, double x0, double y0, double vx0, double vy0, String name){
         this.m = m;
+        this.radius = radius;
         this.name = name;
 
-        r.put(0d, new Double[]{x0, y0});
-        v.put(0d, new Double[]{vx0, vy0});
+        r.put(t, new Double[]{x0, y0});
+        v.put(t, new Double[]{vx0, vy0});
     }
 
     public String getOutput(double t){
@@ -29,6 +31,8 @@ public class Body {
     public String getName() {
         return name;
     }
+
+    public double getRadius(){ return radius;}
 
     public boolean containsKeyR(double t){
         return r.containsKey(t);

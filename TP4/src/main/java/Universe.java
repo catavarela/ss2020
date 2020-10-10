@@ -3,18 +3,17 @@ import java.util.List;
 
 public class Universe {
     private double G;
-    private List<Body> celestial_bodies = new ArrayList<Body>();
+    private List<Body> celestial_bodies;
     private List<String> results = new ArrayList<String>();
+    private boolean hay_cohete;
+    private double dia_del_despegue;
 
-    public Universe(double G, double ms, double x0_s, double y0_s, double vx0_s, double vy0_s,
-                    double mt, double x0_t, double y0_t, double vx0_t, double vy0_t,
-                    double mm, double x0_m, double y0_m, double vx0_m, double vy0_m){
+    public Universe(double G, ArrayList<Body> celestial_bodies, boolean hay_cohete, double dia_del_despegue){
 
         this.G = G;
-
-        celestial_bodies.add(new Body(ms, x0_s, y0_s, vx0_s, vy0_s, "Sol"));
-        celestial_bodies.add(new Body(mt, x0_t, y0_t, vx0_t, vy0_t, "Tierra"));
-        celestial_bodies.add(new Body(mm, x0_m, y0_m, vx0_m, vy0_m, "Marte"));
+        this.celestial_bodies = celestial_bodies;
+        this.hay_cohete = hay_cohete;
+        this.dia_del_despegue = dia_del_despegue;
     }
 
     /*public void startResults(){
@@ -41,14 +40,28 @@ public class Universe {
         }
     }
 
-    public List<String> calculate(double final_t, double delta_t, Metodo metodo){
+    public double calculate(double final_t, double delta_t, Metodo metodo){
         double current_t = 0d;
+        double crash_time = 0d;
+        boolean no_fue_agregado = true;
 
         //startResults();
 
         while(current_t < final_t) {
             //result = "";
+
+            if(hay_cohete && no_fue_agregado && Double.compare(current_t/86400, dia_del_despegue) >= 0) {
+                no_fue_agregado = false;
+
+                celestial_bodies.add(addRocket(current_t));
+            }
+
             calculateNextIteration(current_t, delta_t, metodo);
+
+            if(hay_cohete && rocketCrash(current_t)) {
+                crash_time = current_t;
+                celestial_bodies.remove(celestial_bodies.size() - 1);
+            }
 
             results.add("" + (int)current_t);
 
@@ -60,7 +73,64 @@ public class Universe {
             current_t += delta_t;
         }
 
-        return results;
+        return crash_time;
+    }
+
+    private boolean rocketCrash(double t){
+        Body cohete = null;
+        Body marte = null;
+
+        for(Body body : celestial_bodies){
+            if(body.getName().equals("Cohete"))
+                cohete = body;
+            else if (body.getName().equals("Marte"))
+                marte = body;
+        }
+
+        if(cohete == null)
+            return false;
+
+        double distance = Math.sqrt(Math.pow(cohete.getR(t)[0] - marte.getR(t)[0], 2) + Math.pow(cohete.getR(t)[1] - marte.getR(t)[1], 2));
+
+        if(Double.compare(distance, marte.getRadius()) <= 0)
+            return true;
+
+        return false;
+
+    }
+
+    private Body addRocket(double t){
+
+        double rocket_mass = Constants.rocket_mass;
+        double dist_to_space_station = Constants.dist_to_space_station;
+        double orbital_velocity_of_space_station = Constants.orbital_velocity_of_space_station;
+        double rocket_blastoff_velocity = Constants.rocket_blastoff_velocity;
+
+        double teta_pos;
+        Body sol = null;
+        Body tierra = null;
+
+        double x0, y0, vx0, vy0;
+
+        for(Body body : celestial_bodies){
+            if(body.getName().equals("Sol"))
+                sol = body;
+            else if (body.getName().equals("Tierra"))
+                tierra = body;
+        }
+
+        double dist_s_t = Math.sqrt(Math.pow(sol.getR(t)[0]-tierra.getR(t)[0], 2) + Math.pow(sol.getR(t)[1] - tierra.getR(t)[1], 2));
+
+        teta_pos = Math.asin(tierra.getR(t)[1]/dist_s_t);
+
+        x0 = (tierra.getRadius() + dist_to_space_station) * Math.cos(teta_pos);
+        y0 = (tierra.getRadius() + dist_to_space_station) * Math.sin(teta_pos);
+
+        vx0 = tierra.getV(t)[0] + orbital_velocity_of_space_station;
+        vy0 = tierra.getV(t)[1] + orbital_velocity_of_space_station + rocket_blastoff_velocity;
+
+        return new Body(t, rocket_mass, 0d, x0, y0, vx0, vy0, "Cohete");
+
     }
 
     private double force(double m1, double m2, double distance){
@@ -92,7 +162,11 @@ public class Universe {
 
         for(Body other_body : celestial_bodies){
             if(!other_body.getName().equals(body.getName())) {
-                aux_force = force(body.getM(), other_body.getM(), body.getR(t), other_body.getR(t));
+
+                if(other_body.getName().equals("Cohete") && (t/86400 < dia_del_despegue))
+                    aux_force = new double[]{0d, 0d};
+                else
+                    aux_force = force(body.getM(), other_body.getM(), body.getR(t), other_body.getR(t));
 
                 force[0] += aux_force[0];
                 force[1] += aux_force[1];
@@ -133,8 +207,9 @@ public class Universe {
     //7) calcular nuevas velocidades del sistema para t + delta_t       DONE
 
     private void Verlet(double t, double delta_t){
-        double[][] forces_t = new double[2][2];
-        double[][] forces = new double[2][2];
+        int size = celestial_bodies.size()-1;
+        double[][] forces_t = new double[size][2];
+        double[][] forces = new double[size][2];
 
         Body b;
 
@@ -143,27 +218,27 @@ public class Universe {
             forces_t[i] = calculateForce(b, t); //paso 0
         }
 
-        moveSistWithForceInTVerlet(t, delta_t, forces_t); //pasos 1, 2 y 3
+        moveSistWithForceInTVerlet(t, delta_t, forces_t, size); //pasos 1, 2 y 3
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
             b = celestial_bodies.get(i+1);
             forces[i] = calculateForce(b, t + delta_t/2); //paso 4
         }
 
-        newVelWithForceTPlusHalfDeltaT(t, delta_t, forces); //paso 5
+        newVelWithForceTPlusHalfDeltaT(t, delta_t, forces, size); //paso 5
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
             b = celestial_bodies.get(i+1);
             forces[i] = calculateForce(b, t + delta_t); //paso 6
         }
 
-        newVelWithForceTPlusDeltaT(t, delta_t, forces, forces_t);   //paso 7
+        newVelWithForceTPlusDeltaT(t, delta_t, forces, forces_t, size);   //paso 7
     }
 
-    private void newVelWithForceTPlusDeltaT(double t, double delta_t, double [][] forces, double [][] forces_t){
+    private void newVelWithForceTPlusDeltaT(double t, double delta_t, double [][] forces, double [][] forces_t, int size){
         Body b;
         Double[] v;
-        Double[] new_v = new Double[2];
+        Double[] new_v = new Double[size];
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
 
@@ -176,10 +251,10 @@ public class Universe {
         }
     }
 
-    private void newVelWithForceTPlusHalfDeltaT(double t, double delta_t, double [][] forces){
+    private void newVelWithForceTPlusHalfDeltaT(double t, double delta_t, double [][] forces, int size){
         Body b;
         Double[] v;
-        Double[] new_v = new Double[2];
+        Double[] new_v = new Double[size];
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
 
@@ -192,12 +267,12 @@ public class Universe {
         }
     }
 
-    private void moveSistWithForceInTVerlet(double t, double delta_t, double [][] forces){
+    private void moveSistWithForceInTVerlet(double t, double delta_t, double [][] forces, int size){
         Body b;
         Double[] r, v;
-        Double[] new_r = new Double[2];
-        Double[] new_v = new Double[2];
-        Double[] aux_r = new Double[2];
+        Double[] new_r = new Double[size];
+        Double[] new_v = new Double[size];
+        Double[] aux_r = new Double[size];
 
         for(int i = 0; i < celestial_bodies.size()-1; i++){
 
@@ -259,18 +334,20 @@ public class Universe {
     //8) Agrego r y v siguientes                            DONE
 
     private void Beeman(double t, double delta_t) {
-        double[][] forces = new double[2][2];
-        double[][] prev_a = new double[2][2];
+        int size = celestial_bodies.size()-1;
 
-        Double[][] current_r = new Double[2][2];
-        Double[][] current_v = new Double[2][2];
-        Double[][] current_a = new Double[2][2];
+        double[][] forces = new double[size][2];
+        double[][] prev_a = new double[size][2];
 
-        Double[][] next_r = new Double[3][3];
+        Double[][] current_r = new Double[size][2];
+        Double[][] current_v = new Double[size][2];
+        Double[][] current_a = new Double[size][2];
+
+        Double[][] next_r = new Double[size+1][2];
         next_r[0] = celestial_bodies.get(0).getR(0);
 
-        Double[][] next_v = new Double[2][2];
-        double[][] next_a = new double[2][2];
+        Double[][] next_v = new Double[size][2];
+        double[][] next_a = new double[size][2];
 
         Body b;
 
