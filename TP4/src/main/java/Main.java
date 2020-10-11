@@ -30,9 +30,9 @@ public class Main {
         Universe universe = new Universe(Constants.G, celestial_bodies, hay_cohete, dia_de_despegue);
 
         crash_time = universe.calculate(final_t, delta_t, Metodo.BEEMAN);
-        System.out.println(getDayWithMinDistance());
 
         writeFile(universe.getResults(), output);
+        writeFile(universe.getRocketSpeed(), "rocketSpeed.csv");
         writeXYZ();
     }
 
@@ -106,12 +106,12 @@ public class Main {
                 lector.nextLine(); // seconds
 
                 XYZ_output.add("");
-                XYZ_output.add(lector.nextLine() + "    3e+10    0.5    0.5    0"); //Sun position
-                XYZ_output.add(lector.nextLine() + "    1e+10    0    0    1"); //Earth position
-                XYZ_output.add(lector.nextLine() + "    1e+10    1    0    0"); //Mars position
+                XYZ_output.add(lector.nextLine() + "    9e+09    0.5    0.5    0"); //Sun position
+                XYZ_output.add(lector.nextLine() + "    4e+09    0    0    1"); //Earth position
+                XYZ_output.add(lector.nextLine() + "    4e+09    1    0    0"); //Mars position
 
                 if (!lector.hasNextInt()) {
-                    XYZ_output.add(lector.nextLine() + "    0.75e+10    1    1    1"); //Rocket position //TODO: CAMBIAR EL TAMAÑO!
+                    XYZ_output.add(lector.nextLine() + "    2e+09    1    1    1"); //Rocket position 
                     XYZ_output.add(XYZ_output.size() - 5,"8");
                 } else {
                     XYZ_output.add(XYZ_output.size() - 4,"7");

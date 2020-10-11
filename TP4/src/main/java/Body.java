@@ -87,4 +87,10 @@ public class Body {
         if(!name.equals("Sol"))
             this.v.put(t, new Double[]{v[0], v[1]});
     }
+
+    public double getSpeed(double t) {
+        Double speed[] = getV(t);
+
+        return Math.hypot(speed[0], speed[1]);
+    }
 }

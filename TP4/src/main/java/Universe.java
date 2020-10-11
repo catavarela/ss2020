@@ -5,6 +5,7 @@ public class Universe {
     private double G;
     private List<Body> celestial_bodies;
     private List<String> results = new ArrayList<String>();
+    private List<String> rocket_speed = new ArrayList<String>();
     private boolean hay_cohete;
     private double dia_del_despegue;
 
@@ -69,6 +70,7 @@ public class Universe {
 
                 for (Body b : celestial_bodies) {
                     results.add(b.getOutput(current_t));
+                    if(b.getName().equals("Cohete")) rocket_speed.add((int)current_t + "," + b.getSpeed(current_t));
                 }
             //}
 
@@ -400,5 +402,10 @@ public class Universe {
 
     public List<String> getResults() {
         return results;
+    }
+
+    public List<String> getRocketSpeed() {
+        rocket_speed.add(0, "Time,Speed");
+        return rocket_speed;
     }
 }
