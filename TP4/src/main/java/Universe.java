@@ -51,7 +51,7 @@ public class Universe {
         while(current_t < final_t) {
             //result = "";
 
-            if(hay_cohete && no_fue_agregado && Double.compare(current_t/86400, dia_del_despegue) >= 0) {
+            if(hay_cohete && no_fue_agregado && Double.compare(current_t, dia_del_despegue) >= 0) {
                 no_fue_agregado = false;
 
                 celestial_bodies.add(addRocket(current_t));
@@ -110,7 +110,6 @@ public class Universe {
         double orbital_velocity_of_space_station = Constants.orbital_velocity_of_space_station;
         double rocket_blastoff_velocity = Constants.rocket_blastoff_velocity;
 
-        double teta_pos, teta_vel;
         Body sol = null;
         Body tierra = null;
 
@@ -123,20 +122,13 @@ public class Universe {
                 tierra = body;
         }
 
-        double dist_s_t = Math.sqrt(Math.pow(sol.getR(t)[0]-tierra.getR(t)[0], 2) + Math.pow(sol.getR(t)[1] - tierra.getR(t)[1], 2));
+        double teta = Math.atan2(tierra.getR(t)[1] - sol.getR(t)[1], tierra.getR(t)[0] - sol.getR(t)[0]);
 
-        teta_pos = Math.asin(tierra.getR(t)[1] / dist_s_t);
+        x0 = (tierra.getRadius() + dist_to_space_station) * Math.cos(teta) + tierra.getR(t)[0];
+        y0 = (tierra.getRadius() + dist_to_space_station) * Math.sin(teta) + tierra.getR(t)[1];
 
-        x0 = (tierra.getRadius() + dist_to_space_station) * Math.cos(teta_pos) + tierra.getR(t)[0];
-        y0 = (tierra.getRadius() + dist_to_space_station) * Math.sin(teta_pos) + tierra.getR(t)[1];
-
-        teta_vel = 90 - teta_pos;
-
-        vx0 = tierra.getV(t)[0] + (orbital_velocity_of_space_station + rocket_blastoff_velocity) * Math.cos(teta_vel);
-        vy0 = tierra.getV(t)[1] + (orbital_velocity_of_space_station + rocket_blastoff_velocity) * Math.sin(teta_vel);
-
-        //vx0 = tierra.getV(t)[0] + orbital_velocity_of_space_station;
-        //vy0 = tierra.getV(t)[1] + orbital_velocity_of_space_station + rocket_blastoff_velocity;
+        vx0 = tierra.getV(t)[0] + (rocket_blastoff_velocity + orbital_velocity_of_space_station) * Math.cos(teta);
+        vy0 = tierra.getV(t)[1] + (rocket_blastoff_velocity + orbital_velocity_of_space_station) * Math.sin(teta);
 
         return new Body(t, rocket_mass, 0d, x0, y0, vx0, vy0, "Cohete");
 
@@ -172,7 +164,7 @@ public class Universe {
         for(Body other_body : celestial_bodies){
             if(!other_body.getName().equals(body.getName())) {
 
-                if(other_body.getName().equals("Cohete") && (t/86400 < dia_del_despegue))
+                if(other_body.getName().equals("Cohete") && (t < dia_del_despegue))
                     aux_force = new double[]{0d, 0d};
                 else
                     aux_force = force(body.getM(), other_body.getM(), body.getR(t), other_body.getR(t));

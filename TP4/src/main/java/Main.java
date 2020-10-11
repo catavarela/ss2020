@@ -9,9 +9,9 @@ import java.util.Scanner;
 
 public class Main {
     private static double final_t = 31556926; //s
-    private static double delta_t = 120; //s
+    private static double delta_t = 100; //s
     private static boolean hay_cohete = true;
-    private static double dia_de_despegue = 8.5;
+    private static double dia_de_despegue = 723900;
     private static double crash_time;
     private static String output = "output1.tsv";
 
