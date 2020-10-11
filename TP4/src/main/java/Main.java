@@ -29,11 +29,12 @@ public class Main {
 
         Universe universe = new Universe(Constants.G, celestial_bodies, hay_cohete, dia_de_despegue);
 
-        crash_time = universe.calculate(final_t, delta_t, Metodo.BEEMAN);
+        //crash_time = universe.calculate(final_t, delta_t, Metodo.BEEMAN);
 
-        writeFile(universe.getResults(), output);
-        writeFile(universe.getRocketSpeed(), "rocketSpeed.csv");
-        writeXYZ();
+        //writeFile(universe.getResults(), output);
+        //writeFile(universe.getRocketSpeed(), "rocketSpeed.csv");
+        //writeXYZ();
+        getDayWithMinDistance();
     }
 
     public static void writeFile(List<String> output, String fileName) {
@@ -59,6 +60,7 @@ public class Main {
         double Earth_position[] = new double[2], Mars_position[] = new double[2];
         String aux[];
         List<String> results = new ArrayList<String>();
+        results.add("Día,Distancia");
 
         try {
             Scanner lector = new Scanner(new File(output));
@@ -79,7 +81,7 @@ public class Main {
                     lector.nextLine(); // rocket position
 
                 if(Math.floor(seconds / 86400) == current_day){
-                    results.add(Math.floor(seconds / 86400) + "," + current_distance);
+                    results.add(Math.floor(seconds / 86400) + "," + (current_distance - Constants.earth_radius - Constants.mars_radius));
                     current_day++;
                 }
 
@@ -111,7 +113,7 @@ public class Main {
                 XYZ_output.add(lector.nextLine() + "    4e+09    1    0    0"); //Mars position
 
                 if (!lector.hasNextInt()) {
-                    XYZ_output.add(lector.nextLine() + "    2e+09    1    1    1"); //Rocket position 
+                    XYZ_output.add(lector.nextLine() + "    2e+09    1    1    1"); //Rocket position
                     XYZ_output.add(XYZ_output.size() - 5,"8");
                 } else {
                     XYZ_output.add(XYZ_output.size() - 4,"7");
