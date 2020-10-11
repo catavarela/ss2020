@@ -132,8 +132,8 @@ public class Universe {
 
         teta_vel = 90 - teta_pos;
 
-        vx0 = tierra.getV(t)[0] + orbital_velocity_of_space_station * Math.cos(teta_vel);
-        vy0 = tierra.getV(t)[1] + orbital_velocity_of_space_station * Math.sin(teta_vel) + rocket_blastoff_velocity;
+        vx0 = tierra.getV(t)[0] + (orbital_velocity_of_space_station + rocket_blastoff_velocity) * Math.cos(teta_vel);
+        vy0 = tierra.getV(t)[1] + (orbital_velocity_of_space_station + rocket_blastoff_velocity) * Math.sin(teta_vel);
 
         //vx0 = tierra.getV(t)[0] + orbital_velocity_of_space_station;
         //vy0 = tierra.getV(t)[1] + orbital_velocity_of_space_station + rocket_blastoff_velocity;
