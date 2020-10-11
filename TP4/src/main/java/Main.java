@@ -13,7 +13,7 @@ public class Main {
     private static boolean hay_cohete = true;
     private static double dia_de_despegue = 723900;
     private static double crash_time;
-    private static String output = "output1.tsv";
+    private static String output = "output.tsv";
 
     public static void main(String[] args) {
 
@@ -30,6 +30,7 @@ public class Main {
         Universe universe = new Universe(Constants.G, celestial_bodies, hay_cohete, dia_de_despegue);
 
         crash_time = universe.calculate(final_t, delta_t, Metodo.BEEMAN);
+        System.out.println(getDayWithMinDistance());
 
         writeFile(universe.getResults(), output);
         writeXYZ();
@@ -73,6 +74,9 @@ public class Main {
                 Mars_position[0] = Double.valueOf(aux[0]); Mars_position[1] = Double.valueOf(aux[1]);
 
                 current_distance = Math.hypot(Earth_position[0] - Mars_position[0], Earth_position[1] - Mars_position[1]);
+
+                if (!lector.hasNextInt())
+                    lector.nextLine(); // rocket position
 
                 if(Math.floor(seconds / 86400) == current_day){
                     results.add(Math.floor(seconds / 86400) + "," + current_distance);
