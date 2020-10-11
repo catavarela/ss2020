@@ -101,11 +101,18 @@ public class Main {
             while(lector.hasNext()) {
                 lector.nextLine(); // seconds
 
-                XYZ_output.add("7");
                 XYZ_output.add("");
                 XYZ_output.add(lector.nextLine() + "    3e+10    0.5    0.5    0"); //Sun position
                 XYZ_output.add(lector.nextLine() + "    1e+10    0    0    1"); //Earth position
                 XYZ_output.add(lector.nextLine() + "    1e+10    1    0    0"); //Mars position
+
+                if (!lector.hasNextInt()) {
+                    XYZ_output.add(lector.nextLine() + "    3e+10    1    1    1"); //Rocket position //TODO: CAMBIAR EL TAMAÑO!
+                    XYZ_output.add(XYZ_output.size() - 5,"8");
+                } else {
+                    XYZ_output.add(XYZ_output.size() - 4,"7");
+                }
+
                 XYZ_output.add("-3e+11    -3e+11    1    0    0    0");
                 XYZ_output.add("-3e+11    3e+11    1    0    0    0");
                 XYZ_output.add("3e+11    -3e+11    1    0    0    0");
