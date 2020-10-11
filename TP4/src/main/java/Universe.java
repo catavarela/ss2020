@@ -125,10 +125,10 @@ public class Universe {
 
         double dist_s_t = Math.sqrt(Math.pow(sol.getR(t)[0]-tierra.getR(t)[0], 2) + Math.pow(sol.getR(t)[1] - tierra.getR(t)[1], 2));
 
-        teta_pos = Math.asin(tierra.getR(t)[1]/dist_s_t);
+        teta_pos = Math.asin(tierra.getR(t)[1] / dist_s_t);
 
-        x0 = (tierra.getRadius() + dist_to_space_station) * Math.cos(teta_pos);
-        y0 = (tierra.getRadius() + dist_to_space_station) * Math.sin(teta_pos);
+        x0 = (tierra.getRadius() + dist_to_space_station) * Math.cos(teta_pos) + tierra.getR(t)[0];
+        y0 = (tierra.getRadius() + dist_to_space_station) * Math.sin(teta_pos) + tierra.getR(t)[1];
 
         teta_vel = 90 - teta_pos;
 

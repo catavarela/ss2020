@@ -107,7 +107,7 @@ public class Main {
                 XYZ_output.add(lector.nextLine() + "    1e+10    1    0    0"); //Mars position
 
                 if (!lector.hasNextInt()) {
-                    XYZ_output.add(lector.nextLine() + "    3e+10    1    1    1"); //Rocket position //TODO: CAMBIAR EL TAMAÑO!
+                    XYZ_output.add(lector.nextLine() + "    0.75e+10    1    1    1"); //Rocket position //TODO: CAMBIAR EL TAMAÑO!
                     XYZ_output.add(XYZ_output.size() - 5,"8");
                 } else {
                     XYZ_output.add(XYZ_output.size() - 4,"7");
