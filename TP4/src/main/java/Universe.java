@@ -6,6 +6,7 @@ public class Universe {
     private List<Body> celestial_bodies;
     private List<String> results = new ArrayList<String>();
     private List<String> rocket_speed = new ArrayList<String>();
+    private double min_distance = Double.MAX_VALUE; //TODO: SACAR
     private boolean hay_cohete;
     private double dia_del_despegue;
 
@@ -70,7 +71,19 @@ public class Universe {
 
                 for (Body b : celestial_bodies) {
                     results.add(b.getOutput(current_t));
-                    if(b.getName().equals("Cohete")) rocket_speed.add((int)current_t + "," + b.getSpeed(current_t));
+                    if(b.getName().equals("Cohete")){
+                        rocket_speed.add((int)current_t + "," + b.getSpeed(current_t));
+                        Double mars_position[] = celestial_bodies.get(2).getR(current_t);
+
+                        //TODO: SACAR TODO ESTO:
+                        Double rocket_position[] = b.getR(current_t);
+                        double current_distance = Math.hypot(mars_position[0] - rocket_position[0], mars_position[1] - rocket_position[1]);
+                        if(current_distance < min_distance) {
+                            min_distance = current_distance;
+                        }
+                        //TODO: ================================================================================================================
+
+                    }
                 }
             //}
 
@@ -407,5 +420,10 @@ public class Universe {
     public List<String> getRocketSpeed() {
         rocket_speed.add(0, "Time,Speed");
         return rocket_speed;
+    }
+
+    //TODO: SACAR
+    public double getDistance() {
+        return min_distance;
     }
 }
