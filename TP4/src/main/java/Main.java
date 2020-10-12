@@ -21,7 +21,7 @@ public class Main {
         List<String> minDistance = new ArrayList<String>();
         minDistance.add("Día,Distancia");
 
-        while(dia < 5) {
+        while(dia_de_despegue < final_t) {
             Body sol = new Body(0d, Constants.sun_mass, Constants.sun_radius, Constants.x0_sun, Constants.y0_sun, Constants.vx0_sun, Constants.vy0_sun, "Sol");
             Body tierra = new Body(0d, Constants.earth_mass, Constants.earth_radius, Constants.x0_earth, Constants.y0_earth, Constants.vx0_earth, Constants.vy0_earth, "Tierra");
             Body marte = new Body(0d, Constants.mars_mass, Constants.mars_radius, Constants.x0_mars, Constants.y0_mars, Constants.vx0_mars, Constants.vy0_mars, "Marte");
