@@ -8,20 +8,15 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    private static double final_t = 31556926 * 1.8809; //s
+    private static double final_t = 86400 * 687; //s
     private static double delta_t = 100; //s
     private static boolean hay_cohete = true;
     private static double crash_time;
     private static String output = "output.tsv";
 
     public static void main(String[] args) {
-        double dia_de_despegue = 0;
-        int dia = 0; //TODO: SACAR
+        double dia_de_despegue = 86400 * 275 + 15 * 3600;
 
-        List<String> minDistance = new ArrayList<String>();
-        minDistance.add("Día,Distancia");
-
-        while(dia_de_despegue < final_t) {
             Body sol = new Body(0d, Constants.sun_mass, Constants.sun_radius, Constants.x0_sun, Constants.y0_sun, Constants.vx0_sun, Constants.vy0_sun, "Sol");
             Body tierra = new Body(0d, Constants.earth_mass, Constants.earth_radius, Constants.x0_earth, Constants.y0_earth, Constants.vx0_earth, Constants.vy0_earth, "Tierra");
             Body marte = new Body(0d, Constants.mars_mass, Constants.mars_radius, Constants.x0_mars, Constants.y0_mars, Constants.vx0_mars, Constants.vy0_mars, "Marte");
@@ -35,17 +30,10 @@ public class Main {
 
             crash_time = universe.calculate(final_t, delta_t, Metodo.BEEMAN);
 
-            minDistance.add(dia + "," + universe.getDistance());
-            //writeFile(universe.getResults(), "output" + dia + ".tsv"); //TODO: CAMBIAR
+            //writeFile(universe.getResults(), output);
             //writeFile(universe.getRocketSpeed(), "rocketSpeed.csv");
-            //writeXYZ(dia);
-
-            //minDistance.add(getMinDistance(dia));
-            dia_de_despegue += 86400;
-            System.out.println(dia++); //TODO: SACAR
-        }
-
-        writeFile(minDistance, "distanceToMars.csv");
+            //writeXYZ();
+            //System.out.println(getMinDistance());
     }
 
     public static void writeFile(List<String> output, String fileName) {
@@ -65,13 +53,13 @@ public class Main {
         }
     }
 
-    public static String getMinDistance(int launch_day) {
+    public static double getMinDistance() {
         double min_distance = Double.MAX_VALUE, current_distance = 0;
         double rocket_position[] = new double[2], Mars_position[] = new double[2];
         String aux[];
 
         try {
-            Scanner lector = new Scanner(new File("output" + launch_day + ".tsv")); //TODO: CAMBIAR
+            Scanner lector = new Scanner(new File(output));
 
             while(lector.hasNext()) {
                 Double.parseDouble(lector.nextLine()); // seconds
@@ -95,15 +83,14 @@ public class Main {
             e.printStackTrace();
         }
 
-        return launch_day + "," + min_distance;
+        return min_distance;
     }
 
-    public static void writeXYZ(int dia){ //TODO: CAMBIAR
+    public static void writeXYZ(){
         List<String> XYZ_output = new ArrayList<String>();
 
         try {
-            Scanner lector = new Scanner(new File("output" + dia + ".tsv")); //TODO:CAMBIAR
-
+            Scanner lector = new Scanner(new File(output));
             while(lector.hasNext()) {
                 lector.nextLine(); // seconds
 
@@ -128,6 +115,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        writeFile(XYZ_output, "output" + dia + ".xyz"); //TODO:CAMBIAR
+        writeFile(XYZ_output, "output.xyz");
     }
 }
