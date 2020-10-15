@@ -46,6 +46,7 @@ public class Universe {
         double crash_time = 0d;
         boolean no_fue_agregado = true;
         int iteration = 0;
+        Body crashed_body;
 
         //startResults();
 
@@ -60,12 +61,14 @@ public class Universe {
 
             calculateNextIteration(current_t, delta_t, metodo);
 
-            if(hay_cohete && rocketCrash(current_t)) {
+            if(hay_cohete && !no_fue_agregado && ((crashed_body = rocketCrash(current_t)) != null)) {
                 crash_time = current_t;
                 celestial_bodies.remove(celestial_bodies.size() - 1);
+
+                System.out.println("La nave chocó contra " + crashed_body.getName());
             }
 
-            //if(iteration % 100 == 0) {
+            //if(iteration % 10000 == 0) {
                 results.add("" + (int) current_t);
 
                 for (Body b : celestial_bodies) {
@@ -84,27 +87,28 @@ public class Universe {
         return crash_time;
     }
 
-    private boolean rocketCrash(double t){
-        Body cohete = null;
-        Body marte = null;
+    private Body rocketCrash(double t){
+        Body cohete = celestial_bodies.get(celestial_bodies.size() - 1);
+        double distance = -1, aux_distance;
+
+        Body body_crashed = null;
 
         for(Body body : celestial_bodies){
-            if(body.getName().equals("Cohete"))
-                cohete = body;
-            else if (body.getName().equals("Marte"))
-                marte = body;
+            if(!body.getName().equals("Cohete")){
+                aux_distance = Math.sqrt(Math.pow(cohete.getR(t)[0] - body.getR(t)[0], 2) + Math.pow(cohete.getR(t)[1] - body.getR(t)[1], 2));
+
+                if(distance == -1 || Double.compare(distance,aux_distance) > 0){
+                    distance = aux_distance;
+
+                    body_crashed = body;
+                }
+            }
         }
 
-        if(cohete == null)
-            return false;
+        if(body_crashed != null && Double.compare(distance, body_crashed.getRadius()) <= 0)
+            return body_crashed;
 
-        double distance = Math.sqrt(Math.pow(cohete.getR(t)[0] - marte.getR(t)[0], 2) + Math.pow(cohete.getR(t)[1] - marte.getR(t)[1], 2));
-
-        if(Double.compare(distance, marte.getRadius()) <= 0)
-            return true;
-
-        return false;
-
+        return null;
     }
 
     private Body addRocket(double t){
