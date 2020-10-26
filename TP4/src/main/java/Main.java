@@ -10,9 +10,9 @@ import java.util.Scanner;
 public class Main {
     private static double final_t = 86400 * 687; //s
     private static double delta_t = 100; //s
-    private static boolean hay_cohete = true;
+    private static boolean hay_cohete = false;
     private static double crash_time;
-    private static String output = "output.tsv";
+    private static String output = "norocket.tsv";
 
     public static void main(String[] args) {
         double dia_de_despegue = 86400 * 275 + 15 * 3600;
@@ -26,9 +26,9 @@ public class Main {
             celestial_bodies.add(tierra);
             celestial_bodies.add(marte);
 
-            Universe universe = new Universe(Constants.G, celestial_bodies, hay_cohete, dia_de_despegue);
+            //Universe universe = new Universe(Constants.G, celestial_bodies, hay_cohete, dia_de_despegue);
 
-            crash_time = universe.calculate(final_t, delta_t, Metodo.BEEMAN);
+            //crash_time = universe.calculate(final_t, delta_t, Metodo.BEEMAN);
 
             writeFile(universe.getResults(), output);
             //writeFile(universe.getRocketSpeed(), "rocketSpeed.csv");
@@ -99,7 +99,7 @@ public class Main {
                 XYZ_output.add(lector.nextLine() + "    4e+09    0    0    1"); //Earth position
                 XYZ_output.add(lector.nextLine() + "    4e+09    1    0    0"); //Mars position
 
-                if (!lector.hasNextInt()) {
+                if (lector.hasNext() && !lector.hasNextInt()) {
                     XYZ_output.add(lector.nextLine() + "    2e+09    1    1    1"); //Rocket position
                     XYZ_output.add(XYZ_output.size() - 5,"8");
                 } else {
@@ -115,6 +115,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        writeFile(XYZ_output, "output.xyz");
+        writeFile(XYZ_output, "norocket.xyz");
     }
 }
