@@ -30,9 +30,9 @@ public class Main {
 
             crash_time = universe.calculate(final_t, delta_t, Metodo.BEEMAN);
 
-            //writeFile(universe.getResults(), output);
+            writeFile(universe.getResults(), output);
             //writeFile(universe.getRocketSpeed(), "rocketSpeed.csv");
-            //writeXYZ();
+            writeXYZ();
             //System.out.println(getMinDistance());
     }
 

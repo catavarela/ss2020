@@ -135,8 +135,8 @@ public class Universe {
         x0 = (tierra.getRadius() + dist_to_space_station) * Math.cos(teta) + tierra.getR(t)[0];
         y0 = (tierra.getRadius() + dist_to_space_station) * Math.sin(teta) + tierra.getR(t)[1];
 
-        vx0 = tierra.getV(t)[0] + (rocket_blastoff_velocity + orbital_velocity_of_space_station) * Math.cos(teta);
-        vy0 = tierra.getV(t)[1] + (rocket_blastoff_velocity + orbital_velocity_of_space_station) * Math.sin(teta);
+        vx0 = tierra.getV(t)[0] + (rocket_blastoff_velocity + orbital_velocity_of_space_station) * Math.sin(teta);
+        vy0 = tierra.getV(t)[1] + (rocket_blastoff_velocity + orbital_velocity_of_space_station) * Math.cos(teta);
 
         return new Body(t, rocket_mass, 0d, x0, y0, vx0, vy0, "Cohete");
 
