@@ -6,7 +6,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         Track track = new Track();
-        writeFile(track.getOutput(), "output.xyz");
+        writeFile(track.run(), "output.xyz");
     }
 
     public static void writeFile(List<String> output, String fileName) {

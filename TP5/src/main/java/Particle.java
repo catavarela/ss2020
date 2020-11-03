@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import java.util.Map;
-
 public class Particle {
     private double radius;
     private Coordinates position;
@@ -20,12 +17,16 @@ public class Particle {
         return position;
     }
 
+    public Coordinates getVelocity() {
+        return velocity;
+    }
+
     public double getDistance() {
         return position.getLength();
     }
 
     public double getDistanceToParticle(Particle other) {
-        return position.getDifference(other.getPosition()).getLength();
+        return position.substract(other.getPosition()).getLength();
     }
 
     public double getX() {
@@ -34,6 +35,22 @@ public class Particle {
 
     public double getY() {
         return position.getY();
+    }
+
+    public Coordinates getTangentVector() {
+        return position.getTangentVector();
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public void setPosition(Coordinates position) {
+        this.position = position;
+    }
+
+    public void setVelocity(Coordinates velocity) {
+        this.velocity = velocity;
     }
 }
 
