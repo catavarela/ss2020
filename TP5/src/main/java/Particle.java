@@ -1,24 +1,42 @@
 public class Particle {
+    private int id;
     private double radius;
-    private Coordinates position;
-    private Coordinates velocity;
+    private Coordinate position;
+    private Coordinate velocity;
 
-    public Particle(double radius, double initial_x, double initial_y, double initial_vx, double initial_vy){
+    public Particle(int id, double radius, double initial_x, double initial_y, double initial_vx, double initial_vy) {
+        this.id = id;
         this.radius = radius;
-        position = new Coordinates(initial_x, initial_y);
-        velocity = new Coordinates(initial_vx, initial_vy);
+        position = new Coordinate(initial_x, initial_y);
+        velocity = new Coordinate(initial_vx, initial_vy);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public double getRadius() {
         return radius;
     }
 
-    public Coordinates getPosition() {
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public Coordinate getPosition() {
         return position;
     }
 
-    public Coordinates getVelocity() {
+    public void setPosition(Coordinate position) {
+        this.position = position;
+    }
+
+    public Coordinate getVelocity() {
         return velocity;
+    }
+
+    public void setVelocity(Coordinate velocity) {
+        this.velocity = velocity;
     }
 
     public double getDistance() {
@@ -26,7 +44,7 @@ public class Particle {
     }
 
     public double getDistanceToParticle(Particle other) {
-        return position.substract(other.getPosition()).getLength();
+        return position.subtract(other.getPosition()).getLength();
     }
 
     public double getX() {
@@ -37,20 +55,20 @@ public class Particle {
         return position.getY();
     }
 
-    public Coordinates getTangentVector() {
+    public double getVX() {
+        return velocity.getX();
+    }
+
+    public double getVY() {
+        return velocity.getY();
+    }
+
+    public Coordinate getTangentVector() {
         return position.getTangentVector();
     }
 
-    public void setRadius(double radius) {
-        this.radius = radius;
-    }
-
-    public void setPosition(Coordinates position) {
-        this.position = position;
-    }
-
-    public void setVelocity(Coordinates velocity) {
-        this.velocity = velocity;
+    public Coordinate getNormalVector(Coordinate other) {
+        return position.getNormalVector(other);
     }
 }
 

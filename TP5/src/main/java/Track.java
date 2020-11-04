@@ -16,16 +16,18 @@ public class Track {
 
     private void createParticles() {
         Random rand = new Random();
+        int id = 1;
         int tries = Constants.maxTries;
 
         while (tries-- > 0) {
             double x = -ext_radius + 2 * ext_radius * rand.nextDouble();
             double y = -ext_radius + 2 * ext_radius * rand.nextDouble();
             double radius = Constants.minPartRadius + (Constants.maxPartRadius - Constants.minPartRadius) * rand.nextDouble();
-            Particle particle = new Particle(radius, x, y, 0, 0);
+            Particle particle = new Particle(id, radius, x, y, 0, 0);
 
             if (isValid(particle)) {
                 particles.add(particle);
+                id++;
                 tries = Constants.maxTries;
             }
         }
@@ -36,9 +38,11 @@ public class Track {
             return false;
 
         for (Particle other : particles) {
-            double distance = particle.getDistanceToParticle(other);
+            if (particle.getId() != other.getId()) {
+                double distance = particle.getDistanceToParticle(other);
 
-            if (distance < particle.getRadius() + other.getRadius()) return false;
+                if (distance < particle.getRadius() + other.getRadius()) return false;
+            }
         }
 
         return true;
@@ -71,8 +75,8 @@ public class Track {
         while (current_time < Constants.final_t) {
             System.out.println("Current time: " + current_time);
             updateVelocities();
+            updateRadius();
             updatePositions();
-            //updateRadius();
             xyz.addAll(getOutput());
             current_time += Constants.delta_t;
         }
@@ -82,15 +86,81 @@ public class Track {
 
     private void updatePositions() {
         for (Particle particle : particles) {
-            Coordinates new_position = particle.getPosition().sum(particle.getVelocity().multiply(Constants.delta_t));
+            Coordinate new_position = particle.getPosition().sum(particle.getVelocity().multiply(Constants.delta_t));
             particle.setPosition(new_position);
         }
     }
 
     private void updateVelocities() {
         for (Particle particle : particles) {
-            Coordinates new_velocity = particle.getTangentVector().multiply(Constants.maxSpeed);
+            Coordinate new_velocity;
+
+            if (isValid(particle)) {
+                new_velocity = calculateDesiredVelocity(particle);
+            } else {
+                new_velocity = calculateEscapeVelocity(particle);
+            }
+
             particle.setVelocity(new_velocity);
+        }
+    }
+
+    private void updateRadius() {
+        List<Particle> new_list = new ArrayList<Particle>();
+
+        for (Particle particle : particles) {
+            double new_radius;
+
+            if (isValid(particle)) {
+                new_radius = calculateRadius(particle);
+            } else {
+                new_radius = Constants.minPartRadius;
+            }
+
+            Particle new_particle = new Particle(particle.getId(), new_radius, particle.getX(), particle.getY(), particle.getVX(), particle.getVY());
+            new_list.add(new_particle);
+        }
+
+        particles = new_list;
+    }
+
+    private Coordinate calculateDesiredVelocity(Particle particle) {
+        double desired_velocity = Constants.maxSpeed * Math.pow((particle.getRadius() - Constants.minPartRadius) / (Constants.maxPartRadius - Constants.minPartRadius), Constants.beta);
+
+        return particle.getTangentVector().multiply(desired_velocity);
+    }
+
+    private Coordinate calculateEscapeVelocity(Particle particle) {
+        Coordinate escape_velocity = new Coordinate(0, 0);
+
+        for (Particle other : particles) {
+            if (particle.getId() != other.getId()) {
+                double distance = particle.getDistanceToParticle(other);
+
+                if (distance < particle.getRadius() + other.getRadius()) {
+                    escape_velocity = escape_velocity.sum(particle.getNormalVector(other.getPosition()));
+                }
+            }
+        }
+
+        if (particle.getDistance() - particle.getRadius() <= int_radius) {
+            escape_velocity = escape_velocity.sum(particle.getPosition().divide(particle.getDistance()));
+        }
+
+        if (particle.getDistance() + particle.getRadius() >= ext_radius) {
+            escape_velocity = escape_velocity.sum((particle.getPosition().divide(particle.getDistance())).getOpposite());
+        }
+
+        escape_velocity = escape_velocity.divide(escape_velocity.getLength()).multiply(Constants.maxSpeed);
+
+        return escape_velocity;
+    }
+
+    private double calculateRadius(Particle particle) {
+        if (particle.getRadius() < Constants.maxPartRadius) {
+            return particle.getRadius() + Constants.maxPartRadius / (Constants.tau / Constants.delta_t);
+        } else {
+            return Constants.maxPartRadius;
         }
     }
 }
