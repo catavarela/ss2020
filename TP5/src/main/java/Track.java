@@ -14,11 +14,11 @@ public class Track {
         createParticles();
     }
 
-    private void createParticles(){
+    private void createParticles() {
         Random rand = new Random();
         int tries = Constants.maxTries;
 
-        while(tries-- > 0) {
+        while (tries-- > 0) {
             double x = -ext_radius + 2 * ext_radius * rand.nextDouble();
             double y = -ext_radius + 2 * ext_radius * rand.nextDouble();
             double radius = Constants.minPartRadius + (Constants.maxPartRadius - Constants.minPartRadius) * rand.nextDouble();
@@ -31,13 +31,14 @@ public class Track {
         }
     }
 
-    private boolean isValid(Particle particle){
-        if(particle.getDistance() - particle.getRadius() < int_radius || particle.getDistance() + particle.getRadius() > ext_radius) return false;
+    private boolean isValid(Particle particle) {
+        if (particle.getDistance() - particle.getRadius() < int_radius || particle.getDistance() + particle.getRadius() > ext_radius)
+            return false;
 
-        for(Particle other : particles) {
+        for (Particle other : particles) {
             double distance = particle.getDistanceToParticle(other);
 
-            if(distance < particle.getRadius() + other.getRadius()) return false;
+            if (distance < particle.getRadius() + other.getRadius()) return false;
         }
 
         return true;
@@ -45,12 +46,20 @@ public class Track {
 
     public List<String> getOutput() {
         List<String> output = new ArrayList<String>();
+        double angle = 0;
 
-        for(Particle particle : particles) {
+        for (Particle particle : particles) {
             output.add(particle.getX() + " " + particle.getY() + " " + particle.getRadius());
         }
 
-        output.add(0, String.valueOf(particles.size()));
+        // Draw borders
+        while (angle < 2 * Math.PI) {
+            output.add(Math.cos(angle) * Constants.intTrackRadius + " " + Math.sin(angle) * Constants.intTrackRadius + " 0.05");
+            output.add(Math.cos(angle) * Constants.extTrackRadius + " " + Math.sin(angle) * Constants.extTrackRadius + " 0.05");
+            angle += 0.01;
+        }
+
+        output.add(0, String.valueOf(output.size()));
         output.add(1, "");
 
         return output;
@@ -59,7 +68,7 @@ public class Track {
     public List<String> run() {
         double current_time = 0;
 
-        while(current_time < Constants.final_t) {
+        while (current_time < Constants.final_t) {
             System.out.println("Current time: " + current_time);
             updateVelocities();
             updatePositions();
@@ -72,14 +81,14 @@ public class Track {
     }
 
     private void updatePositions() {
-        for(Particle particle : particles) {
+        for (Particle particle : particles) {
             Coordinates new_position = particle.getPosition().sum(particle.getVelocity().multiply(Constants.delta_t));
             particle.setPosition(new_position);
         }
     }
 
     private void updateVelocities() {
-        for(Particle particle : particles) {
+        for (Particle particle : particles) {
             Coordinates new_velocity = particle.getTangentVector().multiply(Constants.maxSpeed);
             particle.setVelocity(new_velocity);
         }
