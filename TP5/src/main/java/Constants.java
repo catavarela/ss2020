@@ -9,11 +9,11 @@ public class Constants {
 
     static int maxTries = 100;
 
-    static double delta_t = 0.01;
-    static double final_t = 30;
-
     static double maxSpeed = 1.55;
 
     static double beta = 0.9;
     static double tau = 0.5;
+
+    static double delta_t = minPartRadius / (2 * maxSpeed);
+    static double final_t = 30;
 }
