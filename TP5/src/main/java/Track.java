@@ -74,8 +74,7 @@ public class Track {
 
         while (current_time < Constants.final_t) {
             System.out.println("Current time: " + current_time);
-            updateVelocities();
-            updateRadius();
+            updateVelocityAndRadius();
             updatePositions();
             xyz.addAll(getOutput());
             current_time += Constants.delta_t;
@@ -91,33 +90,22 @@ public class Track {
         }
     }
 
-    private void updateVelocities() {
-        for (Particle particle : particles) {
-            Coordinate new_velocity;
-
-            if (isValid(particle)) {
-                new_velocity = calculateDesiredVelocity(particle);
-            } else {
-                new_velocity = calculateEscapeVelocity(particle);
-            }
-
-            particle.setVelocity(new_velocity);
-        }
-    }
-
-    private void updateRadius() {
+    private void updateVelocityAndRadius() {
         List<Particle> new_list = new ArrayList<Particle>();
 
         for (Particle particle : particles) {
+            Coordinate new_velocity;
             double new_radius;
 
             if (isValid(particle)) {
+                new_velocity = calculateDesiredVelocity(particle);
                 new_radius = calculateRadius(particle);
             } else {
+                new_velocity = calculateEscapeVelocity(particle);
                 new_radius = Constants.minPartRadius;
             }
 
-            Particle new_particle = new Particle(particle.getId(), new_radius, particle.getX(), particle.getY(), particle.getVX(), particle.getVY());
+            Particle new_particle = new Particle(particle.getId(), new_radius, particle.getX(), particle.getY(), new_velocity.getX(), new_velocity.getY());
             new_list.add(new_particle);
         }
 
