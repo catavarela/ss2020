@@ -6,35 +6,83 @@ public class Track {
     private List<Particle> particles = new ArrayList<Particle>();
     private double int_radius;
     private double ext_radius;
+    private double area;
+
     private List<String> xyz = new ArrayList<String>();
 
     public Track() {
         int_radius = Constants.intTrackRadius;
         ext_radius = Constants.extTrackRadius;
-        createParticles();
+        area = Math.PI * (Math.pow(ext_radius, 2) - Math.pow(int_radius, 2));
+
+        createParticles(Constants.density);
     }
 
-    private void createParticles() {
+    private void createParticles(double density) {  //density = cant_part / área    ||      density = area_tot_parts / area_track
         Random rand = new Random();
         int id = 1;
+        int tries = Constants.maxTries;
+
+        //int quantity = (int)Math.floor(density * area);
+
+        double area_tot_parts = (int)Math.floor(density * area);
+        int area_tries = 2;
+
+        while (area_tot_parts != 0 && /*quantity != 0 &&*/ tries-- > 0) {
+            double x = -ext_radius + 2 * ext_radius * rand.nextDouble();
+            double y = -ext_radius + 2 * ext_radius * rand.nextDouble();
+            double radius = Constants.minPartRadius + (Constants.maxPartRadius - Constants.minPartRadius) * rand.nextDouble();
+
+            Particle particle = new Particle(id, radius, x, y, 0, 0);
+
+            if (isValid(particle, area_tot_parts)) {
+                particles.add(particle);
+                id++;
+                tries = Constants.maxTries;
+
+                //quantity--;
+
+                area_tot_parts -= Math.PI*Math.pow(particle.getRadius(), 2);
+                area_tries = 2;
+            }else if (area_tot_parts < Math.PI*Math.pow(particle.getRadius(), 2)) {
+                area_tries--;
+
+                if (area_tries < 0) {
+                    addParticleWithDetRadius(Math.sqrt(area_tot_parts / Math.PI), id);
+
+                    area_tot_parts = 0;
+                }
+
+            }
+        }
+    }
+
+    private void addParticleWithDetRadius(double radius, int id){
+        Random rand = new Random();
+
         int tries = Constants.maxTries;
 
         while (tries-- > 0) {
             double x = -ext_radius + 2 * ext_radius * rand.nextDouble();
             double y = -ext_radius + 2 * ext_radius * rand.nextDouble();
-            double radius = Constants.minPartRadius + (Constants.maxPartRadius - Constants.minPartRadius) * rand.nextDouble();
+
             Particle particle = new Particle(id, radius, x, y, 0, 0);
 
             if (isValid(particle)) {
                 particles.add(particle);
-                id++;
-                tries = Constants.maxTries;
             }
         }
     }
 
-    private boolean isValid(Particle particle) {
+    private boolean isValid(Particle particle){
+        return isValid(particle, area);
+    }
+
+    private boolean isValid(Particle particle, double area_tot_parts) {
         if (particle.getDistance() - particle.getRadius() < int_radius || particle.getDistance() + particle.getRadius() > ext_radius)
+            return false;
+
+        if (area_tot_parts < Math.PI*Math.pow(particle.getRadius(), 2))
             return false;
 
         for (Particle other : particles) {
