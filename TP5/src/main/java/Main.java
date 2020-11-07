@@ -33,7 +33,7 @@ public class Main {
         double current_radius = min_ext_radius;
 
         List<String> title = new ArrayList<String>();
-        title.add("Density,Mean_Velocity,Track_Width");
+        title.add("Density,Mean_Velocity,Min_Velocity,Max_Velocity,Track_Width");
 
         writeFile(title, csvName, false);
 
@@ -52,7 +52,7 @@ public class Main {
         Track track;
 
         List<String> title = new ArrayList<String>();
-        title.add("Density,Mean_Velocity");
+        title.add("Density,Mean_Velocity,Min_Velocity,Max_Velocity");
 
         writeFile(title, csvName, false);
 

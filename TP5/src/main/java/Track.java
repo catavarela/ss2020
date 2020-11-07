@@ -166,20 +166,30 @@ public class Track {
         return quantity / area;
     }
 
-    private double meanVelocity(){
+    private String meanMinAndMaxVelocities(){
         double mean = 0d;
+        double min = particles.get(0).getVelocity().getLength();
+        double max = min;
+        double current_v;
 
-        for(Particle p : particles)
-            mean += p.getVelocity().getLength();
+        for(Particle p : particles) {
+            current_v = p.getVelocity().getLength();
+            mean += current_v;
 
-        return mean / particles.size();
+            if (min > current_v)
+                min = current_v;
+            if (max < current_v)
+                max = current_v;
+        }
+
+        return "" + (mean / particles.size()) + "," + min + "," + max;
     }
 
     /* TODO: INFO PARA PARTE A - BORRAR */
     public List<String> getOutputA() {
         List<String> output = new ArrayList<String>();
 
-        output.add(getDensity() + "," + meanVelocity());
+        output.add(getDensity() + "," + meanMinAndMaxVelocities());
 
         return output;
     }
@@ -188,7 +198,7 @@ public class Track {
     public List<String> getOutputB(){
         List<String> output = new ArrayList<String>();
 
-        output.add(getDensity() + "," + meanVelocity() + "," + (ext_radius-int_radius));
+        output.add(getDensity() + "," + meanMinAndMaxVelocities() + "," + (ext_radius-int_radius));
 
         return output;
     }
