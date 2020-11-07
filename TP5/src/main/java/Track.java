@@ -6,83 +6,42 @@ public class Track {
     private List<Particle> particles = new ArrayList<Particle>();
     private double int_radius;
     private double ext_radius;
-    private double area;
+    private int quantity;
 
     private List<String> xyz = new ArrayList<String>();
 
     public Track() {
         int_radius = Constants.intTrackRadius;
         ext_radius = Constants.extTrackRadius;
-        area = Math.PI * (Math.pow(ext_radius, 2) - Math.pow(int_radius, 2));
-
-        createParticles(Constants.density);
+        quantity = Constants.quantity;
+        createParticles();
     }
 
-    private void createParticles(double density) {  //density = cant_part / área    ||      density = area_tot_parts / area_track
+    private void createParticles() {
         Random rand = new Random();
         int id = 1;
         int tries = Constants.maxTries;
 
-        //int quantity = (int)Math.floor(density * area);
-
-        double area_tot_parts = (int)Math.floor(density * area);
-        int area_tries = 2;
-
-        while (area_tot_parts != 0 && /*quantity != 0 &&*/ tries-- > 0) {
+        while (quantity != 0 && tries-- > 0) {
             double x = -ext_radius + 2 * ext_radius * rand.nextDouble();
             double y = -ext_radius + 2 * ext_radius * rand.nextDouble();
             double radius = Constants.minPartRadius + (Constants.maxPartRadius - Constants.minPartRadius) * rand.nextDouble();
 
             Particle particle = new Particle(id, radius, x, y, 0, 0);
 
-            if (isValid(particle, area_tot_parts)) {
+            if (isValid(particle)) {
                 particles.add(particle);
                 id++;
                 tries = Constants.maxTries;
 
-                //quantity--;
-
-                area_tot_parts -= Math.PI*Math.pow(particle.getRadius(), 2);
-                area_tries = 2;
-            }else if (area_tot_parts < Math.PI*Math.pow(particle.getRadius(), 2)) {
-                area_tries--;
-
-                if (area_tries < 0) {
-                    addParticleWithDetRadius(Math.sqrt(area_tot_parts / Math.PI), id);
-
-                    area_tot_parts = 0;
-                }
+                quantity--;
 
             }
         }
     }
 
-    private void addParticleWithDetRadius(double radius, int id){
-        Random rand = new Random();
-
-        int tries = Constants.maxTries;
-
-        while (tries-- > 0) {
-            double x = -ext_radius + 2 * ext_radius * rand.nextDouble();
-            double y = -ext_radius + 2 * ext_radius * rand.nextDouble();
-
-            Particle particle = new Particle(id, radius, x, y, 0, 0);
-
-            if (isValid(particle)) {
-                particles.add(particle);
-            }
-        }
-    }
-
-    private boolean isValid(Particle particle){
-        return isValid(particle, area);
-    }
-
-    private boolean isValid(Particle particle, double area_tot_parts) {
+    private boolean isValid(Particle particle) {
         if (particle.getDistance() - particle.getRadius() < int_radius || particle.getDistance() + particle.getRadius() > ext_radius)
-            return false;
-
-        if (area_tot_parts < Math.PI*Math.pow(particle.getRadius(), 2))
             return false;
 
         for (Particle other : particles) {
@@ -198,5 +157,39 @@ public class Track {
         } else {
             return Constants.maxPartRadius;
         }
+    }
+
+    private double getDensity() {
+
+        double area = Math.PI * (Math.pow(ext_radius, 2) - Math.pow(int_radius, 2));
+
+        return quantity / area;
+    }
+
+    private double meanVelocity(){
+        double mean = 0d;
+
+        for(Particle p : particles)
+            mean += p.getVelocity().getLength();
+
+        return mean / particles.size();
+    }
+
+    /* TODO: INFO PARA PARTE A - BORRAR */
+    public List<String> getOutputA() {
+        List<String> output = new ArrayList<String>();
+
+        output.add(getDensity() + "," + meanVelocity());
+
+        return output;
+    }
+
+    /* TODO: INFO PARA PARTE B - BORRAR */
+    public List<String> getOutputB(){
+        List<String> output = new ArrayList<String>();
+
+        output.add(getDensity() + "," + meanVelocity() + "," + (ext_radius-int_radius));
+
+        return output;
     }
 }
