@@ -9,20 +9,22 @@ public class Track {
     private int quantity;
 
     private List<String> xyz = new ArrayList<String>();
+    private List<String> outputA = new ArrayList<String>();
+    private List<String> outputB = new ArrayList<String>();
 
     public Track() {
         int_radius = Constants.intTrackRadius;
         ext_radius = Constants.extTrackRadius;
         quantity = Constants.quantity;
-        createParticles();
     }
 
-    private void createParticles() {
+    public int createParticles() {
         Random rand = new Random();
         int id = 1;
         int tries = Constants.maxTries;
+        int current_quantity = quantity;
 
-        while (quantity != 0 && tries-- > 0) {
+        while (current_quantity != 0 && tries > 0) {
             double x = -ext_radius + 2 * ext_radius * rand.nextDouble();
             double y = -ext_radius + 2 * ext_radius * rand.nextDouble();
             double radius = Constants.minPartRadius + (Constants.maxPartRadius - Constants.minPartRadius) * rand.nextDouble();
@@ -34,21 +36,26 @@ public class Track {
                 id++;
                 tries = Constants.maxTries;
 
-                quantity--;
+                current_quantity--;
 
-            }
+            }else
+                tries--;
         }
+
+        return tries;
     }
 
     private boolean isValid(Particle particle) {
+        double distance;
+
         if (particle.getDistance() - particle.getRadius() < int_radius || particle.getDistance() + particle.getRadius() > ext_radius)
             return false;
 
         for (Particle other : particles) {
             if (particle.getId() != other.getId()) {
-                double distance = particle.getDistanceToParticle(other);
+                distance = particle.getDistanceToParticle(other);
 
-                if (distance < particle.getRadius() + other.getRadius()) return false;
+                if (Double.compare(distance, particle.getRadius() + other.getRadius()) < 0) return false;
             }
         }
 
@@ -76,16 +83,55 @@ public class Track {
         return output;
     }
 
-    public List<String> run() {
+    private List<String> getOutputA(double time){
+        //"Quantity,Density,Velocity,Time"
+        List<String> output = new ArrayList<String>();
+
+        double mean = 0d;
+
+        for(Particle p : particles)
+            mean += p.getVelocity().getLength();
+
+        mean /= quantity;
+
+        output.add(quantity + "," + getDensity() + "," + mean + "," + time);
+
+        return output;
+    }
+
+    private List<String> getOutputB(double time, double density){
+        //"Quantity,Density,Velocity,Time,Track_Width"
+        List<String> output = new ArrayList<String>();
+
+        double mean = 0d;
+
+        for(Particle p : particles)
+            mean += p.getVelocity().getLength();
+
+        mean /= quantity;
+
+        output.add(quantity + "," + density + "," + mean + "," + time + "," + ext_radius);
+
+        return output;
+    }
+
+    public List<String> run(/*double density*/) {
         double current_time = 0;
 
         while (current_time < Constants.final_t) {
             System.out.println("Current time: " + current_time);
-            updateVelocityAndRadius();
-            updatePositions();
+
             xyz.addAll(getOutput());
+            updateVelocityAndRadius();
+
+            outputA.addAll(getOutputA(current_time));
+            //outputB.addAll(getOutputB(current_time, density));
+
+            updatePositions();
             current_time += Constants.delta_t;
         }
+
+        xyz.addAll(getOutput());
 
         return xyz;
     }
@@ -166,40 +212,13 @@ public class Track {
         return quantity / area;
     }
 
-    private String meanMinAndMaxVelocities(){
-        double mean = 0d;
-        double min = particles.get(0).getVelocity().getLength();
-        double max = min;
-        double current_v;
-
-        for(Particle p : particles) {
-            current_v = p.getVelocity().getLength();
-            mean += current_v;
-
-            if (min > current_v)
-                min = current_v;
-            if (max < current_v)
-                max = current_v;
-        }
-
-        return "" + (mean / particles.size()) + "," + min + "," + max;
-    }
-
     /* TODO: INFO PARA PARTE A - BORRAR */
     public List<String> getOutputA() {
-        List<String> output = new ArrayList<String>();
-
-        output.add(getDensity() + "," + meanMinAndMaxVelocities());
-
-        return output;
+        return outputA;
     }
 
     /* TODO: INFO PARA PARTE B - BORRAR */
     public List<String> getOutputB(){
-        List<String> output = new ArrayList<String>();
-
-        output.add(getDensity() + "," + meanMinAndMaxVelocities() + "," + (ext_radius-int_radius));
-
-        return output;
+        return outputB;
     }
 }

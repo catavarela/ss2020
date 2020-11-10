@@ -4,10 +4,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static java.lang.System.exit;
+
 public class Main {
     public static void main(String[] args) {
-        Track track = new Track();
-        writeFile(track.run(), "output2.xyz", false);
+        //Track track = new Track();
+        //writeFile(track.run(), "output2.xyz", false);
+
+        variateQuantity(5, 145, 10, "outputA150OnlyMeans.csv", Exercise.A);
+
+        //variateQuantityAndTrackWidth(6.0, 6.0, 0.5, 0.5, 4.0, 0.5, "outputB150.csv");
 
     }
 
@@ -32,12 +38,12 @@ public class Main {
     public static void variateQuantityAndTrackWidth(double min_ext_radius, double max_ext_radius, double step, int min, int max, int step_q,String csvName){
         double current_radius = min_ext_radius;
 
-        List<String> title = new ArrayList<String>();
-        title.add("Density,Mean_Velocity,Min_Velocity,Max_Velocity,Track_Width");
+        //List<String> title = new ArrayList<String>();
+        //title.add("Quantity,Density,Velocity,Time,Track_Width");
 
-        writeFile(title, csvName, false);
+        //writeFile(title, csvName, false);
 
-        while (current_radius < max_ext_radius){
+        while (current_radius <= max_ext_radius){
             Constants.extTrackRadius = current_radius;
 
             variateQuantity(min, max, step_q, csvName, Exercise.B);
@@ -51,15 +57,27 @@ public class Main {
         int current_quantity = min;
         Track track;
 
-        List<String> title = new ArrayList<String>();
-        title.add("Density,Mean_Velocity,Min_Velocity,Max_Velocity");
+        if(exercise == Exercise.A){
+            List<String> title = new ArrayList<String>();
+            title.add("Quantity,Density,Velocity,Time");
 
-        writeFile(title, csvName, false);
+            writeFile(title, csvName, false);
+        }
 
-        while (current_quantity < max){
+        while (current_quantity <= max){
+            //Constants.quantity = (int)Math.floor(current_quantity * Math.PI * (Math.pow(Constants.extTrackRadius, 2) - Math.pow(Constants.intTrackRadius, 2)));
+
             Constants.quantity = current_quantity;
 
             track = new Track();
+
+            if(track.createParticles() != Constants.maxTries) {
+                System.out.println("Could not create track using " + Constants.quantity + " particles. Tried " + Constants.maxTries + " different times before exiting.");
+
+                exit(1);
+            }
+
+            track.run(/*current_quantity*/);
 
             writeExerciseOutput(exercise, track, csvName);
 
