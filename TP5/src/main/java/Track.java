@@ -27,7 +27,7 @@ public class Track {
         while (current_quantity != 0 && tries > 0) {
             double x = -ext_radius + 2 * ext_radius * rand.nextDouble();
             double y = -ext_radius + 2 * ext_radius * rand.nextDouble();
-            double radius = Constants.minPartRadius + (Constants.maxPartRadius - Constants.minPartRadius) * rand.nextDouble();
+            double radius = Constants.minPartRadius;
 
             Particle particle = new Particle(id, radius, x, y, 0, 0);
 
