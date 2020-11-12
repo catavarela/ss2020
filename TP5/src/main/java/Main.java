@@ -1,4 +1,5 @@
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,11 +11,9 @@ public class Main {
         //Track track = new Track();
         //writeFile(track.run(), "output2.xyz", false);
 
-        //variateQuantity(5, 145, 10, "outputR0125.csv", Exercise.A);
+        variateQuantity(5, 145, 10, "outputA150OnlyMeans.csv", Exercise.A);
 
         //variateQuantityAndTrackWidth(6.0, 6.0, 0.5, 0.5, 4.0, 0.5, "outputB150.csv");
-        List<String[]> data = parseCsv("Rmin015.csv");
-        System.out.println(getError(data));
 
     }
 
@@ -36,34 +35,6 @@ public class Main {
     }
 
     /* <--------- TODO: CSVs PARA GRAFICOS - BORRAR */
-    public static double getError(List<String[]> data) {
-        double error = 0;
-        for(String[] d : data) {
-            error += Math.pow(Double.valueOf(d[1]) - (0.0276 * Double.valueOf(d[0]) * Double.valueOf(d[0]) - 0.3763 * Double.valueOf(d[0]) + 1.5442), 2);
-        }
-
-        return error;
-    }
-
-    public static List<String[]> parseCsv(String fileName) {
-        List<String[]> records = new ArrayList();
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            br.readLine();
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                records.add(values);
-            }
-
-            return records;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return records;
-    }
-
     public static void variateQuantityAndTrackWidth(double min_ext_radius, double max_ext_radius, double step, int min, int max, int step_q,String csvName){
         double current_radius = min_ext_radius;
 
