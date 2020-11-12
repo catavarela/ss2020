@@ -16,6 +16,7 @@ public class Track {
         int_radius = Constants.intTrackRadius;
         ext_radius = Constants.extTrackRadius;
         quantity = Constants.quantity;
+        createParticles();
     }
 
     public int createParticles() {

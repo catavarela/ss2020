@@ -7,14 +7,14 @@ import static java.lang.System.exit;
 
 public class Main {
     public static void main(String[] args) {
-        //Track track = new Track();
-        //writeFile(track.run(), "output2.xyz", false);
+        Track track = new Track();
+        writeFile(track.run(), "output2.xyz", false);
 
         //variateQuantity(5, 145, 10, "outputR0125.csv", Exercise.A);
 
         //variateQuantityAndTrackWidth(6.0, 6.0, 0.5, 0.5, 4.0, 0.5, "outputB150.csv");
-        List<String[]> data = parseCsv("Rmin015.csv");
-        System.out.println(getError(data));
+        //List<String[]> data = parseCsv("Rmin015.csv");
+        //System.out.println(getError(data));
 
     }
 

@@ -1,7 +1,7 @@
 public class Constants {
     static double ninetyDegrees = Math.PI / 2;
 
-    static double minPartRadius = 0.125;
+    static double minPartRadius = 0.15;
     static double maxPartRadius = 0.32;
 
     static double intTrackRadius = 2.0;
