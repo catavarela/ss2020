@@ -118,25 +118,42 @@ public class Universe {
         double orbital_velocity_of_space_station = Constants.orbital_velocity_of_space_station;
         double rocket_blastoff_velocity = Constants.rocket_blastoff_velocity;
 
-        Body sol = null;
+        //Body sol = null;
         Body tierra = null;
 
         double x0, y0, vx0, vy0;
 
-        for(Body body : celestial_bodies){
+        /*for(Body body : celestial_bodies){
             if(body.getName().equals("Sol"))
                 sol = body;
             else if (body.getName().equals("Tierra"))
                 tierra = body;
         }
 
-        double teta = Math.atan2(tierra.getR(t)[1] - sol.getR(t)[1], tierra.getR(t)[0] - sol.getR(t)[0]);
+        double teta = Math.atan2(tierra.getR(t)[1] - sol.getR(t)[1], tierra.getR(t)[0] - sol.getR(t)[0]);*/
 
-        x0 = (tierra.getRadius() + dist_to_space_station) * Math.cos(teta) + tierra.getR(t)[0];
-        y0 = (tierra.getRadius() + dist_to_space_station) * Math.sin(teta) + tierra.getR(t)[1];
+        double r_mod = dist_to_space_station + tierra.getRadius();
+        double x_versor = tierra.getR(t)[0] / Math.hypot(tierra.getR(t)[0], tierra.getR(t)[1]);
+        double y_versor = tierra.getR(t)[1] / Math.hypot(tierra.getR(t)[0], tierra.getR(t)[1]);
 
-        vx0 = tierra.getV(t)[0] + (rocket_blastoff_velocity + orbital_velocity_of_space_station) * Math.sin(teta);
-        vy0 = tierra.getV(t)[1] + (rocket_blastoff_velocity + orbital_velocity_of_space_station) * Math.cos(teta);
+        x0 = tierra.getR(t)[0] + x_versor * r_mod;
+        y0 = tierra.getR(t)[1] + y_versor * r_mod;
+
+        //x0 = (tierra.getRadius() + dist_to_space_station) * Math.cos(teta) + tierra.getR(t)[0];
+        //y0 = (tierra.getRadius() + dist_to_space_station) * Math.sin(teta) + tierra.getR(t)[1];
+
+        /*vx0 = tierra.getV(t)[0] + (rocket_blastoff_velocity + orbital_velocity_of_space_station) * Math.sin(teta);
+        vy0 = tierra.getV(t)[1] + (rocket_blastoff_velocity + orbital_velocity_of_space_station) * Math.cos(teta);*/
+
+        double v_tan_mod = rocket_blastoff_velocity + orbital_velocity_of_space_station;
+        double v_tan_x = tierra.getR(t)[0] * Math.cos(Constants.ninety_deg) - tierra.getR(t)[1] * Math.sin(Constants.ninety_deg);
+        double v_tan_y = tierra.getR(t)[0] * Math.sin(Constants.ninety_deg) + tierra.getR(t)[1] * Math.cos(Constants.ninety_deg);
+
+        v_tan_x = v_tan_x / Math.hypot(v_tan_x, v_tan_y);
+        v_tan_y = v_tan_y / Math.hypot(v_tan_x, v_tan_y);
+
+        vx0 = tierra.getV(t)[0] + v_tan_mod * v_tan_x;
+        vy0 = tierra.getV(t)[1] + v_tan_mod * v_tan_y;
 
         return new Body(t, rocket_mass, 0d, x0, y0, vx0, vy0, "Cohete");
 

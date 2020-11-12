@@ -10,9 +10,9 @@ import java.util.Scanner;
 public class Main {
     private static double final_t = 86400 * 687; //s
     private static double delta_t = 100; //s
-    private static boolean hay_cohete = false;
+    private static boolean hay_cohete = true;
     private static double crash_time;
-    private static String output = "norocket.tsv";
+    private static String output = "conVersores.tsv";
 
     public static void main(String[] args) {
         double dia_de_despegue = 86400 * 275 + 15 * 3600;
@@ -26,9 +26,9 @@ public class Main {
             celestial_bodies.add(tierra);
             celestial_bodies.add(marte);
 
-            //Universe universe = new Universe(Constants.G, celestial_bodies, hay_cohete, dia_de_despegue);
+            Universe universe = new Universe(Constants.G, celestial_bodies, hay_cohete, dia_de_despegue);
 
-            //crash_time = universe.calculate(final_t, delta_t, Metodo.BEEMAN);
+            crash_time = universe.calculate(final_t, delta_t, Metodo.BEEMAN);
 
             writeFile(universe.getResults(), output);
             //writeFile(universe.getRocketSpeed(), "rocketSpeed.csv");
@@ -115,6 +115,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        writeFile(XYZ_output, "norocket.xyz");
+        writeFile(XYZ_output, "conVersores.xyz");
     }
 }

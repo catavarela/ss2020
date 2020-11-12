@@ -7,7 +7,7 @@ public class Constants {
     static double intTrackRadius = 2.0;
     static double extTrackRadius = 4.0;
 
-    static int quantity = 150;
+    static int quantity = 100;
     static int maxTries = 10000;
 
     static double maxSpeed = 1.55;

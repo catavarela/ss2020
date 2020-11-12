@@ -8,10 +8,10 @@ import static java.lang.System.exit;
 
 public class Main {
     public static void main(String[] args) {
-        //Track track = new Track();
-        //writeFile(track.run(), "output2.xyz", false);
+        Track track = new Track();
+        writeFile(track.run(), "output100.xyz", false);
 
-        variateQuantity(5, 145, 10, "outputA150OnlyMeans.csv", Exercise.A);
+        //variateQuantity(5, 145, 10, "outputA150OnlyMeans.csv", Exercise.A);
 
         //variateQuantityAndTrackWidth(6.0, 6.0, 0.5, 0.5, 4.0, 0.5, "outputB150.csv");
 
@@ -34,7 +34,7 @@ public class Main {
         }
     }
 
-    /* <--------- TODO: CSVs PARA GRAFICOS - BORRAR */
+    /* <---------
     public static void variateQuantityAndTrackWidth(double min_ext_radius, double max_ext_radius, double step, int min, int max, int step_q,String csvName){
         double current_radius = min_ext_radius;
 
@@ -77,8 +77,8 @@ public class Main {
                 exit(1);
             }
 
-            track.run(/*current_quantity*/);
-
+            track.run(/*current_quantity);*/
+/*
             writeExerciseOutput(exercise, track, csvName);
 
             current_quantity += step;
@@ -97,5 +97,5 @@ public class Main {
         }
     }
 
-    /* ---------> */
+     ---------> */
 }

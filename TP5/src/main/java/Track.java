@@ -9,13 +9,15 @@ public class Track {
     private int quantity;
 
     private List<String> xyz = new ArrayList<String>();
-    private List<String> outputA = new ArrayList<String>();
-    private List<String> outputB = new ArrayList<String>();
+    /*private List<String> outputA = new ArrayList<String>();
+    private List<String> outputB = new ArrayList<String>();*/
 
     public Track() {
         int_radius = Constants.intTrackRadius;
         ext_radius = Constants.extTrackRadius;
         quantity = Constants.quantity;
+
+        createParticles();
     }
 
     public int createParticles() {
@@ -82,7 +84,7 @@ public class Track {
 
         return output;
     }
-
+/*
     private List<String> getOutputA(double time){
         //"Quantity,Density,Velocity,Time"
         List<String> output = new ArrayList<String>();
@@ -114,7 +116,7 @@ public class Track {
 
         return output;
     }
-
+*/
     public List<String> run(/*double density*/) {
         double current_time = 0;
 
@@ -124,7 +126,7 @@ public class Track {
             xyz.addAll(getOutput());
             updateVelocityAndRadius();
 
-            outputA.addAll(getOutputA(current_time));
+            //outputA.addAll(getOutputA(current_time));
             //outputB.addAll(getOutputB(current_time, density));
 
             updatePositions();
@@ -204,7 +206,7 @@ public class Track {
             return Constants.maxPartRadius;
         }
     }
-
+/*
     private double getDensity() {
 
         double area = Math.PI * (Math.pow(ext_radius, 2) - Math.pow(int_radius, 2));
@@ -212,13 +214,13 @@ public class Track {
         return quantity / area;
     }
 
-    /* TODO: INFO PARA PARTE A - BORRAR */
+     TODO: INFO PARA PARTE A - BORRAR
     public List<String> getOutputA() {
         return outputA;
     }
 
-    /* TODO: INFO PARA PARTE B - BORRAR */
+     TODO: INFO PARA PARTE B - BORRAR
     public List<String> getOutputB(){
         return outputB;
-    }
+    }*/
 }
