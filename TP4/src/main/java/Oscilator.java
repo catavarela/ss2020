@@ -140,8 +140,8 @@ public class Oscilator {
         v.put(t + delta_t, r_corrected[1]);
     }
 
-    private void calculateNextIteration(double current_t, double delta_t, Metodo metodo){
-        switch (metodo){
+    private void calculateNextIteration(double current_t, double delta_t, Metodo metodo) {
+        switch (metodo) {
             case VERLET:
                 velocityVerletIteration(current_t, delta_t);
                 break;
@@ -165,7 +165,7 @@ public class Oscilator {
 
         resetResults(metodo);
 
-        while(current_t < final_t) {
+        while (current_t < final_t) {
             calculateNextIteration(current_t, delta_t, metodo);
 
             analyticSolution = analyticSolution(current_t);
@@ -179,11 +179,12 @@ public class Oscilator {
         error.add(delta_t + ", " + errorSum / iteration);
         return results;
     }
+
     private double calculateError(double analyticSolution, double numericSolution) {
         return Math.pow(analyticSolution - numericSolution, 2);
     }
 
-    public List<String> getError(){
+    public List<String> getError() {
         return error;
     }
 

@@ -1,4 +1,6 @@
 public class Constants {
+    public static double ninety_deg = Math.PI/2;
+
 ////    CONSTANTS FOR 28/09 ========================================================
 //    public static double G = 6.67408 * Math.pow(10,-11);
 //
@@ -48,8 +50,6 @@ public class Constants {
 //    public static double vy0_mars = 1.285278029310825 * Math.pow(10,4);
 
     ////    CONSTANTS FOR 1/1 ==========================================================
-    public static double ninety_deg = Math.PI/2;
-
     public static double G = 6.67408 * Math.pow(10,-11);
 
     public static double sun_mass = 1.988435 * Math.pow(10,30);
